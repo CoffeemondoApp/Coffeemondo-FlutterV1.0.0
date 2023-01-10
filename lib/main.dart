@@ -23,10 +23,12 @@ class HomeStart extends State<Home> {
     return MaterialApp(
         title: 'login app',
         home: Scaffold(
+          backgroundColor: Color(0xffffebdcac),
           appBar: AppBarcustom(),
           body: Center(
             child: CustomButton(),
           ),
+          bottomNavigationBar: CustomBottomBar(),
         ));
   }
 }
@@ -35,6 +37,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffffebdcac),
       body: Center(
         child: Container(
           width: 300,
@@ -98,29 +101,26 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 100,
+      height: 88.0,
       child: ClipPath(
         clipper: BackgroundAppBar(),
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: 100,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Color.fromARGB(255, 207, 111, 55), Color(0xFFF6EFE9)]),
+            gradient: LinearGradient(colors: [
+              Color.fromARGB(255, 207, 111, 55),
+              Color.fromARGB(255, 207, 111, 55)
+            ]),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {},
+          child: Center(
+            child: Text(
+              'Inicio',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25,
               ),
-              Text('Inicio'),
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {},
-              )
-            ],
+            ),
           ),
         ),
       ),
@@ -128,7 +128,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(100);
+  Size get preferredSize => Size.fromHeight(88.0);
 }
 
 class BackgroundAppBar extends CustomClipper<Path> {
@@ -144,4 +144,38 @@ class BackgroundAppBar extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(BackgroundAppBar oldClipper) => oldClipper != this;
+}
+
+class CustomBottomBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80.0,
+      width: double.infinity,
+      child: ClipPath(
+        clipper: BackgroundBottomBar(),
+        child: Container(
+          color: Color.fromARGB(255, 207, 111, 55),
+        ),
+      ),
+    );
+  }
+}
+
+class BackgroundBottomBar extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0.0, size.height);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width - 990, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
 }
