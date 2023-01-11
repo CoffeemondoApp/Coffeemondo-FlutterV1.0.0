@@ -16,12 +16,12 @@ class LoginApp extends State<Login> {
       body: SingleChildScrollView(
         child: Column(children: [
           Padding(
-              padding: EdgeInsets.all(30),
+              padding: EdgeInsets.all(20),
               child: Center(
                 child: Container(
                   width: 100,
                   height: 100,
-                  child: Image.asset('assets/usuario.png'),
+                  child: Image.asset('assets/logo.png'),
                 ),
               )),
           Padding(
@@ -132,7 +132,7 @@ class BackgroundBottomBar extends CustomClipper<Path> {
     path.lineTo(0.0, size.height);
     path.lineTo(size.width, size.height);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width - 990, size.height);
+    path.lineTo(size.width, size.height - 59);
     path.close();
     return path;
   }

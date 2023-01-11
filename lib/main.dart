@@ -104,24 +104,13 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
       height: 88.0,
       child: ClipPath(
         clipper: BackgroundAppBar(),
-        child: Container(
+        child: Image.asset(
+          'assets/2134.jpg',
           width: MediaQuery.of(context).size.width,
           height: 100,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Color.fromARGB(255, 207, 111, 55),
-              Color.fromARGB(255, 207, 111, 55)
-            ]),
-          ),
-          child: Center(
-            child: Text(
-              'Inicio',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-              ),
-            ),
-          ),
+          fit: BoxFit.cover,
+          color: Color.fromARGB(255, 255, 145, 0),
+          colorBlendMode: BlendMode.overlay,
         ),
       ),
     );
@@ -169,7 +158,7 @@ class BackgroundBottomBar extends CustomClipper<Path> {
     path.lineTo(0.0, size.height);
     path.lineTo(size.width, size.height);
     path.lineTo(size.width, 0);
-    path.lineTo(size.width - 990, size.height);
+    path.lineTo(size.width, size.height - 59);
     path.close();
     return path;
   }
