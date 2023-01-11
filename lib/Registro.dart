@@ -1,0 +1,207 @@
+import 'package:flutter/material.dart';
+import 'package:coffeemondo/iconos.dart';
+
+class Registro extends StatefulWidget {
+  @override
+  RegistroApp createState() => RegistroApp();
+}
+
+class RegistroApp extends State<Registro> {
+  @override
+  bool _obscureText = true;
+  bool obs = true;
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xffffebdcac),
+      appBar: AppBarcustom(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(left: 50, top: 200, right: 40),
+                child: TextField(
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.account_circle_outlined),
+                        hintText: 'Correo electronico'))),
+            Padding(
+                padding: EdgeInsets.only(left: 50, top: 10, right: 40),
+                child: TextField(
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.remove_red_eye),
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                            obs == true ? obs = true : obs = false;
+                          });
+                        },
+                      ),
+                      hintText: 'Contraseña'),
+                  obscureText: _obscureText,
+                )),
+            Padding(
+              padding: EdgeInsets.only(left: 20, top: 200, right: 10),
+              child: CustomButton1(),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: CustomBottomBar(),
+    );
+  }
+}
+
+//APPBAR CUSTOM
+
+class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 88.0,
+      child: ClipPath(
+        clipper: BackgroundAppBar(),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 100,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(colors: [
+              Color.fromARGB(255, 207, 111, 55),
+              Color.fromARGB(255, 207, 111, 55)
+            ]),
+          ),
+          child: Center(
+            child: Text(
+              'Registro',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(88.0);
+}
+
+class BackgroundAppBar extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    path.lineTo(0.0, size.height);
+
+    path.lineTo(size.width, size.height - 20);
+    path.lineTo(size.width, 0.0);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(BackgroundAppBar oldClipper) => oldClipper != this;
+}
+
+//APPBAR CUSTOM
+
+//BOTTOMBAR CUSTOM
+
+class CustomBottomBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80.0,
+      width: double.infinity,
+      child: ClipPath(
+        clipper: BackgroundBottomBar(),
+        child: Container(
+          color: Color.fromARGB(255, 207, 111, 55),
+        ),
+      ),
+    );
+  }
+}
+
+class BackgroundBottomBar extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0.0, size.height);
+    path.lineTo(size.width, size.height);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width, size.height - 59);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
+  }
+}
+
+//BOTTOMBAR CUSTOM
+
+//BOTON CUSTOM
+
+class CustomButton1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton1(),
+          child: InkWell(
+            onTap: () {},
+            child: Center(
+              child: Text(
+                'Registrarme',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BackgroundButton1 extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Color color1 = Color.fromARGB(255, 97, 2, 185);
+    Color color2 = Color.fromARGB(255, 43, 0, 83);
+
+    final LinearGradient gradient = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [color1, color2]);
+
+    final paint = Paint()
+      ..shader =
+          gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    var path = Path();
+    path.lineTo(size.width - 240, size.height - 10);
+    path.lineTo(size.width - 10, size.height - 3);
+    path.lineTo(size.width, size.height - 52);
+
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+//BOTON CUSTOM

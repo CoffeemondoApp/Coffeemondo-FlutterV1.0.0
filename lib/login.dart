@@ -1,3 +1,4 @@
+import 'package:coffeemondo/Registro.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/iconos.dart';
 
@@ -33,25 +34,32 @@ class LoginApp extends State<Login> {
           Padding(
               padding: EdgeInsets.only(left: 50, top: 10, right: 40),
               child: TextField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.remove_red_eye),
-                        onPressed: () {
-                          setState(() {
-                            obs == true ? obs = true : obs = false;
-                          });
-                        },
-                      ),
-                      hintText: 'Contraseña'))),
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(Icons.remove_red_eye),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                          obs == true ? obs = true : obs = false;
+                        });
+                      },
+                    ),
+                    hintText: 'Contraseña'),
+                obscureText: _obscureText,
+              )),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 50, right: 10),
             child: CustomButton1(),
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 20, right: 10),
+            child: CustomButtongoogle(),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 20, top: 100, right: 10),
             child: CustomButton2(),
-          )
+          ),
         ]),
       ),
       bottomNavigationBar: CustomBottomBar(),
@@ -204,6 +212,86 @@ class BackgroundButton1 extends CustomPainter {
   }
 }
 
+//BUTTON CUSTOM GOOGLE
+
+class CustomButtongoogle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButtongoogle(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Registro()));
+            },
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      width: 15,
+                      height: 12,
+                      child: Image.asset('assets/google.png')),
+                  SizedBox(width: 10), // Spacer
+                  Text(
+                    'Iniciar Sesion con Google',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 97, 2, 185),
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class BackgroundButtongoogle extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Color color1 = Color.fromARGB(197, 219, 219, 219);
+
+    final LinearGradient gradient = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [color1, color1]);
+
+    final paint = Paint()
+      ..shader =
+          gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    var path = Path();
+    path.lineTo(size.width - 240, size.height - 10);
+    path.lineTo(size.width - 10, size.height - 3);
+    path.lineTo(size.width, size.height - 52);
+
+    path.close();
+
+    canvas.drawPath(path, paint);
+
+    final borderPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    canvas.drawPath(path, borderPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+//BUTTON CUSTOM GOOGLE
+
 class CustomButton2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -216,7 +304,7 @@ class CustomButton2 extends StatelessWidget {
           child: InkWell(
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Login()));
+                  context, MaterialPageRoute(builder: (_) => Registro()));
             },
             child: Center(
               child: Text(
