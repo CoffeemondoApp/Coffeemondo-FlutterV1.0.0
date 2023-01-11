@@ -42,6 +42,9 @@ dependencies:
   cloud_firestore:
   google_sign_in:
   flutter_native_splash: 
+flutter_native_splash:
+  color: '#FB6228'
+  image: assets/splash_screen.png
 
 dev_dependencies:
   flutter_test:
