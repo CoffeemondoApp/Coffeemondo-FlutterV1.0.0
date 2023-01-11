@@ -18,28 +18,72 @@ class RegistroApp extends State<Registro> {
         child: Column(
           children: [
             Padding(
-                padding: EdgeInsets.only(left: 50, top: 200, right: 40),
-                child: TextField(
+                padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
+                child: const TextField(
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 84, 14, 148),
+                      fontSize: 10.0,
+                      //fontWeight: FontWeight.bold,
+                    ),
                     decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.account_circle_outlined),
-                        hintText: 'Correo electronico'))),
+                        focusedBorder: UnderlineInputBorder(
+                          // width: 0.0 produces a thin "hairline" border
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 255, 79, 52)),
+                        ),
+                        enabledBorder: UnderlineInputBorder(
+                          // width: 0.0 produces a thin "hairline" border
+                          borderSide:
+                              BorderSide(color: Colors.grey, width: 0.0),
+                        ),
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.account_circle_outlined,
+                            color: Color.fromARGB(255, 255, 79, 52)),
+                        suffixIcon: Icon(Icons.check,
+                            color: Color.fromARGB(255, 84, 14, 148)),
+                        hintText: 'C o r r e o   e l e c t r o n i c o ',
+                        hintStyle: TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w900,
+                          color: Color.fromARGB(255, 84, 14, 148),
+                        )))),
             Padding(
                 padding: EdgeInsets.only(left: 50, top: 10, right: 40),
                 child: TextField(
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 84, 14, 148),
+                      fontSize: 10.0,
+                      //fontWeight: FontWeight.bold,
+                    ),
+                    obscureText: obs,
+                    decoration: InputDecoration(
+                      focusedBorder: const UnderlineInputBorder(
+                        // width: 0.0 produces a thin "hairline" border
+                        borderSide:
+                            BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                      ),
+                      enabledBorder: const UnderlineInputBorder(
+                        // width: 0.0 produces a thin "hairline" border
+                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
+                      ),
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock,
+                          color: Color.fromARGB(255, 255, 79, 52)),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.remove_red_eye),
+                        icon: const Icon(Icons.remove_red_eye,
+                            color: Color.fromARGB(255, 255, 79, 52)),
                         onPressed: () {
                           setState(() {
-                            _obscureText = !_obscureText;
-                            obs == true ? obs = true : obs = false;
+                            obs == true ? obs = false : obs = true;
                           });
                         },
                       ),
-                      hintText: 'Contraseña'),
-                  obscureText: _obscureText,
-                )),
+                      hintText: 'P a s s w o r d',
+                      hintStyle: const TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w900,
+                          color: Color.fromARGB(255, 84, 14, 148)),
+                    ))),
             Padding(
               padding: EdgeInsets.only(left: 20, top: 200, right: 10),
               child: CustomButton1(),

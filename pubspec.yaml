@@ -75,6 +75,11 @@ flutter:
       - family: Iconos
         fonts:
           - asset: assets/Iconos.ttf
+
+
+      - family: Hitchcock
+        fonts:
+          - asset: assets/Hitchcock.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
