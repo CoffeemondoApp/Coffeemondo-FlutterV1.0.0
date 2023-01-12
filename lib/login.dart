@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_unnecessary_containers
+
 import 'package:coffeemondo/Registro.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/iconos.dart';
@@ -79,6 +81,7 @@ class LoginApp extends State<Login> {
         ));
   }
 
+  // ignore: non_constant_identifier_names
   Widget BotonLogin() {
     return Container(
       child: Container(
@@ -91,11 +94,76 @@ class LoginApp extends State<Login> {
               Navigator.push(
                   context, MaterialPageRoute(builder: (_) => Login()));
             },
+            // ignore: prefer_const_constructors
             child: Center(
               child: Text(
                 'Entrar',
                 style: TextStyle(
                   color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget BotonGoogle() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButtongoogle(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Registro()));
+            },
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      width: 15,
+                      height: 12,
+                      child: Image.asset('assets/google.png')),
+                  SizedBox(width: 10), // Spacer
+                  Text(
+                    'Iniciar Sesion con Google',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 97, 2, 185),
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget BotonRegistrarse() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton2(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Registro()));
+            },
+            child: Center(
+              child: Text(
+                'Soy Nuevo',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 97, 2, 185),
                   fontSize: 20,
                 ),
               ),
@@ -133,11 +201,11 @@ class LoginApp extends State<Login> {
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 20, right: 10),
-            child: CustomButtongoogle(),
+            child: BotonGoogle(),
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 100, right: 10),
-            child: CustomButton2(),
+            child: BotonRegistrarse(),
           ),
         ]),
       ),
@@ -146,6 +214,7 @@ class LoginApp extends State<Login> {
   }
 }
 
+//CUSTOM APP BAR
 class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
@@ -180,7 +249,9 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(88.0);
 }
+//CUSTOM APP BAR
 
+//CUSTOM PAINTER APP BAR
 class BackgroundAppBar extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -195,7 +266,9 @@ class BackgroundAppBar extends CustomClipper<Path> {
   @override
   bool shouldReclip(BackgroundAppBar oldClipper) => oldClipper != this;
 }
+//CUSTOM PAINTER APP BAR
 
+//CUSTOM PAINTER BOTTOM BAR
 class CustomBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -229,6 +302,7 @@ class BackgroundBottomBar extends CustomClipper<Path> {
     return false;
   }
 }
+//CUSTOM PAINTER BOTTOM BAR
 
 //CUSTOM PAINTER BOTON ENTRAR
 class BackgroundButton1 extends CustomPainter {
@@ -261,51 +335,9 @@ class BackgroundButton1 extends CustomPainter {
     return false;
   }
 }
-
 //CUSTOM PAINTER BOTON ENTRAR
 
-//BUTTON CUSTOM GOOGLE
-
-class CustomButtongoogle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButtongoogle(),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Registro()));
-            },
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      width: 15,
-                      height: 12,
-                      child: Image.asset('assets/google.png')),
-                  SizedBox(width: 10), // Spacer
-                  Text(
-                    'Iniciar Sesion con Google',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 97, 2, 185),
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
+//CUSTOM PAINTER BOTON GOOGLE
 class BackgroundButtongoogle extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -341,39 +373,9 @@ class BackgroundButtongoogle extends CustomPainter {
     return false;
   }
 }
+//CUSTOM PAINTER BOTON GOOGLE
 
-//BUTTON CUSTOM GOOGLE
-
-class CustomButton2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButton2(),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Registro()));
-            },
-            child: Center(
-              child: Text(
-                'Soy Nuevo',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 97, 2, 185),
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
+//CUSTOM PAINTER BOTON REGISTRARSE
 class BackgroundButton2 extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -398,3 +400,4 @@ class BackgroundButton2 extends CustomPainter {
     return false;
   }
 }
+//CUSTOM PAINTER BOTON REGISTRARSE
