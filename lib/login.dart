@@ -74,6 +74,7 @@ String? errorMessage = '';
           fontSize: 10.0,
           //fontWeight: FontWeight.bold,
         ),
+        // ignore: prefer_const_constructors
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
@@ -195,7 +196,7 @@ String? errorMessage = '';
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 100, right: 10),
-            child: BotonRegistrarse(),
+            child: Botonregistrar(),
           ),
         ]),
       ),
@@ -327,6 +328,35 @@ class BackgroundButton1 extends CustomPainter {
   }
 }
 //CUSTOM PAINTER BOTON ENTRAR
+class Botonregistrar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton2(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Registro()));
+            },
+            child: Center(
+              child: Text(
+                'Soy Nuevo',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 97, 2, 185),
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 //BUTTON CUSTOM GOOGLE
 
