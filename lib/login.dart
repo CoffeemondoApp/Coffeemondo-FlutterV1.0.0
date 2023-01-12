@@ -165,6 +165,43 @@ String? errorMessage = '';
     );
   }
 
+    Widget BotonGoogle(){
+      return Container(
+        child: Container(
+          width: 250,
+          height: 50,
+          child: CustomPaint(
+            painter: BackgroundButtongoogle(),
+            child: InkWell(
+              onTap: () {
+                signInWithGoogle();
+              },
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        width: 15,
+                        height: 12,
+                        child: Image.asset('assets/google.png')),
+                    SizedBox(width: 10), // Spacer
+                    Text(
+                      'Iniciar Sesion con Google',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 97, 2, 185),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
@@ -192,7 +229,7 @@ String? errorMessage = '';
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 20, right: 10),
-            child: CustomButtongoogle(),
+            child: BotonGoogle(),
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 100, right: 10),
@@ -358,47 +395,7 @@ class Botonregistrar extends StatelessWidget {
   }
 }
 
-//BUTTON CUSTOM GOOGLE
 
-class CustomButtongoogle extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButtongoogle(),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Registro()));
-            },
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      width: 15,
-                      height: 12,
-                      child: Image.asset('assets/google.png')),
-                  SizedBox(width: 10), // Spacer
-                  Text(
-                    'Iniciar Sesion con Google',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 97, 2, 185),
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class BackgroundButtongoogle extends CustomPainter {
   @override
