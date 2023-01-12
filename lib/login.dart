@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
-
 import 'package:coffeemondo/Registro.dart';
 import 'package:coffeemondo/autenticacion.dart';
 import 'package:coffeemondo/home.dart';
@@ -138,6 +136,7 @@ String? errorMessage = '';
         ));
   }
 
+  // ignore: non_constant_identifier_names
   Widget BotonLogin() {
     return Container(
       child: Container(
@@ -149,6 +148,7 @@ String? errorMessage = '';
             onTap: () {
               signInWithEmailAndPassword();
             },
+            // ignore: prefer_const_constructors
             child: Center(
               child: Text(
                 'Entrar',
@@ -162,43 +162,6 @@ String? errorMessage = '';
         ),
       ),
     );
-  }
-  
-  //BUTTON CUSTOM GOOGLE
-  Widget botonGoogle(){
-    return Container(
-        child: Container(
-          width: 250,
-          height: 50,
-          child: CustomPaint(
-            painter: BackgroundButtongoogle(),
-            child: InkWell(
-              onTap: () {
-                signInWithGoogle();
-              },
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                        width: 15,
-                        height: 12,
-                        child: Image.asset('assets/google.png')),
-                    SizedBox(width: 10), // Spacer
-                    Text(
-                      'Iniciar Sesion con Google',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 97, 2, 185),
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
   }
 
   Widget build(BuildContext context) {
@@ -228,11 +191,11 @@ String? errorMessage = '';
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 20, right: 10),
-            child: botonGoogle(),
+            child: CustomButtongoogle(),
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 100, right: 10),
-            child: CustomButton2(),
+            child: BotonRegistrarse(),
           ),
         ]),
       ),
@@ -242,6 +205,7 @@ String? errorMessage = '';
 }
 
 
+//CUSTOM APP BAR
 class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
@@ -276,7 +240,9 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(88.0);
 }
+//CUSTOM APP BAR
 
+//CUSTOM PAINTER APP BAR
 class BackgroundAppBar extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
@@ -291,7 +257,9 @@ class BackgroundAppBar extends CustomClipper<Path> {
   @override
   bool shouldReclip(BackgroundAppBar oldClipper) => oldClipper != this;
 }
+//CUSTOM PAINTER APP BAR
 
+//CUSTOM PAINTER BOTTOM BAR
 class CustomBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -325,6 +293,7 @@ class BackgroundBottomBar extends CustomClipper<Path> {
     return false;
   }
 }
+//CUSTOM PAINTER BOTTOM BAR
 
 //CUSTOM PAINTER BOTON ENTRAR
 class BackgroundButton1 extends CustomPainter {
@@ -357,10 +326,49 @@ class BackgroundButton1 extends CustomPainter {
     return false;
   }
 }
-
 //CUSTOM PAINTER BOTON ENTRAR
 
+//BUTTON CUSTOM GOOGLE
 
+class CustomButtongoogle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButtongoogle(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Registro()));
+            },
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      width: 15,
+                      height: 12,
+                      child: Image.asset('assets/google.png')),
+                  SizedBox(width: 10), // Spacer
+                  Text(
+                    'Iniciar Sesion con Google',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 97, 2, 185),
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class BackgroundButtongoogle extends CustomPainter {
   @override
@@ -397,39 +405,9 @@ class BackgroundButtongoogle extends CustomPainter {
     return false;
   }
 }
+//CUSTOM PAINTER BOTON GOOGLE
 
-//BUTTON CUSTOM GOOGLE
-
-class CustomButton2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButton2(),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Registro()));
-            },
-            child: Center(
-              child: Text(
-                'Soy Nuevo',
-                style: TextStyle(
-                  color: Color.fromARGB(255, 97, 2, 185),
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
+//CUSTOM PAINTER BOTON REGISTRARSE
 class BackgroundButton2 extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -454,3 +432,4 @@ class BackgroundButton2 extends CustomPainter {
     return false;
   }
 }
+//CUSTOM PAINTER BOTON REGISTRARSE

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/iconos.dart';
 
@@ -10,6 +12,98 @@ class RegistroApp extends State<Registro> {
   @override
   bool _obscureText = true;
   bool obs = true;
+
+  // ignore: non_constant_identifier_names
+  Widget _Correo() {
+    return TextField(
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 10.0,
+          //fontWeight: FontWeight.bold,
+        ),
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide: BorderSide(color: Colors.grey, width: 0.0),
+            ),
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.account_circle_outlined,
+                color: Color.fromARGB(255, 255, 79, 52)),
+            suffixIcon:
+                Icon(Icons.check, color: Color.fromARGB(255, 84, 14, 148)),
+            hintText: 'C o r r e o   e l e c t r o n i c o ',
+            hintStyle: TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148),
+            )));
+  }
+
+  Widget _Contrasena() {
+    return TextField(
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 10.0,
+          //fontWeight: FontWeight.bold,
+        ),
+        obscureText: obs,
+        decoration: InputDecoration(
+          focusedBorder: const UnderlineInputBorder(
+            // width: 0.0 produces a thin "hairline" border
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          enabledBorder: const UnderlineInputBorder(
+            // width: 0.0 produces a thin "hairline" border
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+          ),
+          border: const OutlineInputBorder(),
+          prefixIcon:
+              const Icon(Icons.lock, color: Color.fromARGB(255, 255, 79, 52)),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.remove_red_eye,
+                color: Color.fromARGB(255, 255, 79, 52)),
+            onPressed: () {
+              setState(() {
+                obs == true ? obs = false : obs = true;
+              });
+            },
+          ),
+          hintText: 'P a s s w o r d',
+          hintStyle: const TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148)),
+        ));
+  }
+
+  Widget BotonRegistrarse() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton1(),
+          child: InkWell(
+            onTap: () {},
+            child: Center(
+              child: Text(
+                'Registrarme',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
@@ -19,74 +113,13 @@ class RegistroApp extends State<Registro> {
           children: [
             Padding(
                 padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
-                child: const TextField(
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 84, 14, 148),
-                      fontSize: 10.0,
-                      //fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                        focusedBorder: UnderlineInputBorder(
-                          // width: 0.0 produces a thin "hairline" border
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 255, 79, 52)),
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          // width: 0.0 produces a thin "hairline" border
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 0.0),
-                        ),
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.account_circle_outlined,
-                            color: Color.fromARGB(255, 255, 79, 52)),
-                        suffixIcon: Icon(Icons.check,
-                            color: Color.fromARGB(255, 84, 14, 148)),
-                        hintText: 'C o r r e o   e l e c t r o n i c o ',
-                        hintStyle: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w900,
-                          color: Color.fromARGB(255, 84, 14, 148),
-                        )))),
+                child: _Correo()),
             Padding(
                 padding: EdgeInsets.only(left: 50, top: 10, right: 40),
-                child: TextField(
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 84, 14, 148),
-                      fontSize: 10.0,
-                      //fontWeight: FontWeight.bold,
-                    ),
-                    obscureText: obs,
-                    decoration: InputDecoration(
-                      focusedBorder: const UnderlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-                      ),
-                      enabledBorder: const UnderlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
-                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                      ),
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock,
-                          color: Color.fromARGB(255, 255, 79, 52)),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.remove_red_eye,
-                            color: Color.fromARGB(255, 255, 79, 52)),
-                        onPressed: () {
-                          setState(() {
-                            obs == true ? obs = false : obs = true;
-                          });
-                        },
-                      ),
-                      hintText: 'P a s s w o r d',
-                      hintStyle: const TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w900,
-                          color: Color.fromARGB(255, 84, 14, 148)),
-                    ))),
+                child: _Contrasena()),
             Padding(
               padding: EdgeInsets.only(left: 20, top: 200, right: 10),
-              child: CustomButton1(),
+              child: BotonRegistrarse(),
             ),
           ],
         ),
@@ -189,33 +222,6 @@ class BackgroundBottomBar extends CustomClipper<Path> {
 //BOTTOMBAR CUSTOM
 
 //BOTON CUSTOM
-
-class CustomButton1 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButton1(),
-          child: InkWell(
-            onTap: () {},
-            child: Center(
-              child: Text(
-                'Registrarme',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class BackgroundButton1 extends CustomPainter {
   @override
