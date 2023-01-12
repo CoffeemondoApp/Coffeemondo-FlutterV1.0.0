@@ -1,4 +1,4 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, prefer_final_fields
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -56,10 +56,21 @@ signInWithGoogle() async {
     return await FirebaseAuth.instance.signInWithCredential(credential);
 }
 
-  // Cerrar sesion
+  // Cerrar sesion con email y google
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+    await _googleSignIn.signOut();
   }
+
+  // Instancia de google para cerrar sesion
+  GoogleSignIn _googleSignIn = GoogleSignIn(
+  // Optional clientId
+  // clientId: '479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com',
+  scopes: <String>[
+    'email',
+    'https://www.googleapis.com/auth/contacts.readonly',
+  ],
+);
 }
 
 
