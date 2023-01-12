@@ -10,12 +10,108 @@ class Login extends StatefulWidget {
 class LoginApp extends State<Login> {
   bool _obscureText = true;
   bool obs = true;
+
+  @override
+  // TODO: implement widget
+  Widget _Correo() {
+    return TextField(
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 10.0,
+          //fontWeight: FontWeight.bold,
+        ),
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide: BorderSide(color: Colors.grey, width: 0.0),
+            ),
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.account_circle_outlined,
+                color: Color.fromARGB(255, 255, 79, 52)),
+            suffixIcon:
+                Icon(Icons.check, color: Color.fromARGB(255, 84, 14, 148)),
+            hintText: 'C o r r e o   e l e c t r o n i c o ',
+            hintStyle: TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148),
+            )));
+  }
+
+  Widget _Contrasena() {
+    return TextField(
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 10.0,
+          //fontWeight: FontWeight.bold,
+        ),
+        obscureText: obs,
+        decoration: InputDecoration(
+          focusedBorder: const UnderlineInputBorder(
+            // width: 0.0 produces a thin "hairline" border
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          enabledBorder: const UnderlineInputBorder(
+            // width: 0.0 produces a thin "hairline" border
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+          ),
+          border: const OutlineInputBorder(),
+          prefixIcon:
+              const Icon(Icons.lock, color: Color.fromARGB(255, 255, 79, 52)),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.remove_red_eye,
+                color: Color.fromARGB(255, 255, 79, 52)),
+            onPressed: () {
+              setState(() {
+                obs == true ? obs = false : obs = true;
+              });
+            },
+          ),
+          hintText: 'P a s s w o r d',
+          hintStyle: const TextStyle(
+              fontSize: 10.0,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148)),
+        ));
+  }
+
+  Widget BotonLogin() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton1(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Login()));
+            },
+            child: Center(
+              child: Text(
+                'Entrar',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: AppBarcustom(),
       body: SingleChildScrollView(
-        child: Column(children: [
+        child: Column(children: <Widget>[
           Padding(
               padding: EdgeInsets.all(20),
               child: Center(
@@ -27,73 +123,13 @@ class LoginApp extends State<Login> {
               )),
           Padding(
               padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
-              child: const TextField(
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 84, 14, 148),
-                    fontSize: 10.0,
-                    //fontWeight: FontWeight.bold,
-                  ),
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-                      ),
-                      enabledBorder: UnderlineInputBorder(
-                        // width: 0.0 produces a thin "hairline" border
-                        borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                      ),
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.account_circle_outlined,
-                          color: Color.fromARGB(255, 255, 79, 52)),
-                      suffixIcon: Icon(Icons.check,
-                          color: Color.fromARGB(255, 84, 14, 148)),
-                      hintText: 'C o r r e o   e l e c t r o n i c o ',
-                      hintStyle: TextStyle(
-                        fontSize: 10.0,
-                        fontWeight: FontWeight.w900,
-                        color: Color.fromARGB(255, 84, 14, 148),
-                      )))),
+              child: _Correo()),
           Padding(
               padding: EdgeInsets.only(left: 50, top: 10, right: 40),
-              child: TextField(
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 84, 14, 148),
-                    fontSize: 10.0,
-                    //fontWeight: FontWeight.bold,
-                  ),
-                  obscureText: obs,
-                  decoration: InputDecoration(
-                    focusedBorder: const UnderlineInputBorder(
-                      // width: 0.0 produces a thin "hairline" border
-                      borderSide:
-                          BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-                    ),
-                    enabledBorder: const UnderlineInputBorder(
-                      // width: 0.0 produces a thin "hairline" border
-                      borderSide: BorderSide(color: Colors.grey, width: 0.0),
-                    ),
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.lock,
-                        color: Color.fromARGB(255, 255, 79, 52)),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.remove_red_eye,
-                          color: Color.fromARGB(255, 255, 79, 52)),
-                      onPressed: () {
-                        setState(() {
-                          obs == true ? obs = false : obs = true;
-                        });
-                      },
-                    ),
-                    hintText: 'P a s s w o r d',
-                    hintStyle: const TextStyle(
-                        fontSize: 10.0,
-                        fontWeight: FontWeight.w900,
-                        color: Color.fromARGB(255, 84, 14, 148)),
-                  ))),
+              child: _Contrasena()),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 50, right: 10),
-            child: CustomButton1(),
+            child: BotonLogin(),
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 20, right: 10),
@@ -194,36 +230,7 @@ class BackgroundBottomBar extends CustomClipper<Path> {
   }
 }
 
-class CustomButton1 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButton1(),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Login()));
-            },
-            child: Center(
-              child: Text(
-                'Entrar',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
+//CUSTOM PAINTER BOTON ENTRAR
 class BackgroundButton1 extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -254,6 +261,8 @@ class BackgroundButton1 extends CustomPainter {
     return false;
   }
 }
+
+//CUSTOM PAINTER BOTON ENTRAR
 
 //BUTTON CUSTOM GOOGLE
 
