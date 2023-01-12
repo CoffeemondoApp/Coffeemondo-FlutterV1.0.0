@@ -40,12 +40,26 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
   cloud_firestore:
+  flutter_native_splash:
   google_sign_in:
-  flutter_native_splash: 
   flutter_launcher_icons: "^0.10.0"
+  
 flutter_native_splash:
-  color: '#FB6228'
-  image: assets/splash_screen.png
+  color: "#E64921"
+  image: assets/logo.png
+  branding: assets/coffeemondow.png
+  color_dark: "#E64921"
+  image_dark: assets/logo.png
+  branding_dark: assets/coffeemondow.png
+
+  android_12:
+    image: assets/logo.png
+    icon_background_color: "#E64921"
+    image_dark: assets/logo.png
+    icon_background_color_dark: "#E64921"
+
+  web: false
+
 flutter_icons:
   android: true
   image_path: "assets/icon.png"

@@ -165,42 +165,41 @@ String? errorMessage = '';
     );
   }
 
-    Widget BotonGoogle(){
-      return Container(
-        child: Container(
-          width: 250,
-          height: 50,
-          child: CustomPaint(
-            painter: BackgroundButtongoogle(),
-            child: InkWell(
-              onTap: () {
-                signInWithGoogle();
-              },
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                        width: 15,
-                        height: 12,
-                        child: Image.asset('assets/google.png')),
-                    SizedBox(width: 10), // Spacer
-                    Text(
-                      'Iniciar Sesion con Google',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 97, 2, 185),
-                        fontSize: 16,
-                      ),
+  Widget botonGoogle() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButtongoogle(),
+          child: InkWell(
+            onTap: () {
+              signInWithGoogle();
+            },
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                      width: 15,
+                      height: 12,
+                      child: Image.asset('assets/google.png')),
+                  SizedBox(width: 10), // Spacer
+                  Text(
+                    'Iniciar Sesion con Google',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 97, 2, 185),
+                      fontSize: 16,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-      );
-    }
-    
+      ),
+    );
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -229,7 +228,7 @@ String? errorMessage = '';
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 20, right: 10),
-            child: BotonGoogle(),
+            child: botonGoogle(),
           ),
           Padding(
             padding: EdgeInsets.only(left: 20, top: 100, right: 10),
