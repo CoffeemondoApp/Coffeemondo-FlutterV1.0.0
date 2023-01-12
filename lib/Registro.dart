@@ -1,5 +1,9 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, use_build_context_synchronously
 
+import 'package:coffeemondo/autenticacion.dart';
+import 'package:coffeemondo/bienvenida.dart';
+import 'package:coffeemondo/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/iconos.dart';
 
@@ -9,13 +13,46 @@ class Registro extends StatefulWidget {
 }
 
 class RegistroApp extends State<Registro> {
+
+  bool isLogin = true;
   @override
   bool _obscureText = true;
   bool obs = true;
 
+  // Obtener los strings ingresados por el usuario para verificar su cuenta en firebase
+  final TextEditingController _controladoremail = TextEditingController();
+  final TextEditingController _controladorcontrasena = TextEditingController();
+
+  Future<void> createUserWithEmailAndPassword() async {
+    try {
+      await Auth().createUserWithEmailAndPassword(
+        // Se utilizan los strings ingresados por el usuario para almacenar su email y contrasena en firebase auth
+        email: _controladoremail.text,
+        password: _controladorcontrasena.text,
+      );
+      print('Cuenta de usuario creada en FIREBASE satisfactoriamente.');
+      // pushReplacement remplazará la pantalla actual en la pila de navegacion por la nueva pantalla, 
+      //lo que significa que el usuario no podra volver a la pantalla anterior al presionar el botón 
+      //"Atrás" en su dispositivo.
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) =>  const HomePage()));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('Tu contrasena es muy debil.');
+      } else if (e.code == 'email-already-in-use') {
+        print('Este correo electronico ya esta registrado.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   // ignore: non_constant_identifier_names
-  Widget _Correo() {
+  Widget _Correo(
+    TextEditingController controller,
+  ) {
     return TextField(
+      controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
           fontSize: 10.0,
@@ -43,8 +80,11 @@ class RegistroApp extends State<Registro> {
             )));
   }
 
-  Widget _Contrasena() {
+  Widget _Contrasena(
+    TextEditingController controller
+  ) {
     return TextField(
+      controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
           fontSize: 10.0,
@@ -88,7 +128,9 @@ class RegistroApp extends State<Registro> {
         child: CustomPaint(
           painter: BackgroundButton1(),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              createUserWithEmailAndPassword();
+            },
             child: Center(
               child: Text(
                 'Registrarme',
@@ -113,10 +155,10 @@ class RegistroApp extends State<Registro> {
           children: [
             Padding(
                 padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
-                child: _Correo()),
+                child: _Correo(_controladoremail)),
             Padding(
                 padding: EdgeInsets.only(left: 50, top: 10, right: 40),
-                child: _Contrasena()),
+                child: _Contrasena(_controladorcontrasena)),
             Padding(
               padding: EdgeInsets.only(left: 20, top: 200, right: 10),
               child: BotonRegistrarse(),
