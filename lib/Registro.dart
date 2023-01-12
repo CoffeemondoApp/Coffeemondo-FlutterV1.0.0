@@ -137,27 +137,32 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 88.0,
-      child: ClipPath(
-        clipper: BackgroundAppBar(),
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Color.fromARGB(255, 207, 111, 55),
-              Color.fromARGB(255, 207, 111, 55)
-            ]),
+      child: Stack(
+        children: <Widget>[
+          ClipPath(
+            clipper: BackgroundAppBar(),
+            child: Image.asset(
+              'assets/Granos.png',
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
           ),
-          child: Center(
-            child: Text(
-              'Registro',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 15,
+            child: Center(
+              child: Text(
+                "Registrarse",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -193,8 +198,11 @@ class CustomBottomBar extends StatelessWidget {
       width: double.infinity,
       child: ClipPath(
         clipper: BackgroundBottomBar(),
-        child: Container(
-          color: Color.fromARGB(255, 207, 111, 55),
+        child: Image.asset(
+          'assets/Granos.png',
+          width: MediaQuery.of(context).size.width,
+          height: 100,
+          fit: BoxFit.cover,
         ),
       ),
     );
