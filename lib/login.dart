@@ -130,9 +130,7 @@ class LoginApp extends State<Login> {
             onPressed: () {
               setState(() {
                 obs == true ? obs = false : obs = true;
-                obs == false ? obs = true : obs = false;
-                obs_icon == true ? obs = false : obs = true;
-                obs_icon == false ? obs = true : obs = false;
+                obs_icon == true ? obs_icon = false : obs_icon = true;
               });
             },
           ),
