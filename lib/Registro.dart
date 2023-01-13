@@ -55,8 +55,9 @@ class RegistroApp extends State<Registro> {
         controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 10.0,
-          //fontWeight: FontWeight.bold,
+          fontSize: 12.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
         ),
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
@@ -74,7 +75,7 @@ class RegistroApp extends State<Registro> {
                 Icon(Icons.check, color: Color.fromARGB(255, 84, 14, 148)),
             hintText: 'C o r r e o   e l e c t r o n i c o ',
             hintStyle: TextStyle(
-              fontSize: 10.0,
+              fontSize: 12.0,
               fontWeight: FontWeight.w900,
               color: Color.fromARGB(255, 84, 14, 148),
             )));
