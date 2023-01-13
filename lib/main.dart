@@ -1,4 +1,5 @@
-import 'package:coffeemondo/prueba.dart';
+// ignore_for_file: use_full_hex_values_for_flutter_colors, prefer_const_constructors, sized_box_for_whitespace, use_key_in_widget_constructors
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -6,7 +7,7 @@ import 'login.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,6 +30,8 @@ class MyApp extends StatelessWidget {
 }
 
 class CustomButton extends StatelessWidget {
+  const CustomButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

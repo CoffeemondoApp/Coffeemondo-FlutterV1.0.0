@@ -1,12 +1,14 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors
+
 import 'package:coffeemondo/Registro.dart';
 import 'package:coffeemondo/autenticacion.dart';
 import 'package:coffeemondo/home.dart';
-import 'package:coffeemondo/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:coffeemondo/iconos.dart';
 
 class Login extends StatefulWidget {
+  const Login({super.key});
+
   @override
   LoginApp createState() => LoginApp();
 }
@@ -63,7 +65,6 @@ String? errorMessage = '';
   bool obs = true;
 
   @override
-  // TODO: implement widget
   Widget _Correo(
         TextEditingController controller,
   ) {
@@ -74,7 +75,6 @@ String? errorMessage = '';
           fontSize: 10.0,
           //fontWeight: FontWeight.bold,
         ),
-        // ignore: prefer_const_constructors
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
@@ -137,7 +137,6 @@ String? errorMessage = '';
         ));
   }
 
-  // ignore: non_constant_identifier_names
   Widget BotonLogin() {
     return Container(
       child: Container(
@@ -149,7 +148,6 @@ String? errorMessage = '';
             onTap: () {
               signInWithEmailAndPassword();
             },
-            // ignore: prefer_const_constructors
             child: Center(
               child: Text(
                 'Entrar',
@@ -244,6 +242,8 @@ String? errorMessage = '';
 
 //CUSTOM APP BAR
 class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
+  const AppBarcustom({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
