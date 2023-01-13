@@ -14,12 +14,11 @@ class Login extends StatefulWidget {
 }
 
 class LoginApp extends State<Login> {
-
-String? errorMessage = '';
+  String? errorMessage = '';
   bool isLogin = true;
 
   final TextEditingController _controladoremail = TextEditingController();
-  final TextEditingController _controladorcontrasena = TextEditingController(); 
+  final TextEditingController _controladorcontrasena = TextEditingController();
 
   // Validacion con cuenta email de usuario
   Future<void> signInWithEmailAndPassword() async {
@@ -46,66 +45,68 @@ String? errorMessage = '';
   Future<void> signInWithGoogle() async {
     try {
       // Se guarda en result el resultado de iniciar sesion con google
-    var resultado = await Auth().signInWithGoogle();
-    // En el caso de que el usuario intente ingresar con cuenta de google pero este no ingrese ninguna devolvera nulo y vuelve return para
-    // no ingresar a un usuario sin haber iniciado sesion al HomePage de la aplicacion
-    // Se debe ingresar esta validacion ya que por defecto, si un usuario intenta ingresar con google y este no selecciona ninguna cuenta, la 
-    // aplicacion redirigira al usuario al HomePage.
-    if (resultado == null) return;
-    // En el caso contrario, al usuario que inicio con una cuenta google este es redirigido a HomePage
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const HomePage()));
-    print('Inicio de sesion con google satisfactorio.');
-} on FirebaseAuthException catch(e) {
-    print(e.message);
-    rethrow;
-}
+      var resultado = await Auth().signInWithGoogle();
+      // En el caso de que el usuario intente ingresar con cuenta de google pero este no ingrese ninguna devolvera nulo y vuelve return para
+      // no ingresar a un usuario sin haber iniciado sesion al HomePage de la aplicacion
+      // Se debe ingresar esta validacion ya que por defecto, si un usuario intenta ingresar con google y este no selecciona ninguna cuenta, la
+      // aplicacion redirigira al usuario al HomePage.
+      if (resultado == null) return;
+      // En el caso contrario, al usuario que inicio con una cuenta google este es redirigido a HomePage
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const HomePage()));
+      print('Inicio de sesion con google satisfactorio.');
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      rethrow;
+    }
   }
 
   bool _obscureText = true;
   bool obs = true;
+  bool obs_icon = true;
 
   @override
   Widget _Correo(
-        TextEditingController controller,
+    TextEditingController controller,
   ) {
     return TextField(
-      controller: controller,
+        controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 10.0,
-          //fontWeight: FontWeight.bold,
+          fontSize: 12.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
         ),
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
-              // width: 0.0 produces a thin "hairline" border
               borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
             ),
             enabledBorder: UnderlineInputBorder(
-              // width: 0.0 produces a thin "hairline" border
-              borderSide: BorderSide(color: Colors.grey, width: 0.0),
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
             ),
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.account_circle_outlined,
-                color: Color.fromARGB(255, 255, 79, 52)),
-            suffixIcon:
-                Icon(Icons.check, color: Color.fromARGB(255, 84, 14, 148)),
+                color: Color.fromARGB(255, 255, 79, 52), size: 20),
+            suffixIcon: Icon(Icons.check,
+                color: Color.fromARGB(255, 84, 14, 148), size: 20),
             hintText: 'C o r r e o   e l e c t r o n i c o ',
             hintStyle: TextStyle(
-              fontSize: 10.0,
+              fontSize: 12.0,
               fontWeight: FontWeight.w900,
               color: Color.fromARGB(255, 84, 14, 148),
             )));
   }
 
   Widget _Contrasena(
-        TextEditingController controller,
+    TextEditingController controller,
   ) {
     return TextField(
-      controller: controller,
+        controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 10.0,
-          //fontWeight: FontWeight.bold,
+          fontSize: 12.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
         ),
         obscureText: obs,
         decoration: InputDecoration(
@@ -115,23 +116,29 @@ String? errorMessage = '';
           ),
           enabledBorder: const UnderlineInputBorder(
             // width: 0.0 produces a thin "hairline" border
-            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
           ),
           border: const OutlineInputBorder(),
-          prefixIcon:
-              const Icon(Icons.lock, color: Color.fromARGB(255, 255, 79, 52)),
+          prefixIcon: const Icon(Icons.lock,
+              color: Color.fromARGB(255, 255, 79, 52), size: 20),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.remove_red_eye,
-                color: Color.fromARGB(255, 255, 79, 52)),
+            icon: obs_icon == true
+                ? const Icon(Icons.remove_red_eye,
+                    color: Color.fromARGB(255, 255, 79, 52), size: 20)
+                : const Icon(Icons.remove_red_eye_outlined,
+                    color: Color.fromARGB(255, 255, 79, 52), size: 20),
             onPressed: () {
               setState(() {
                 obs == true ? obs = false : obs = true;
+                obs == false ? obs = true : obs = false;
+                obs_icon == true ? obs = false : obs = true;
+                obs_icon == false ? obs = true : obs = false;
               });
             },
           ),
           hintText: 'P a s s w o r d',
           hintStyle: const TextStyle(
-              fontSize: 10.0,
+              fontSize: 12.0,
               fontWeight: FontWeight.w900,
               color: Color.fromARGB(255, 84, 14, 148)),
         ));
@@ -238,7 +245,6 @@ String? errorMessage = '';
     );
   }
 }
-
 
 //CUSTOM APP BAR
 class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
@@ -371,6 +377,7 @@ class BackgroundButton1 extends CustomPainter {
     return false;
   }
 }
+
 //CUSTOM PAINTER BOTON ENTRAR
 class Botonregistrar extends StatelessWidget {
   @override
@@ -401,8 +408,6 @@ class Botonregistrar extends StatelessWidget {
     );
   }
 }
-
-
 
 class BackgroundButtongoogle extends CustomPainter {
   @override
