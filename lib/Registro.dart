@@ -13,11 +13,11 @@ class Registro extends StatefulWidget {
 }
 
 class RegistroApp extends State<Registro> {
-
   bool isLogin = true;
   @override
   bool _obscureText = true;
   bool obs = true;
+  bool obs_icon = true;
 
   // Obtener los strings ingresados por el usuario para verificar su cuenta en firebase
   final TextEditingController _controladoremail = TextEditingController();
@@ -31,11 +31,11 @@ class RegistroApp extends State<Registro> {
         password: _controladorcontrasena.text,
       );
       print('Cuenta de usuario creada en FIREBASE satisfactoriamente.');
-      // pushReplacement remplazará la pantalla actual en la pila de navegacion por la nueva pantalla, 
-      //lo que significa que el usuario no podra volver a la pantalla anterior al presionar el botón 
+      // pushReplacement remplazará la pantalla actual en la pila de navegacion por la nueva pantalla,
+      //lo que significa que el usuario no podra volver a la pantalla anterior al presionar el botón
       //"Atrás" en su dispositivo.
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) =>  const HomePage()));
+          context, MaterialPageRoute(builder: (context) => const HomePage()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('Tu contrasena es muy debil.');
@@ -52,7 +52,7 @@ class RegistroApp extends State<Registro> {
     TextEditingController controller,
   ) {
     return TextField(
-      controller: controller,
+        controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
           fontSize: 10.0,
@@ -81,14 +81,15 @@ class RegistroApp extends State<Registro> {
   }
 
   Widget _Contrasena(
-    TextEditingController controller
+    TextEditingController controller,
   ) {
     return TextField(
-      controller: controller,
+        controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 10.0,
-          //fontWeight: FontWeight.bold,
+          fontSize: 12.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
         ),
         obscureText: obs,
         decoration: InputDecoration(
@@ -98,23 +99,27 @@ class RegistroApp extends State<Registro> {
           ),
           enabledBorder: const UnderlineInputBorder(
             // width: 0.0 produces a thin "hairline" border
-            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
           ),
           border: const OutlineInputBorder(),
-          prefixIcon:
-              const Icon(Icons.lock, color: Color.fromARGB(255, 255, 79, 52)),
+          prefixIcon: const Icon(Icons.lock,
+              color: Color.fromARGB(255, 255, 79, 52), size: 20),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.remove_red_eye,
-                color: Color.fromARGB(255, 255, 79, 52)),
+            icon: obs_icon == true
+                ? const Icon(Icons.remove_red_eye,
+                    color: Color.fromARGB(255, 255, 79, 52), size: 20)
+                : const Icon(Icons.remove_red_eye_outlined,
+                    color: Color.fromARGB(255, 255, 79, 52), size: 20),
             onPressed: () {
               setState(() {
                 obs == true ? obs = false : obs = true;
+                obs_icon == true ? obs_icon = false : obs_icon = true;
               });
             },
           ),
           hintText: 'P a s s w o r d',
           hintStyle: const TextStyle(
-              fontSize: 10.0,
+              fontSize: 12.0,
               fontWeight: FontWeight.w900,
               color: Color.fromARGB(255, 84, 14, 148)),
         ));
