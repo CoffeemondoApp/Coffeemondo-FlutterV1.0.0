@@ -1,11 +1,11 @@
 // ignore_for_file: file_names, avoid_print
 
-import 'package:coffeemondo/login.dart';
+import 'package:coffeemondo/pantallas/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'Autenticacion.dart';
+import '../firebase/autenticacion.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

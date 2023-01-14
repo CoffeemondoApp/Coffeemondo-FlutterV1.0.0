@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors
 
-import 'package:coffeemondo/Registro.dart';
-import 'package:coffeemondo/autenticacion.dart';
-import 'package:coffeemondo/home.dart';
+import 'package:coffeemondo/pantallas/Registro.dart';
+import 'package:coffeemondo/firebase/autenticacion.dart';
+import 'package:coffeemondo/pantallas/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

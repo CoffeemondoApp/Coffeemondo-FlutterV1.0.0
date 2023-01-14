@@ -1,25 +1,21 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: use_full_hex_values_for_flutter_colors, prefer_const_constructors, sized_box_for_whitespace, use_key_in_widget_constructors
 
-import 'package:coffeemondo/prueba.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:coffeemondo/login.dart';
+import 'login.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: Home());
-  }
-}
+  const MyApp({super.key});
 
-class Home extends StatefulWidget {
   @override
-  HomeStart createState() => HomeStart();
-}
-
-class HomeStart extends State<Home> {
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'login app',
         home: Scaffold(
           backgroundColor: Color(0xffffebdcac),
@@ -33,6 +29,8 @@ class HomeStart extends State<Home> {
 }
 
 class CustomButton extends StatelessWidget {
+  const CustomButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,16 +99,32 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 88.0,
-      child: ClipPath(
-        clipper: BackgroundAppBar(),
-        child: Image.asset(
-          'assets/2134.jpg',
-          width: MediaQuery.of(context).size.width,
-          height: 100,
-          fit: BoxFit.cover,
-          color: Color.fromARGB(255, 255, 145, 0),
-          colorBlendMode: BlendMode.overlay,
-        ),
+      child: Stack(
+        children: <Widget>[
+          ClipPath(
+            clipper: BackgroundAppBar(),
+            child: Image.asset(
+              'assets/Granos.png',
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 15,
+            child: Center(
+              child: Text(
+                "Bienvenido!",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -142,8 +156,11 @@ class CustomBottomBar extends StatelessWidget {
       width: double.infinity,
       child: ClipPath(
         clipper: BackgroundBottomBar(),
-        child: Container(
-          color: Color.fromARGB(255, 207, 111, 55),
+        child: Image.asset(
+          'assets/Granos.png',
+          width: MediaQuery.of(context).size.width,
+          height: 100,
+          fit: BoxFit.cover,
         ),
       ),
     );

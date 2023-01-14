@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names, use_build_context_synchronously
 
-import 'package:coffeemondo/autenticacion.dart';
-import 'package:coffeemondo/bienvenida.dart';
-import 'package:coffeemondo/home.dart';
+import 'package:coffeemondo/firebase/autenticacion.dart';
+import 'package:coffeemondo/pantallas/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:coffeemondo/iconos.dart';
+import 'package:coffeemondo/pantallas/iconos.dart';
 
 class Registro extends StatefulWidget {
   @override

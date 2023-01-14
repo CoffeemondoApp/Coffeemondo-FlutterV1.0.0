@@ -1,9 +1,9 @@
 // ignore_for_file: file_names
-import 'package:coffeemondo/bienvenida.dart';
-import 'package:coffeemondo/home.dart';
+import 'package:coffeemondo/pantallas/bienvenida.dart';
+import 'package:coffeemondo/pantallas/home.dart';
 import 'package:flutter/material.dart';
 
-import '../Autenticacion.dart';
+import './firebase/autenticacion.dart';
 
 class WidgetTree extends StatefulWidget {
   // Archivo WidgetTree creado con la finalidad de corroborar si existe informacion de usuario previamente en la aplicacion
@@ -30,7 +30,7 @@ class _WidgetTreeState extends State<WidgetTree> {
           return const HomePage();
         } else {
           // Si no existe informacion de usuario redirige a LoginPage para iniciar o registrar un usuario
-          return MyApp();
+          return const MyApp();
         }
       },
     );
