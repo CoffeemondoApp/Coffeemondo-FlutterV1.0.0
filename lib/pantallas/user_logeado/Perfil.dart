@@ -85,6 +85,7 @@ class PerfilApp extends State<PerfilPage> {
     TextEditingController controller,
   ) {
     return TextField(
+      readOnly: true,
       controller: controller,
       // onChanged: (((value) => validarCorreo())),
       style: const TextStyle(
@@ -114,7 +115,26 @@ class PerfilApp extends State<PerfilPage> {
             context: context,
             initialDate: DateTime.now(),
             firstDate: DateTime(1900),
-            lastDate: DateTime(2024));
+            lastDate: DateTime(2024),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(
+                    primary: Color.fromARGB(255, 255, 79, 52), // <-- SEE HERE
+                    onPrimary: Color.fromARGB(255, 84, 14, 148), // <-- SEE HERE
+                    onSurface: Color.fromARGB(255, 84, 14, 148), //<-- SEE HERE
+                    secondary: Color.fromARGB(255, 235, 220, 172),
+                  ),
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(
+                      primary:
+                          Color.fromARGB(255, 255, 79, 52), // button text color
+                    ),
+                  ),
+                ),
+                child: child!,
+              );
+            });
 
         if (pickeddate != null) {
           getMes(pickeddate.month);
