@@ -3,6 +3,7 @@ import 'package:coffeemondo/pantallas/bienvenida.dart';
 
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 
 import './firebase/autenticacion.dart';
 
@@ -28,7 +29,8 @@ class _WidgetTreeState extends State<WidgetTree> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           // Si existe informacion de usuario redirige a HomePage
-          return const Index();
+          // PerfilPage == editar perfil -o- Index == pagina index por defecto usuario
+          return const PerfilPage();
         } else {
           // Si no existe informacion de usuario redirige a LoginPage para iniciar o registrar un usuario
           return const MyApp();
