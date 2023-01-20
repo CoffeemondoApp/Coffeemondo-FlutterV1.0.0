@@ -167,6 +167,8 @@ class PerfilApp extends State<PerfilPage> {
   Widget FotoPerfil() {
     return ElevatedButton(
       onPressed: () {
+        Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const FotoPage()));
         print('Editar foto de perfil');
       },
       child: ClipRRect(
@@ -429,7 +431,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FotoPerfil()),
+                      MaterialPageRoute(builder: (context) => FotoPage()),
                     );
                   },
                 ),

@@ -4,23 +4,81 @@ import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
-
+import 'package:file_picker/file_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-class FotoPerfil extends StatefulWidget {
-  const FotoPerfil({super.key});
+class FotoPage extends StatefulWidget {
+  const FotoPage({super.key});
 
   @override
   FotoApp createState() => FotoApp();
 }
 
-class FotoApp extends State<FotoPerfil> {
+class FotoApp extends State<FotoPage> {
+    // Se declara la instancia de firebase en la variable _firebaseAuth
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
+  User? get currentUser => _firebaseAuth.currentUser;
+
+  // Implementacion de clases extraidas de los paquetes file_picker y firebase_storage
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+
+  // Funcion para seleccionar imagen del dispositivo del usuario
+  Future seleccionarImagen() async {
+    final resultado = await FilePicker.platform.pickFiles();
+    if (resultado == null) return;
+
+    setState(() {
+      pickedFile = resultado.files.first;
+    });
+  }
+
+   // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
+  Future subirImagen() async {
+    // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
+    final path = 'profile_profile_image/${email}.jpg';
+    final file = File(pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+    final urlUserImage = await snapshot.ref.getDownloadURL();
+
+    // Se retorna la url de la imagen para llamarla desde la funcion de guardarInformacion
+    return urlUserImage;
+  }
+
+  // Funcion para guardar la imagen del usuario dentro de Firebase Storage
+  Future<void> guardarFotoUsuario() async {
+    try {
+      final DocumentReference docRef =
+          FirebaseFirestore.instance.collection("users").doc(currentUser?.uid);
+          // Solamente se modifica el campo de urlImage de la BD de Firestore y asi no afecta a otra informacion del usuario
+      docRef.update({'urlImage': await subirImagen()});
+      print('Ingreso de informacion exitoso.');
+      // Una vez que se sube la imagen y se reemplaza el campo de urlImage por la de la imagen alojada en Storage, se redirige al usuario a InfoUser para ver su informacion 
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
+    } catch (e) {
+      print("Error al intentar ingresar informacion");
+    }
+  }
+
   String? errorMessage = '';
   bool isLogin = true;
   String tab = '';
+
+   // Declaracion de email del usuario actual
+  final email = FirebaseAuth.instance.currentUser?.email;
 
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladoredad = TextEditingController();
@@ -159,7 +217,8 @@ class FotoApp extends State<FotoPerfil> {
   Widget FotoPerfil() {
     return ElevatedButton(
       onPressed: () {
-        print('Editar foto de perfil');
+        seleccionarImagen();
+        print('Actualizar Foto');
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
@@ -180,10 +239,12 @@ class FotoApp extends State<FotoPerfil> {
         child: CustomPaint(
           painter: BackgroundButton1(),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              guardarFotoUsuario();
+            },
             child: Center(
               child: Text(
-                'Editar foto',
+                'Actualizar foto',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

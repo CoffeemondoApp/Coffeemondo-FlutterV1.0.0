@@ -5,7 +5,7 @@ import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -20,8 +20,17 @@ class InfoPage extends StatefulWidget {
 String tab = '';
 
 class InfoApp extends State<InfoPage> {
+  // Se declara la instancia de firebase en la variable _firebaseAuth
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
+  User? get currentUser => _firebaseAuth.currentUser;
+
   String? errorMessage = '';
   bool isLogin = true;
+
+  // Declaracion de email del usuario actual
+  final email = FirebaseAuth.instance.currentUser?.email;
 
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladoredad = TextEditingController();
@@ -29,6 +38,24 @@ class InfoApp extends State<InfoPage> {
       TextEditingController();
   final TextEditingController _controladornombreApellido =
       TextEditingController();
+
+  // Funcion para guardar informacion del usuario en Firebase Firestore
+  Future<void> guardarInfoUsuario() async {
+    try {
+      // Importante: Este tipo de declaracion se utiliza para solamente actualizar la informacion solicitada y no manipular informacion adicional, como lo es la imagen y esto permite no borrar otros datos importantes
+
+      // Se busca la coleccion 'users' de la BD de Firestore en donde el uid sea igual al del usuario actual
+      final DocumentReference docRef = FirebaseFirestore.instance.collection("users").doc(currentUser?.uid);
+      // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
+      docRef.update({'nombre': _controladornombreApellido.text, 'nickname': _controladornombreUsuario.text, 'cumpleanos': _controladoredad.text});
+      print('Ingreso de informacion exitoso.');
+      // Una vez actualizada la informacion, se devuelve a InfoUser para mostrar su nueva informacion
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
+    } catch (e) {
+      print("Error al intentar ingresar informacion");
+    }
+  }
 
   @override
   Widget _NombreApellido(
@@ -244,7 +271,9 @@ class InfoApp extends State<InfoPage> {
         child: CustomPaint(
           painter: BackgroundButton1(),
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              guardarInfoUsuario();
+            },
             child: Center(
               child: Text(
                 'Editar informacion',
@@ -266,11 +295,11 @@ class InfoApp extends State<InfoPage> {
       appBar: AppBarcustom(),
       body: SingleChildScrollView(
           child: Column(children: <Widget>[
+        // Padding(
+        //     padding: const EdgeInsets.only(left: 50, top: 130, right: 40),
+        //     child: _Correo(_controladoremail)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 130, right: 40),
-            child: _Correo(_controladoremail)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            padding: const EdgeInsets.only(left: 50, top: 140, right: 40),
             child: _NombreApellido(_controladornombreApellido)),
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
@@ -390,7 +419,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FotoPerfil()),
+                      MaterialPageRoute(builder: (context) => FotoPage()),
                     );
                   },
                 ),
