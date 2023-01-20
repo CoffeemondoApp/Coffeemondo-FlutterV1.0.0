@@ -2,7 +2,6 @@
 
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/login.dart';
-import 'package:coffeemondo/pantallas/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/pantallas/iconos.dart';

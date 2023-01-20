@@ -2,7 +2,7 @@
 
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
-import 'package:coffeemondo/pantallas/home.dart';
+import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +31,7 @@ class LoginApp extends State<Login> {
       //lo que significa que el usuario no podra volver a la pantalla anterior al presionar el botón
       //"Atrás" en su dispositivo.
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          context, MaterialPageRoute(builder: (context) => const IndexPage()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No se ha encontrado un usuario asociado a este email.');
@@ -53,7 +53,7 @@ class LoginApp extends State<Login> {
       if (resultado == null) return;
       // En el caso contrario, al usuario que inicio con una cuenta google este es redirigido a HomePage
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          context, MaterialPageRoute(builder: (context) => const IndexPage()));
       print('Inicio de sesion con google satisfactorio.');
     } on FirebaseAuthException catch (e) {
       print(e.message);
