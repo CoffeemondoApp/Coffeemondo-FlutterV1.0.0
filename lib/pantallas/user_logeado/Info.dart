@@ -27,6 +27,8 @@ class InfoApp extends State<InfoPage> {
   final TextEditingController _controladoredad = TextEditingController();
   final TextEditingController _controladornombreUsuario =
       TextEditingController();
+  final TextEditingController _controladornombreApellido =
+      TextEditingController();
 
   @override
   Widget _NombreApellido(
@@ -234,7 +236,7 @@ class InfoApp extends State<InfoPage> {
             )));
   }
 
-  Widget BotonLogin() {
+  Widget BotonEditarInfo() {
     return Container(
       child: Container(
         width: 250,
@@ -245,7 +247,7 @@ class InfoApp extends State<InfoPage> {
             onTap: () {},
             child: Center(
               child: Text(
-                'Entrar',
+                'Editar informacion',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -265,17 +267,20 @@ class InfoApp extends State<InfoPage> {
       body: SingleChildScrollView(
           child: Column(children: <Widget>[
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
+            padding: const EdgeInsets.only(left: 50, top: 130, right: 40),
             child: _Correo(_controladoremail)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _NombreApellido(_controladoremail)),
+            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            child: _NombreApellido(_controladornombreApellido)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
+            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
             child: _NombreUsuario(_controladornombreUsuario)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
+            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
             child: _Edad(_controladoredad)),
+        Padding(
+            padding: const EdgeInsets.only(left: 10, top: 50, right: 0),
+            child: BotonEditarInfo()),
       ])),
       bottomNavigationBar: CustomBottomBar(),
     );

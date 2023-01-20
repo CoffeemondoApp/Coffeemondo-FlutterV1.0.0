@@ -183,7 +183,7 @@ class FotoApp extends State<FotoPerfil> {
             onTap: () {},
             child: Center(
               child: Text(
-                'Editar foto de perfil',
+                'Editar foto',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

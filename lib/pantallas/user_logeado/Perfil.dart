@@ -308,7 +308,7 @@ class PerfilApp extends State<PerfilPage> {
       body: SingleChildScrollView(
           child: Column(children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 40, top: 20, right: 40),
+          padding: const EdgeInsets.only(left: 40, top: 10, right: 40),
           child: FotoPerfil(),
         ),
         Padding(
