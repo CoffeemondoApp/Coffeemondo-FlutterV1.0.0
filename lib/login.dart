@@ -1,7 +1,10 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,21 +20,33 @@ class LoginApp extends State<Login> {
   String? errorMessage = '';
   bool isLogin = true;
 
+   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  User? get currentUser => _firebaseAuth.currentUser;
+
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladorcontrasena = TextEditingController();
 
   // Validacion con cuenta email de usuario
   Future<void> signInWithEmailAndPassword() async {
     try {
-      // Se llama a la funcion iniciar con email declarada en Autentication.dart
-      await Auth().signInWithEmailAndPassword(
+      final authResult = await Auth().signInWithEmailAndPassword(
           email: _controladoremail.text, password: _controladorcontrasena.text);
       print('Inicio de sesion con email satisfactorio.');
-      // pushReplacement remplazará la pantalla actual en la pila de navegacion por la nueva pantalla,
-      //lo que significa que el usuario no podra volver a la pantalla anterior al presionar el botón
-      //"Atrás" en su dispositivo.
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const IndexPage()));
+      final uid = currentUser?.uid;
+      final DocumentSnapshot snapshot =
+          await FirebaseFirestore.instance.collection("users").doc(uid).get();
+      if (!snapshot.exists) {
+        // Crear un nuevo documento para el usuario
+        await FirebaseFirestore.instance.collection("users").doc(uid).set({
+          'cumpleanos': '',
+          'nickname': '',
+          'nombre': '',
+          'urlImage': '',
+        });
+      }
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No se ha encontrado un usuario asociado a este email.');
@@ -44,16 +59,22 @@ class LoginApp extends State<Login> {
 // Validaciones con cuenta google de usuario
   Future<void> signInWithGoogle() async {
     try {
-      // Se guarda en result el resultado de iniciar sesion con google
       var resultado = await Auth().signInWithGoogle();
-      // En el caso de que el usuario intente ingresar con cuenta de google pero este no ingrese ninguna devolvera nulo y vuelve return para
-      // no ingresar a un usuario sin haber iniciado sesion al HomePage de la aplicacion
-      // Se debe ingresar esta validacion ya que por defecto, si un usuario intenta ingresar con google y este no selecciona ninguna cuenta, la
-      // aplicacion redirigira al usuario al HomePage.
       if (resultado == null) return;
-      // En el caso contrario, al usuario que inicio con una cuenta google este es redirigido a HomePage
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const IndexPage()));
+      final uid = currentUser?.uid;
+      final DocumentSnapshot snapshot =
+          await FirebaseFirestore.instance.collection("users").doc(uid).get();
+      if (!snapshot.exists) {
+        // Crear un nuevo documento para el usuario
+        await FirebaseFirestore.instance.collection("users").doc(uid).set({
+          'cumpleanos': '',
+          'nickname': '',
+          'nombre': '',
+          'urlImage': '',
+        });
+      }
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage()));
       print('Inicio de sesion con google satisfactorio.');
     } on FirebaseAuthException catch (e) {
       print(e.message);

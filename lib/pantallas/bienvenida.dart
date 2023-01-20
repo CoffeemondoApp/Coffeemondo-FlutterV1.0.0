@@ -1,8 +1,8 @@
 // ignore_for_file: use_full_hex_values_for_flutter_colors, prefer_const_constructors, sized_box_for_whitespace, use_key_in_widget_constructors
 
+import 'package:coffeemondo/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'login.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

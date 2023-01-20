@@ -21,10 +21,10 @@ class FotoPage extends StatefulWidget {
 }
 
 class FotoApp extends State<FotoPage> {
-    // Se declara la instancia de firebase en la variable _firebaseAuth
+  // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
+  // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
   User? get currentUser => _firebaseAuth.currentUser;
 
   // Implementacion de clases extraidas de los paquetes file_picker y firebase_storage
@@ -41,7 +41,7 @@ class FotoApp extends State<FotoPage> {
     });
   }
 
-   // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
+  // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
   Future subirImagen() async {
     // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
     final path = 'profile_profile_image/${email}.jpg';
@@ -57,15 +57,32 @@ class FotoApp extends State<FotoPage> {
     return urlUserImage;
   }
 
+
+// Mostrar informacion del usuario en pantalla
+  void _getdata() async {
+    // Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      setState(() {
+        // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
+        urlImage = userData.data()!['urlImage'];
+      });
+    });
+  }
+
   // Funcion para guardar la imagen del usuario dentro de Firebase Storage
   Future<void> guardarFotoUsuario() async {
     try {
       final DocumentReference docRef =
           FirebaseFirestore.instance.collection("users").doc(currentUser?.uid);
-          // Solamente se modifica el campo de urlImage de la BD de Firestore y asi no afecta a otra informacion del usuario
+      // Solamente se modifica el campo de urlImage de la BD de Firestore y asi no afecta a otra informacion del usuario
       docRef.update({'urlImage': await subirImagen()});
       print('Ingreso de informacion exitoso.');
-      // Una vez que se sube la imagen y se reemplaza el campo de urlImage por la de la imagen alojada en Storage, se redirige al usuario a InfoUser para ver su informacion 
+      // Una vez que se sube la imagen y se reemplaza el campo de urlImage por la de la imagen alojada en Storage, se redirige al usuario a InfoUser para ver su informacion
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const PerfilPage()));
     } catch (e) {
@@ -76,8 +93,9 @@ class FotoApp extends State<FotoPage> {
   String? errorMessage = '';
   bool isLogin = true;
   String tab = '';
+  String urlImage = '';
 
-   // Declaracion de email del usuario actual
+  // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
 
   final TextEditingController _controladoremail = TextEditingController();
@@ -212,6 +230,7 @@ class FotoApp extends State<FotoPage> {
       },
     );
   }
+  
 
   @override
   Widget FotoPerfil() {
@@ -230,6 +249,7 @@ class FotoApp extends State<FotoPage> {
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
     );
   }
+
 
   Widget BotonEditarFoto() {
     return Container(

@@ -29,13 +29,12 @@ class PerfilApp extends State<PerfilPage> {
     // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
     _getdata();
   }
-
+  
   // Declaracion de variables de informaicon de usuario
   String nombre = 'Nombre y apellido';
   String nickname = 'Nombre de usuario';
   String cumpleanos = 'Fecha de nacimiento';
   String urlImage = '';
-  String urlmageDefecto = '';
 
   String? errorMessage = '';
   bool isLogin = true;
