@@ -172,6 +172,30 @@ class FotoApp extends State<FotoPerfil> {
     );
   }
 
+  Widget BotonEditarFoto() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton1(),
+          child: InkWell(
+            onTap: () {},
+            child: Center(
+              child: Text(
+                'Editar foto de perfil',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
@@ -181,7 +205,15 @@ class FotoApp extends State<FotoPerfil> {
         Padding(
           padding: const EdgeInsets.only(left: 80, top: 80, right: 0),
           child: FotoPerfil(),
-        )
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 80, top: 50, right: 0),
+          child: BotonEditarFoto(),
+        ),
+        //Padding(
+        //padding: const EdgeInsets.only(left: 80, top: 30, right: 0),
+        //child: BotonEliminarFoto(),
+        //)
       ])),
       bottomNavigationBar: CustomBottomBar(),
     );
@@ -248,6 +280,36 @@ class BackgroundAppBar extends CustomClipper<Path> {
   bool shouldReclip(BackgroundAppBar oldClipper) => oldClipper != this;
 }
 //CUSTOM PAINTER APP BAR
+
+class BotonEliminarFoto extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton2(),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => Registro()));
+            },
+            child: Center(
+              child: Text(
+                'Eliminar foto de perfil',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 97, 2, 185),
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 //CUSTOM PAINTER BOTTOM BAR
 class CustomBottomBar extends StatelessWidget {
