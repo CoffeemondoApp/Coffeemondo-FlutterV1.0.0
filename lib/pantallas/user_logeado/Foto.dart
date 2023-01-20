@@ -57,7 +57,6 @@ class FotoApp extends State<FotoPage> {
     return urlUserImage;
   }
 
-
 // Mostrar informacion del usuario en pantalla
   void _getdata() async {
     // Se declara en user al usuario actual
@@ -230,7 +229,6 @@ class FotoApp extends State<FotoPage> {
       },
     );
   }
-  
 
   @override
   Widget FotoPerfil() {
@@ -249,7 +247,6 @@ class FotoApp extends State<FotoPage> {
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
     );
   }
-
 
   Widget BotonEditarFoto() {
     return Container(

@@ -238,36 +238,6 @@ class InfoApp extends State<InfoPage> {
             )));
   }
 
-  Widget _Correo(
-    TextEditingController controller,
-  ) {
-    return TextField(
-        controller: controller,
-        // onChanged: (((value) => validarCorreo())),
-        style: const TextStyle(
-          color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 14.0,
-          height: 2.0,
-          fontWeight: FontWeight.w900,
-        ),
-        decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-            ),
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.email,
-                color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'C o r r e o   e l e c t r o n i c o',
-            hintStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
-            )));
-  }
-
   Widget BotonEditarInfo() {
     return Container(
       child: Container(
@@ -295,6 +265,11 @@ class InfoApp extends State<InfoPage> {
   }
 
   Widget build(BuildContext context) {
+    //          VALORES INICIALES TEXTFIELD EDITAR INFORMACION
+    //_controladornombreApellido.text = 'Solomeo Paredes';
+    //_controladornombreUsuario.text = 'SolomeoDev';
+    //_controladoredad.text = '14 de junio de 1945';
+
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: AppBarcustom(),
