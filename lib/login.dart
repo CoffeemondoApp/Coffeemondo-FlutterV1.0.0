@@ -20,7 +20,7 @@ class LoginApp extends State<Login> {
   String? errorMessage = '';
   bool isLogin = true;
 
-   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   User? get currentUser => _firebaseAuth.currentUser;
 
@@ -39,14 +39,14 @@ class LoginApp extends State<Login> {
       if (!snapshot.exists) {
         // Crear un nuevo documento para el usuario
         await FirebaseFirestore.instance.collection("users").doc(uid).set({
-          'cumpleanos': '',
-          'nickname': '',
-          'nombre': '',
+          'cumpleanos': 'Sin informacion de edad',
+          'nickname': 'sin informacion de nombre de usuario',
+          'nombre': 'Sin informacion de nombre y apellido',
           'urlImage': '',
         });
       }
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const PerfilPage()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No se ha encontrado un usuario asociado a este email.');
@@ -67,14 +67,14 @@ class LoginApp extends State<Login> {
       if (!snapshot.exists) {
         // Crear un nuevo documento para el usuario
         await FirebaseFirestore.instance.collection("users").doc(uid).set({
-          'cumpleanos': '',
-          'nickname': '',
-          'nombre': '',
+          'cumpleanos': 'Sin informacion de edad',
+          'nickname': 'sin informacion de nombre de usuario',
+          'nombre': 'Sin informacion de nombre y apellido',
           'urlImage': '',
         });
       }
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const PerfilPage()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
       print('Inicio de sesion con google satisfactorio.');
     } on FirebaseAuthException catch (e) {
       print(e.message);
