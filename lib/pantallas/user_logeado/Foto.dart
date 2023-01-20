@@ -3,26 +3,25 @@
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/home.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 
+import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-class PerfilPage extends StatefulWidget {
-  const PerfilPage({super.key});
+class FotoPerfil extends StatefulWidget {
+  const FotoPerfil({super.key});
 
   @override
-  PerfilApp createState() => PerfilApp();
+  FotoApp createState() => FotoApp();
 }
 
-String tab = '';
-
-class PerfilApp extends State<PerfilPage> {
+class FotoApp extends State<FotoPerfil> {
   String? errorMessage = '';
   bool isLogin = true;
+  String tab = '';
 
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladoredad = TextEditingController();
@@ -34,7 +33,6 @@ class PerfilApp extends State<PerfilPage> {
     TextEditingController controller,
   ) {
     return TextField(
-        readOnly: true,
         controller: controller,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
@@ -102,22 +100,59 @@ class PerfilApp extends State<PerfilPage> {
         fontWeight: FontWeight.w900,
       ),
       decoration: InputDecoration(
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-        ),
-        border: OutlineInputBorder(),
-        prefixIcon:
-            Icon(Icons.cake, color: Color.fromARGB(255, 255, 79, 52), size: 24),
-        hintText: 'E d a d',
-        hintStyle: TextStyle(
-          fontSize: 14.0,
-          fontWeight: FontWeight.w900,
-          color: Color.fromARGB(255, 84, 14, 148),
-        ),
-      ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.cake,
+              color: Color.fromARGB(255, 255, 79, 52), size: 24),
+          hintText: 'E d a d',
+          hintStyle: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w900,
+            color: Color.fromARGB(255, 84, 14, 148),
+          )),
+      onTap: () async {
+        DateTime? pickeddate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime(2024),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(
+                    primary: Color.fromARGB(255, 255, 79, 52), // <-- SEE HERE
+                    onPrimary: Color.fromARGB(255, 84, 14, 148), // <-- SEE HERE
+                    onSurface: Color.fromARGB(255, 84, 14, 148), //<-- SEE HERE
+                    secondary: Color.fromARGB(255, 235, 220, 172),
+                  ),
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(
+                      primary:
+                          Color.fromARGB(255, 255, 79, 52), // button text color
+                    ),
+                  ),
+                ),
+                child: child!,
+              );
+            });
+
+        if (pickeddate != null) {
+          getMes(pickeddate.month);
+          setState(() {
+            var string_fecha = pickeddate.day.toString() +
+                ' de ' +
+                mes_nacimiento +
+                ' de ' +
+                pickeddate.year.toString();
+            _controladoredad.text = string_fecha;
+          });
+        }
+      },
     );
   }
 
@@ -131,97 +166,10 @@ class PerfilApp extends State<PerfilPage> {
         borderRadius: BorderRadius.circular(100.0),
         child: const Image(
           image: AssetImage('./assets/user_img.png'),
-          width: 150,
+          width: 220,
         ),
       ),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
-    );
-  }
-
-  @override
-  Widget _NombreUsuario(
-    TextEditingController controller,
-  ) {
-    return TextField(
-        controller: controller,
-        readOnly: true,
-        // onChanged: (((value) => validarCorreo())),
-        style: const TextStyle(
-          color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 14.0,
-          height: 2.0,
-          fontWeight: FontWeight.w900,
-        ),
-        decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-            ),
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.account_circle_rounded,
-                color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'N o m b r e   u s u a r i o',
-            hintStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
-            )));
-  }
-
-  Widget _Correo(
-    TextEditingController controller,
-  ) {
-    return TextField(
-        controller: controller,
-        readOnly: true,
-        // onChanged: (((value) => validarCorreo())),
-        style: const TextStyle(
-          color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 14.0,
-          height: 2.0,
-          fontWeight: FontWeight.w900,
-        ),
-        decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-            ),
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.email,
-                color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'C o r r e o   e l e c t r o n i c o',
-            hintStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
-            )));
-  }
-
-  Widget BotonLogin() {
-    return Container(
-      child: Container(
-        width: 250,
-        height: 50,
-        child: CustomPaint(
-          painter: BackgroundButton1(),
-          child: InkWell(
-            onTap: () {},
-            child: Center(
-              child: Text(
-                'Entrar',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -232,21 +180,9 @@ class PerfilApp extends State<PerfilPage> {
       body: SingleChildScrollView(
           child: Column(children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 40, top: 50, right: 40),
+          padding: const EdgeInsets.only(left: 80, top: 80, right: 0),
           child: FotoPerfil(),
-        ),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
-            child: _Correo(_controladoremail)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _NombreApellido(_controladoremail)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _NombreUsuario(_controladornombreUsuario)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _Edad(_controladoredad)),
+        )
       ])),
       bottomNavigationBar: CustomBottomBar(),
     );
@@ -336,23 +272,23 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 84, 14, 148),
               activeColor: Color.fromARGB(255, 84, 14, 148),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: 0,
+              selectedIndex: 1,
               gap: 8,
               padding: EdgeInsets.all(16),
               tabs: [
                 GButton(
                   icon: Icons.home,
                   text: 'Perfil',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PerfilPage()),
+                    );
+                  },
                 ),
                 GButton(
                   icon: Icons.image,
                   text: 'Foto de perfil',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FotoPerfil()),
-                    );
-                  },
                 ),
                 GButton(
                   icon: Icons.info,
@@ -367,12 +303,6 @@ class CustomBottomBar extends StatelessWidget {
                 GButton(
                   icon: Icons.arrow_back,
                   text: 'Volver atras',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Index()),
-                    );
-                  },
                 ),
               ]),
         ),

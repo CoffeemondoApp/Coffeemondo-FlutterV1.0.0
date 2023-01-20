@@ -4,23 +4,23 @@ import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/home.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
-import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-class PerfilPage extends StatefulWidget {
-  const PerfilPage({super.key});
+class InfoPage extends StatefulWidget {
+  const InfoPage({super.key});
 
   @override
-  PerfilApp createState() => PerfilApp();
+  InfoApp createState() => InfoApp();
 }
 
 String tab = '';
 
-class PerfilApp extends State<PerfilPage> {
+class InfoApp extends State<InfoPage> {
   String? errorMessage = '';
   bool isLogin = true;
 
@@ -34,7 +34,6 @@ class PerfilApp extends State<PerfilPage> {
     TextEditingController controller,
   ) {
     return TextField(
-        readOnly: true,
         controller: controller,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
@@ -102,22 +101,59 @@ class PerfilApp extends State<PerfilPage> {
         fontWeight: FontWeight.w900,
       ),
       decoration: InputDecoration(
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-        ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-        ),
-        border: OutlineInputBorder(),
-        prefixIcon:
-            Icon(Icons.cake, color: Color.fromARGB(255, 255, 79, 52), size: 24),
-        hintText: 'E d a d',
-        hintStyle: TextStyle(
-          fontSize: 14.0,
-          fontWeight: FontWeight.w900,
-          color: Color.fromARGB(255, 84, 14, 148),
-        ),
-      ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.cake,
+              color: Color.fromARGB(255, 255, 79, 52), size: 24),
+          hintText: 'E d a d',
+          hintStyle: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w900,
+            color: Color.fromARGB(255, 84, 14, 148),
+          )),
+      onTap: () async {
+        DateTime? pickeddate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime(2024),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: ColorScheme.light(
+                    primary: Color.fromARGB(255, 255, 79, 52), // <-- SEE HERE
+                    onPrimary: Color.fromARGB(255, 84, 14, 148), // <-- SEE HERE
+                    onSurface: Color.fromARGB(255, 84, 14, 148), //<-- SEE HERE
+                    secondary: Color.fromARGB(255, 235, 220, 172),
+                  ),
+                  textButtonTheme: TextButtonThemeData(
+                    style: TextButton.styleFrom(
+                      primary:
+                          Color.fromARGB(255, 255, 79, 52), // button text color
+                    ),
+                  ),
+                ),
+                child: child!,
+              );
+            });
+
+        if (pickeddate != null) {
+          getMes(pickeddate.month);
+          setState(() {
+            var string_fecha = pickeddate.day.toString() +
+                ' de ' +
+                mes_nacimiento +
+                ' de ' +
+                pickeddate.year.toString();
+            _controladoredad.text = string_fecha;
+          });
+        }
+      },
     );
   }
 
@@ -144,7 +180,6 @@ class PerfilApp extends State<PerfilPage> {
   ) {
     return TextField(
         controller: controller,
-        readOnly: true,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
@@ -175,7 +210,6 @@ class PerfilApp extends State<PerfilPage> {
   ) {
     return TextField(
         controller: controller,
-        readOnly: true,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
@@ -231,10 +265,6 @@ class PerfilApp extends State<PerfilPage> {
       appBar: AppBarcustom(),
       body: SingleChildScrollView(
           child: Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 40, top: 50, right: 40),
-          child: FotoPerfil(),
-        ),
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 50, right: 40),
             child: _Correo(_controladoremail)),
@@ -336,13 +366,19 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 84, 14, 148),
               activeColor: Color.fromARGB(255, 84, 14, 148),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: 0,
+              selectedIndex: 2,
               gap: 8,
               padding: EdgeInsets.all(16),
               tabs: [
                 GButton(
                   icon: Icons.home,
                   text: 'Perfil',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PerfilPage()),
+                    );
+                  },
                 ),
                 GButton(
                   icon: Icons.image,
@@ -357,12 +393,6 @@ class CustomBottomBar extends StatelessWidget {
                 GButton(
                   icon: Icons.info,
                   text: 'Informacion',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => InfoPage()),
-                    );
-                  },
                 ),
                 GButton(
                   icon: Icons.arrow_back,

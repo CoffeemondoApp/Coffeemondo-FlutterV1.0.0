@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'Perfil.dart';
 import 'dart:math' as math;
 
 class Index extends StatefulWidget {
@@ -138,7 +139,7 @@ class CustomBottomBar extends StatelessWidget {
               tabBackgroundColor: Colors.transparent,
               gap: 8,
               padding: EdgeInsets.all(16),
-              tabs: const [
+              tabs: [
                 GButton(
                   icon: Icons.home,
                   text: 'Home',
@@ -154,6 +155,13 @@ class CustomBottomBar extends StatelessWidget {
                 GButton(
                   icon: Icons.settings,
                   text: 'Configuracion',
+                  //Enlace a vista editar perfil desde Index
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PerfilPage()),
+                    );
+                  },
                 ),
               ]),
         ),
