@@ -16,6 +16,7 @@ class IndexPageState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xffffebdcac),
       appBar: AppBarcustom(),
       bottomNavigationBar: CustomBottomBar(),
     );
@@ -24,20 +25,26 @@ class IndexPageState extends State<IndexPage> {
 
 class HalfCirclePainter extends CustomPainter {
   final Color color;
+  final Color fillColor;
 
-  HalfCirclePainter({required this.color});
+  HalfCirclePainter({required this.color, required this.fillColor});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final borderpaint = Paint()
       ..color = color
-      ..strokeWidth = 2
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    final fillPaint = Paint()
+      ..color = fillColor
       ..style = PaintingStyle.fill;
 
     final center = Offset(size.width - 160, size.height * 1.2);
     final radius = (size.width / 2) * 1.5;
 
-    canvas.drawCircle(center, radius, paint);
+    canvas.drawCircle(center, radius, borderpaint);
+    canvas.drawCircle(center, radius - 1, fillPaint);
   }
 
   @override
@@ -53,26 +60,23 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 100,
+      height: 150,
+      color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
       child: Stack(
         children: <Widget>[
           ClipPath(
             clipper: BackgroundAppBar(),
-            child: Image.asset(
-              'assets/Granos.png',
-              width: MediaQuery.of(context).size.width,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
           ),
           Positioned(
-            left: MediaQuery.of(context).size.width / 2 - 25,
-            top: 15,
+            left: MediaQuery.of(context).size.width / 2 - 39,
+            top: 50,
             child: CustomPaint(
-              painter: HalfCirclePainter(color: Colors.black),
+              painter: HalfCirclePainter(
+                  color: Color.fromARGB(255, 255, 79, 52),
+                  fillColor: Color.fromARGB(0xff, 0x52, 0x01, 0x9b)),
               child: Container(
-                width: 50.0,
-                height: 50.0,
+                width: 65,
+                height: 65,
               ),
             ),
           ),
@@ -106,9 +110,12 @@ class BackgroundAppBar extends CustomClipper<Path> {
   Path getClip(Size size) {
     var path = Path();
     path.lineTo(0.0, size.height);
-
     path.lineTo(size.width, size.height);
     path.lineTo(size.width, 0.0);
+    path.lineTo(0.0, 0.0);
+    path.moveTo(size.width * 0.2, size.height);
+    path.lineTo(size.width, 0);
+    path.close();
     return path;
   }
 
@@ -129,16 +136,16 @@ class CustomBottomBar extends StatelessWidget {
           child: ClipPath(
               clipper: BackgroundBottomBar(),
               child: Container(
-                color: Colors.black,
+                color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
               )),
         ),
         Container(
           height: 70,
           child: GNav(
               backgroundColor: Colors.transparent,
-              color: Colors.white,
-              activeColor: Colors.white,
-              tabBackgroundColor: Colors.transparent,
+              color: Color.fromARGB(255, 255, 79, 52),
+              activeColor: Color.fromARGB(255, 255, 79, 52),
+              tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               gap: 8,
               padding: EdgeInsets.all(16),
               tabs: [

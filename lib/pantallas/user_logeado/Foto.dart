@@ -404,15 +404,15 @@ class CustomBottomBar extends StatelessWidget {
           child: ClipPath(
               clipper: BackgroundBottomBar(),
               child: Container(
-                color: Colors.black,
+                color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
               )),
         ),
         Container(
           height: 70,
           child: GNav(
-              backgroundColor: Color.fromARGB(255, 255, 79, 52),
-              color: Color.fromARGB(255, 84, 14, 148),
-              activeColor: Color.fromARGB(255, 84, 14, 148),
+              backgroundColor: Colors.transparent,
+              color: Color.fromARGB(255, 255, 79, 52),
+              activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               selectedIndex: 1,
               gap: 8,

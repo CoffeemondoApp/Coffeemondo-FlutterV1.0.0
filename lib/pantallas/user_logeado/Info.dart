@@ -45,9 +45,14 @@ class InfoApp extends State<InfoPage> {
       // Importante: Este tipo de declaracion se utiliza para solamente actualizar la informacion solicitada y no manipular informacion adicional, como lo es la imagen y esto permite no borrar otros datos importantes
 
       // Se busca la coleccion 'users' de la BD de Firestore en donde el uid sea igual al del usuario actual
-      final DocumentReference docRef = FirebaseFirestore.instance.collection("users").doc(currentUser?.uid);
+      final DocumentReference docRef =
+          FirebaseFirestore.instance.collection("users").doc(currentUser?.uid);
       // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
-      docRef.update({'nombre': _controladornombreApellido.text, 'nickname': _controladornombreUsuario.text, 'cumpleanos': _controladoredad.text});
+      docRef.update({
+        'nombre': _controladornombreApellido.text,
+        'nickname': _controladornombreUsuario.text,
+        'cumpleanos': _controladoredad.text
+      });
       print('Ingreso de informacion exitoso.');
       // Una vez actualizada la informacion, se devuelve a InfoUser para mostrar su nueva informacion
       Navigator.pushReplacement(
@@ -389,15 +394,15 @@ class CustomBottomBar extends StatelessWidget {
           child: ClipPath(
               clipper: BackgroundBottomBar(),
               child: Container(
-                color: Colors.black,
+                color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
               )),
         ),
         Container(
           height: 70,
           child: GNav(
-              backgroundColor: Color.fromARGB(255, 255, 79, 52),
-              color: Color.fromARGB(255, 84, 14, 148),
-              activeColor: Color.fromARGB(255, 84, 14, 148),
+              backgroundColor: Colors.transparent,
+              color: Color.fromARGB(255, 255, 79, 52),
+              activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               selectedIndex: 2,
               gap: 8,
