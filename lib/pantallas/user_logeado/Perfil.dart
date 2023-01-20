@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors
+// ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors, sort_child_properties_last
 
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
@@ -6,10 +6,13 @@ import 'package:coffeemondo/pantallas/home.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
+import 'package:coffeemondo/firebase/autenticacion.dart';
+import 'package:coffeemondo/login.dart';
 
 class PerfilPage extends StatefulWidget {
   const PerfilPage({super.key});
@@ -21,13 +24,54 @@ class PerfilPage extends StatefulWidget {
 String tab = '';
 
 class PerfilApp extends State<PerfilPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
+    _getdata();
+  }
+
+  // Declaracion de variables de informaicon de usuario
+  String nombre = 'Nombre y apellido';
+  String nickname = 'Nombre de usuario';
+  String cumpleanos = 'Fecha de nacimiento';
+  String urlImage = '';
+  String urlmageDefecto = '';
+
   String? errorMessage = '';
   bool isLogin = true;
 
+  // Declaracion de email del usuario actual
+  final email = FirebaseAuth.instance.currentUser?.email;
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladoredad = TextEditingController();
   final TextEditingController _controladornombreUsuario =
       TextEditingController();
+
+  // Mostrar informacion del usuario en pantalla
+  void _getdata() async {
+    // Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      setState(() {
+        // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
+        nombre = userData.data()!['nombre'];
+        nickname = userData.data()!['nickname'];
+        cumpleanos = userData.data()!['cumpleanos'];
+        urlImage = userData.data()!['urlImage'];
+      });
+    });
+  }
+
+  // Cerrar sesion del usuario
+  Future<void> cerrarSesion() async {
+    await Auth().signOut();
+    print('Usuario ha cerrado sesion');
+  }
 
   @override
   Widget _NombreApellido(
@@ -53,7 +97,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.account_circle_outlined,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'N o m b r e  y  A p e l l i d o',
+            hintText: nombre,
             hintStyle: TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.w900,
@@ -111,7 +155,7 @@ class PerfilApp extends State<PerfilPage> {
         border: OutlineInputBorder(),
         prefixIcon:
             Icon(Icons.cake, color: Color.fromARGB(255, 255, 79, 52), size: 24),
-        hintText: 'E d a d',
+        hintText: cumpleanos,
         hintStyle: TextStyle(
           fontSize: 14.0,
           fontWeight: FontWeight.w900,
@@ -121,18 +165,22 @@ class PerfilApp extends State<PerfilPage> {
     );
   }
 
-  @override
   Widget FotoPerfil() {
     return ElevatedButton(
       onPressed: () {
         print('Editar foto de perfil');
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100.0),
-        child: const Image(
-          image: AssetImage('./assets/user_img.png'),
-          width: 150,
-        ),
+        borderRadius: BorderRadius.circular(100),
+        child: urlImage != ''
+            ? Image.network(
+                urlImage,
+                width: 220,
+              )
+            : Image.asset(
+                'assets/user_img.png',
+                width: 220,
+              ),
       ),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
     );
@@ -162,7 +210,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.account_circle_rounded,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'N o m b r e   u s u a r i o',
+            hintText: nickname,
             hintStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w900,
@@ -193,7 +241,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.email,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'C o r r e o   e l e c t r o n i c o',
+            hintText: email,
             hintStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w900,
@@ -213,6 +261,35 @@ class PerfilApp extends State<PerfilPage> {
             child: Center(
               child: Text(
                 'Entrar',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Widget de boton para cerrar sesion
+  Widget botonCerrarSesion() {
+    return Container(
+      child: Container(
+        width: 250,
+        height: 50,
+        child: CustomPaint(
+          painter: BackgroundButton1(),
+          child: InkWell(
+            onTap: () => [
+              cerrarSesion(),
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => Login()))
+            ],
+            child: Center(
+              child: Text(
+                'Cerrar sesion',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -247,6 +324,9 @@ class PerfilApp extends State<PerfilPage> {
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
             child: _Edad(_controladoredad)),
+        Padding(
+            padding: const EdgeInsets.only(left: 50, top: 15, right: 40),
+            child: botonCerrarSesion()),
       ])),
       bottomNavigationBar: CustomBottomBar(),
     );
@@ -370,7 +450,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Index()),
+                      MaterialPageRoute(builder: (context) => IndexPage()),
                     );
                   },
                 ),

@@ -39,22 +39,25 @@ class Auth {
       email: email,
       password: password,
     );
+    
   }
 
 // Inicio de sesion con Google
-signInWithGoogle() async {
-  final GoogleSignInAccount? googleUser = await GoogleSignIn(
-    scopes: <String>['email']).signIn();
+  signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(scopes: <String>['email']).signIn();
 
-    final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser!.authentication;
 
     final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken
-    );
+        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
+        
+        
     return await FirebaseAuth.instance.signInWithCredential(credential);
-}
+    
+  }
 
   // Cerrar sesion con email y google
   Future<void> signOut() async {
@@ -66,12 +69,9 @@ signInWithGoogle() async {
 
   // Instancia de google para cerrar sesion
   GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: <String>[
-    'email',
-    'https://www.googleapis.com/auth/contacts.readonly',
-  ],
-);
+    scopes: <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
 }
-
-
-

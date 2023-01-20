@@ -31,7 +31,7 @@ class _WidgetTreeState extends State<WidgetTree> {
         if (snapshot.hasData) {
           // Si existe informacion de usuario redirige a HomePage
           // PerfilPage == editar perfil -o- Index == pagina index por defecto usuario
-          return const Index();
+          return const IndexPage();
         } else {
           // Si no existe informacion de usuario redirige a LoginPage para iniciar o registrar un usuario
           return const MyApp();

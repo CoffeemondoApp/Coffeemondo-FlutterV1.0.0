@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, non_constant_identifier_names, use_build_context_synchronously
 
 import 'package:coffeemondo/firebase/autenticacion.dart';
+import 'package:coffeemondo/login.dart';
 import 'package:coffeemondo/pantallas/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class RegistroApp extends State<Registro> {
       //lo que significa que el usuario no podra volver a la pantalla anterior al presionar el botón
       //"Atrás" en su dispositivo.
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+          context, MaterialPageRoute(builder: (context) => const Login()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('Tu contrasena es muy debil.');

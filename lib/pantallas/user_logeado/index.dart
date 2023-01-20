@@ -3,14 +3,16 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
-class Index extends StatefulWidget {
-  const Index({super.key});
+class IndexPage extends StatefulWidget {
+  const IndexPage({super.key});
 
   @override
-  IndexApp createState() => IndexApp();
+  IndexPageState createState() => IndexPageState();
 }
 
-class IndexApp extends State<Index> {
+String tab = '';
+
+class IndexPageState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -400,7 +400,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Index()),
+                      MaterialPageRoute(builder: (context) => IndexPage()),
                     );
                   },
                 ),
