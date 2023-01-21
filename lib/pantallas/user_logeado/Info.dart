@@ -20,6 +20,13 @@ class InfoPage extends StatefulWidget {
 String tab = '';
 
 class InfoApp extends State<InfoPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
+    _getdata();
+  }
+  
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -60,6 +67,28 @@ class InfoApp extends State<InfoPage> {
     } catch (e) {
       print("Error al intentar ingresar informacion");
     }
+  }
+
+  String nombre = '';
+  String nickname = '';
+  String cumpleanos = '';
+
+   // Mostrar informacion del usuario en pantalla
+  void _getdata() async {
+    // Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      setState(() {
+        // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
+        nombre = userData.data()!['nombre'];
+        nickname = userData.data()!['nickname'];
+        cumpleanos = userData.data()!['cumpleanos'];
+      });
+    });
   }
 
   @override
@@ -266,9 +295,9 @@ class InfoApp extends State<InfoPage> {
 
   Widget build(BuildContext context) {
     //          VALORES INICIALES TEXTFIELD EDITAR INFORMACION
-    //_controladornombreApellido.text = 'Solomeo Paredes';
-    //_controladornombreUsuario.text = 'SolomeoDev';
-    //_controladoredad.text = '14 de junio de 1945';
+    _controladornombreApellido.text = nombre;
+    _controladornombreUsuario.text = nickname;
+    _controladoredad.text = cumpleanos;
 
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),

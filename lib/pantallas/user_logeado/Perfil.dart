@@ -31,9 +31,9 @@ class PerfilApp extends State<PerfilPage> {
   }
 
   // Declaracion de variables de informaicon de usuario
-  String nombre = 'Nombre y apellido';
-  String nickname = 'Nombre de usuario';
-  String cumpleanos = 'Fecha de nacimiento';
+  String nombre = '';
+  String nickname = '';
+  String cumpleanos = '';
   String urlImage = '';
 
   String? errorMessage = '';

@@ -40,7 +40,7 @@ class LoginApp extends State<Login> {
         // Crear un nuevo documento para el usuario
         await FirebaseFirestore.instance.collection("users").doc(uid).set({
           'cumpleanos': 'Sin informacion de edad',
-          'nickname': 'sin informacion de nombre de usuario',
+          'nickname': 'Sin informacion de nombre de usuario',
           'nombre': 'Sin informacion de nombre y apellido',
           'urlImage': '',
         });

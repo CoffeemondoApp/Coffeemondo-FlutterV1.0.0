@@ -20,6 +20,9 @@ class FotoPage extends StatefulWidget {
   FotoApp createState() => FotoApp();
 }
 
+//IDEA: QUITAR PANTALLA DE FOTO DE PERFIL Y AGREGAR FUNCIONALIDAD DE CAMBIAR FOTO DE PERFIL EN PANTALLA PERFIL, AL MOMENTO DE APRETAR LA FOTO
+//ABRIR LA GALERIA, ELEGIR FOTO Y LLAMAR A _GETDATA PARA ACTUALIZAR FOTOGRAFIA EN LA MISMA PANTALLA (SIGUIENTE SEMANA)
+
 class FotoApp extends State<FotoPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

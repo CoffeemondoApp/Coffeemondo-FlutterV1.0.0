@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import '../../firebase/autenticacion.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
@@ -11,8 +14,42 @@ class IndexPage extends StatefulWidget {
 }
 
 String tab = '';
+  // Declaracion de variables de informaicon de usuario
+  String nombre = '';
+  String nickname = '';
+  String cumpleanos = '';
+  String urlImage = '';
 
 class IndexPageState extends State<IndexPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
+    _getdata();
+  }
+
+
+
+
+    // Mostrar informacion del usuario en pantalla
+  void _getdata() async {
+    // Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      setState(() {
+        // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
+        nombre = userData.data()!['nombre'];
+        nickname = userData.data()!['nickname'];
+        cumpleanos = userData.data()!['cumpleanos'];
+        urlImage = userData.data()!['urlImage'];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +59,7 @@ class IndexPageState extends State<IndexPage> {
     );
   }
 }
+
 
 class HalfCirclePainter extends CustomPainter {
   final Color color;
@@ -86,7 +124,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 15,
             child: Center(
               child: Text(
-                "Home",
+                "$nombre",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
