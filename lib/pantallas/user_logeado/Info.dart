@@ -61,7 +61,8 @@ class InfoApp extends State<InfoPage> {
       docRef.update({
         'nombre': _controladornombreApellido.text,
         'nickname': _controladornombreUsuario.text,
-        'cumpleanos': _controladoredad.text
+        'cumpleanos': _controladoredad.text,
+        'telefono': _controladortelefono.text,
       });
       print('Ingreso de informacion exitoso.');
       // Una vez actualizada la informacion, se devuelve a InfoUser para mostrar su nueva informacion
@@ -75,6 +76,8 @@ class InfoApp extends State<InfoPage> {
   String nombre = '';
   String nickname = '';
   String cumpleanos = '';
+  String telefono = '';
+  String direccion = '';
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
@@ -90,6 +93,7 @@ class InfoApp extends State<InfoPage> {
         nombre = userData.data()!['nombre'];
         nickname = userData.data()!['nickname'];
         cumpleanos = userData.data()!['cumpleanos'];
+        telefono = userData.data()!['telefono'];
       });
     });
   }
@@ -280,6 +284,7 @@ class InfoApp extends State<InfoPage> {
     TextEditingController controller,
   ) {
     return TextField(
+      keyboardType: TextInputType.phone,
         inputFormatters: [maskFormatter],
         controller: controller,
         // onChanged: (((value) => validarCorreo())),
@@ -370,6 +375,7 @@ class InfoApp extends State<InfoPage> {
     _controladornombreApellido.text = nombre;
     _controladornombreUsuario.text = nickname;
     _controladoredad.text = cumpleanos;
+    _controladortelefono.text = telefono;
 
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
