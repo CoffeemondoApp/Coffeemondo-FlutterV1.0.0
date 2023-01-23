@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors
+// ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors, sort_child_properties_last
 
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
@@ -20,7 +20,16 @@ class FotoPage extends StatefulWidget {
   FotoApp createState() => FotoApp();
 }
 
+//IDEA: QUITAR PANTALLA DE FOTO DE PERFIL Y AGREGAR FUNCIONALIDAD DE CAMBIAR FOTO DE PERFIL EN PANTALLA PERFIL, AL MOMENTO DE APRETAR LA FOTO
+//ABRIR LA GALERIA, ELEGIR FOTO Y LLAMAR A _GETDATA PARA ACTUALIZAR FOTOGRAFIA EN LA MISMA PANTALLA (SIGUIENTE SEMANA)
+
 class FotoApp extends State<FotoPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
+    _getdata();
+  }
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -239,10 +248,19 @@ class FotoApp extends State<FotoPage> {
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
-        child: const Image(
-          image: AssetImage('./assets/user_img.png'),
-          width: 220,
-        ),
+        child: pickedFile == null 
+            ? Image.network(
+                urlImage,
+                width: 220,
+                height: 220,
+                fit: BoxFit.cover,
+              )
+            : Image.file(
+                File(pickedFile!.path!),
+                width: 220,
+                height: 220,
+                fit: BoxFit.cover,
+              ),
       ),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
     );
