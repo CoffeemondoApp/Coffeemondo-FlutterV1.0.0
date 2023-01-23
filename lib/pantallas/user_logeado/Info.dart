@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class InfoPage extends StatefulWidget {
   const InfoPage({super.key});
@@ -34,6 +35,8 @@ class InfoApp extends State<InfoPage> {
 
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladoredad = TextEditingController();
+  final TextEditingController _controladortelefono = TextEditingController();
+  final TextEditingController _controladordireccion = TextEditingController();
   final TextEditingController _controladornombreUsuario =
       TextEditingController();
   final TextEditingController _controladornombreApellido =
@@ -238,6 +241,75 @@ class InfoApp extends State<InfoPage> {
             )));
   }
 
+  var maskFormatter = MaskTextInputFormatter(
+      mask: '+(##) # ### ### ##)',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
+  @override
+  Widget _Telefono(
+    TextEditingController controller,
+  ) {
+    return TextField(
+        inputFormatters: [maskFormatter],
+        controller: controller,
+        // onChanged: (((value) => validarCorreo())),
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 14.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
+        ),
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.mobile_friendly_outlined,
+                color: Color.fromARGB(255, 255, 79, 52), size: 24),
+            hintText: 'T e l e f o n o',
+            hintStyle: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148),
+            )));
+  }
+
+  @override
+  Widget _Direccion(
+    TextEditingController controller,
+  ) {
+    return TextField(
+        inputFormatters: [maskFormatter],
+        controller: controller,
+        // onChanged: (((value) => validarCorreo())),
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 14.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
+        ),
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.location_city_outlined,
+                color: Color.fromARGB(255, 255, 79, 52), size: 24),
+            hintText: 'D i r e c c i o n',
+            hintStyle: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148),
+            )));
+  }
+
   Widget BotonEditarInfo() {
     return Container(
       child: Container(
@@ -266,7 +338,7 @@ class InfoApp extends State<InfoPage> {
 
   Widget build(BuildContext context) {
     //          VALORES INICIALES TEXTFIELD EDITAR INFORMACION
-    //_controladornombreApellido.text = 'Solomeo Paredes';
+    //_controladornombreApellido.text = 'Solomeo Vargas';
     //_controladornombreUsuario.text = 'SolomeoDev';
     //_controladoredad.text = '14 de junio de 1945';
 
@@ -279,7 +351,7 @@ class InfoApp extends State<InfoPage> {
         //     padding: const EdgeInsets.only(left: 50, top: 130, right: 40),
         //     child: _Correo(_controladoremail)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 140, right: 40),
+            padding: const EdgeInsets.only(left: 50, top: 100, right: 40),
             child: _NombreApellido(_controladornombreApellido)),
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
@@ -288,7 +360,13 @@ class InfoApp extends State<InfoPage> {
             padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
             child: _Edad(_controladoredad)),
         Padding(
-            padding: const EdgeInsets.only(left: 10, top: 50, right: 0),
+            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            child: _Telefono(_controladortelefono)),
+        Padding(
+            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            child: _Direccion(_controladordireccion)),
+        Padding(
+            padding: const EdgeInsets.only(left: 10, top: 50, right: 40),
             child: BotonEditarInfo()),
       ])),
       bottomNavigationBar: CustomBottomBar(),

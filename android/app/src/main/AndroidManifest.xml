@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cl.coffeemondo.coffeemondo">
+   <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="coffeemondo"
         android:name="${applicationName}"

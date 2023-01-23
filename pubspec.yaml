@@ -46,6 +46,8 @@ dependencies:
   google_sign_in:
   flutter_launcher_icons: "^0.10.0"
   google_nav_bar: ^5.0.6
+  mask_text_input_formatter: ^2.4.0
+  google_maps_flutter: ^2.2.3
   
 flutter_native_splash:
   color: "#E64921"
