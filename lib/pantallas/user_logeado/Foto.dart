@@ -30,6 +30,7 @@ class FotoApp extends State<FotoPage> {
     // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
     _getdata();
   }
+
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -101,7 +102,7 @@ class FotoApp extends State<FotoPage> {
   String? errorMessage = '';
   bool isLogin = true;
   String tab = '';
-  String urlImage = '';
+  String urlImage = 'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37';
 
   // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
@@ -247,21 +248,20 @@ class FotoApp extends State<FotoPage> {
         print('Actualizar Foto');
       },
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100.0),
-        child: pickedFile == null 
-            ? Image.network(
-                urlImage,
-                width: 220,
-                height: 220,
-                fit: BoxFit.cover,
-              )
-            : Image.file(
-                File(pickedFile!.path!),
-                width: 220,
-                height: 220,
-                fit: BoxFit.cover,
-              ),
-      ),
+          borderRadius: BorderRadius.circular(100.0),
+          child: pickedFile != null
+              ? Image.file(
+                  File(pickedFile!.path!),
+                  width: 220,
+                  height: 220,
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  urlImage,
+                  width: 220,
+                  height: 220,
+                  fit: BoxFit.cover,
+                )),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
     );
   }
