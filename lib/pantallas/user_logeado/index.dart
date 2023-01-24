@@ -14,11 +14,11 @@ class IndexPage extends StatefulWidget {
 }
 
 String tab = '';
-  // Declaracion de variables de informaicon de usuario
-  String nombre = '';
-  String nickname = '';
-  String cumpleanos = '';
-  String urlImage = '';
+// Declaracion de variables de informaicon de usuario
+String nombre = '';
+String nickname = '';
+String cumpleanos = '';
+String urlImage = '';
 
 class IndexPageState extends State<IndexPage> {
   @override
@@ -28,10 +28,7 @@ class IndexPageState extends State<IndexPage> {
     _getdata();
   }
 
-
-
-
-    // Mostrar informacion del usuario en pantalla
+  // Mostrar informacion del usuario en pantalla
   void _getdata() async {
     // Se declara en user al usuario actual
     User? user = Auth().currentUser;
@@ -59,7 +56,6 @@ class IndexPageState extends State<IndexPage> {
     );
   }
 }
-
 
 class HalfCirclePainter extends CustomPainter {
   final Color color;
@@ -124,9 +120,9 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 15,
             child: Center(
               child: Text(
-                "$nombre",
+                "Bienvenido $nombre !",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,
                 ),
               ),
