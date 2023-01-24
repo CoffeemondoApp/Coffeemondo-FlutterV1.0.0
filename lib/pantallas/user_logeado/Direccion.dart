@@ -4,6 +4,9 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 import 'dart:async';
 
 class DireccionPage extends StatefulWidget {
@@ -73,7 +76,7 @@ class DireccionApp extends State<DireccionPage> {
           Padding(
             padding: const EdgeInsets.only(left: 190, top: 550, right: 40),
             child: ElevatedButton(
-                onPressed: _handlePressButton,
+                onPressed: _obtenerUbicacionActual,
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromARGB(255, 84, 14, 148)),
                 child: const Text("Buscar por ubicacion",
@@ -82,6 +85,40 @@ class DireccionApp extends State<DireccionPage> {
         ],
       ),
     );
+  }
+
+  //Funcion para obtener ubicacion actual del usuario con geoLocator y mostrarla en el mapa
+  Future<void> _obtenerUbicacionActual() async {
+    final ubicacion = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    final latitud = ubicacion.latitude;
+    final longitud = ubicacion.longitude;
+
+    final coordenadas = LatLng(latitud, longitud);
+    //Obtener direccion mas cercana a la ubicacion actual del usuario y mostrarla en el mapa
+    final direcciones = await placemarkFromCoordinates(latitud, longitud,
+        localeIdentifier: "es_CL");
+    //mostrar direcciones en consola
+    print(direcciones[0].street);
+    print(direcciones[0].subAdministrativeArea);
+    print(direcciones[0].administrativeArea);
+    print(direcciones[0].country);
+    final cameraPosition = CameraPosition(
+      target: coordenadas,
+      zoom: 15,
+    );
+
+    googleMapController
+        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+    final marker = Marker(
+        markerId: MarkerId("ubicacionActual"),
+        position: coordenadas,
+        infoWindow: InfoWindow(title: "Ubicacion actual"));
+
+    setState(() {
+      markersList.add(marker);
+    });
   }
 
   _guardarDireccion() {
