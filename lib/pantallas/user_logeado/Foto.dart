@@ -102,7 +102,8 @@ class FotoApp extends State<FotoPage> {
   String? errorMessage = '';
   bool isLogin = true;
   String tab = '';
-  String urlImage = 'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37';
+  String urlImage =
+      'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37';
 
   // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
@@ -324,27 +325,24 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 88.0,
+      height: 100,
       child: Stack(
         children: <Widget>[
           ClipPath(
             clipper: BackgroundAppBar(),
-            child: Image.asset(
-              'assets/Granos.png',
-              width: MediaQuery.of(context).size.width,
-              height: 100,
-              fit: BoxFit.cover,
+            child: Container(
+              color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
             ),
           ),
           Positioned(
             left: 0,
             right: 0,
-            bottom: 15,
+            bottom: 20,
             child: Center(
               child: Text(
                 "Perfil de usuario",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,
                 ),
               ),
@@ -356,7 +354,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(88.0);
+  Size get preferredSize => Size.fromHeight(100);
 }
 //CUSTOM APP BAR
 
