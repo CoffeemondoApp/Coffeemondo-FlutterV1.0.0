@@ -3,6 +3,7 @@
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -71,6 +72,11 @@ class InfoApp extends State<InfoPage> {
     } catch (e) {
       print("Error al intentar ingresar informacion");
     }
+  }
+
+  mostrarMapa() {
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => const DireccionPage()));
   }
 
   String nombre = '';
@@ -274,6 +280,7 @@ class InfoApp extends State<InfoPage> {
             )));
   }
 
+  //Formato telefono CL
   var maskFormatter = MaskTextInputFormatter(
       mask: '+(##) # ### ### ##)',
       filter: {"#": RegExp(r'[0-9]')},
@@ -319,6 +326,8 @@ class InfoApp extends State<InfoPage> {
     return TextField(
         inputFormatters: [maskFormatter],
         controller: controller,
+        readOnly: true,
+        onTap: (() => mostrarMapa()),
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
