@@ -47,11 +47,81 @@ class IndexPageState extends State<IndexPage> {
     });
   }
 
+  Widget FotoPerfil() {
+    return ElevatedButton(
+      onPressed: () {},
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: urlImage != ''
+            ? Image.network(
+                urlImage,
+                width: 220,
+                height: 220,
+                fit: BoxFit.cover,
+              )
+            : Image.asset(
+                'assets/user_img.png',
+                width: 220,
+              ),
+      ),
+      style: ElevatedButton.styleFrom(shape: CircleBorder()),
+    );
+  }
+
+  Widget AppBarcus() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 150,
+      color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
+      child: Stack(
+        children: <Widget>[
+          ClipPath(
+            clipper: BackgroundAppBar(),
+          ),
+          Positioned(
+              left: MediaQuery.of(context).size.width / 2 - 39,
+              top: 50,
+              child: Container(height: 65, width: 65, child: FotoPerfil())),
+          Positioned(
+            left: MediaQuery.of(context).size.width / 2 - 39,
+            top: 50,
+            child: CustomPaint(
+              painter: HalfCirclePainter(
+                  color: Color.fromARGB(255, 255, 79, 52),
+                  fillColor: Color.fromARGB(0xff, 0x52, 0x01, 0x9b)),
+              child: Container(
+                width: 65,
+                height: 65,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 15,
+            child: Center(
+              child: Text(
+                "Bienvenido $nombre !",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 255, 79, 52),
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
-      appBar: AppBarcustom(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(150),
+        child: AppBarcus(),
+      ),
       bottomNavigationBar: CustomBottomBar(),
     );
   }
