@@ -434,22 +434,40 @@ class InfoApp extends State<InfoPage> {
         //     padding: const EdgeInsets.only(left: 50, top: 130, right: 40),
         //     child: _Correo(_controladoremail)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 100, right: 40),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.10,
+                right: MediaQuery.of(context).size.width * 0.10,
+                top: MediaQuery.of(context).size.height * 0.05),
             child: _NombreApellido(_controladornombreApellido)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.10,
+                right: MediaQuery.of(context).size.width * 0.10,
+                top: MediaQuery.of(context).size.height * 0.03),
             child: _NombreUsuario(_controladornombreUsuario)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.10,
+                right: MediaQuery.of(context).size.width * 0.10,
+                top: MediaQuery.of(context).size.height * 0.03),
             child: _Edad(_controladoredad)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.10,
+                right: MediaQuery.of(context).size.width * 0.10,
+                top: MediaQuery.of(context).size.height * 0.03),
             child: _Telefono(_controladortelefono)),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.10,
+                right: MediaQuery.of(context).size.width * 0.10,
+                top: MediaQuery.of(context).size.height * 0.03),
             child: _Direccion(_controladordireccion)),
         Padding(
-            padding: const EdgeInsets.only(left: 10, top: 50, right: 40),
+            padding: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width * 0.10,
+                right: MediaQuery.of(context).size.width * 0.10,
+                top: MediaQuery.of(context).size.height * 0.08),
             child: BotonEditarInfo()),
       ])),
       bottomNavigationBar: CustomBottomBar(),
@@ -480,7 +498,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 20,
             child: Center(
               child: Text(
-                "Perfil de usuario",
+                "Editar perfil",
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,

@@ -249,18 +249,18 @@ class FotoApp extends State<FotoPage> {
         print('Actualizar Foto');
       },
       child: ClipRRect(
-          borderRadius: BorderRadius.circular(100.0),
+          borderRadius: BorderRadius.circular(200.0),
           child: pickedFile != null
               ? Image.file(
                   File(pickedFile!.path!),
-                  width: 220,
-                  height: 220,
+                  width: 350,
+                  height: 350,
                   fit: BoxFit.cover,
                 )
               : Image.network(
                   urlImage,
-                  width: 220,
-                  height: 220,
+                  width: 350,
+                  height: 350,
                   fit: BoxFit.cover,
                 )),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
@@ -297,21 +297,28 @@ class FotoApp extends State<FotoPage> {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: AppBarcustom(),
-      body: SingleChildScrollView(
-          child: Column(children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(left: 80, top: 80, right: 0),
-          child: FotoPerfil(),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 40),
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.04),
+                  child: FotoPerfil()),
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.05),
+                  child: BotonEditarFoto()),
+            ],
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 80, top: 50, right: 0),
-          child: BotonEditarFoto(),
-        ),
-        //Padding(
-        //padding: const EdgeInsets.only(left: 80, top: 30, right: 0),
-        //child: BotonEliminarFoto(),
-        //)
-      ])),
+      ),
+      //Padding(
+      //padding: const EdgeInsets.only(left: 80, top: 30, right: 0),
+      //child: BotonEliminarFoto(),
+      //)
+
       bottomNavigationBar: CustomBottomBar(),
     );
   }
@@ -340,7 +347,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 20,
             child: Center(
               child: Text(
-                "Perfil de usuario",
+                "Editar foto",
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,
