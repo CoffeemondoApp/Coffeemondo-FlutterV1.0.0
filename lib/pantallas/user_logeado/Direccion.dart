@@ -1,4 +1,5 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,7 +11,14 @@ import 'package:geocoding/geocoding.dart';
 import 'dart:async';
 
 class DireccionPage extends StatefulWidget {
-  const DireccionPage({super.key});
+  final String nombre_apellido;
+  final String nombre_usuario;
+  final String edad;
+  final String telefono;
+  final String direccion;
+  const DireccionPage(this.nombre_apellido, this.nombre_usuario, this.edad,
+      this.telefono, this.direccion,
+      {super.key});
 
   @override
   DireccionApp createState() => DireccionApp();
@@ -45,6 +53,9 @@ class DireccionApp extends State<DireccionPage> {
       body: Stack(
         children: [
           GoogleMap(
+            //Si direccionencontrada 0 es true, no se puede mover el mapa
+            scrollGesturesEnabled: direccionEncontrada[0] == false,
+            zoomGesturesEnabled: direccionEncontrada[0] == false,
             initialCameraPosition: initialCameraPosition,
             markers: markersList,
             mapType: MapType.hybrid,
@@ -53,19 +64,57 @@ class DireccionApp extends State<DireccionPage> {
               googleMapController = controller;
             },
           ),
-          Padding(
-              padding: const EdgeInsets.only(left: 130, top: 300),
+          Container(
+              //colocar container un poco mas abajo del centro de la pantalla
+              margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.2),
+              alignment: Alignment.center,
               child: direccionEncontrada[0] == true
-                  ? ElevatedButton(
-                      onPressed: _guardarDireccion,
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 84, 14, 148)),
-                      child: const Text("Guardar direccion",
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 255, 79, 52))))
+                  ? //generar columna con boton guardar direccion y otro boton con el icono de cerrar
+                  Column(
+                      //centrar columna de forma vertical y horizontal
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                          ElevatedButton(
+                              onPressed: _guardarDireccion,
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 84, 14, 148)),
+                              child: Text(direccionEncontrada[1].toString(),
+                                  style: TextStyle(
+                                      color:
+                                          Color.fromARGB(255, 255, 79, 52)))),
+                          ElevatedButton(
+                              onPressed: _guardarDireccion,
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 84, 14, 148)),
+                              child: const Text("Guardar direccion",
+                                  style: TextStyle(
+                                      color:
+                                          Color.fromARGB(255, 255, 79, 52)))),
+                          ElevatedButton(
+                              onPressed: () {
+                                //cambiar estado de direccionEncontrada a false
+                                setState(() {
+                                  direccionEncontrada[0] = false;
+                                  markersList.clear();
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 84, 14, 148)),
+                              child: const Icon(Icons.close,
+                                  color: Color.fromARGB(255, 255, 79, 52)))
+                        ])
                   : Container()),
+          //crear elevated button que sea responsive y que se ubique en la parte inferior izquierda de la pantalla y que al presionarlo se abra el buscador de direcciones
           Padding(
-            padding: const EdgeInsets.only(left: 10, top: 550, right: 40),
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).size.width * 0.005,
+              top: MediaQuery.of(context).size.height * 0.80,
+            ),
             child: ElevatedButton(
                 onPressed: _handlePressButton,
                 style: ElevatedButton.styleFrom(
@@ -74,7 +123,10 @@ class DireccionApp extends State<DireccionPage> {
                     style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)))),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 190, top: 550, right: 40),
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).size.width * 0.43,
+              top: MediaQuery.of(context).size.height * 0.80,
+            ),
             child: ElevatedButton(
                 onPressed: _obtenerUbicacionActual,
                 style: ElevatedButton.styleFrom(
@@ -85,6 +137,13 @@ class DireccionApp extends State<DireccionPage> {
         ],
       ),
     );
+  }
+
+  //funcion mostrar marcadore en el mapa
+  void _mostrarMarcador(Marker marker) {
+    setState(() {
+      markersList.add(marker);
+    });
   }
 
   //Funcion para obtener ubicacion actual del usuario con geoLocator y mostrarla en el mapa
@@ -98,6 +157,9 @@ class DireccionApp extends State<DireccionPage> {
     //Obtener direccion mas cercana a la ubicacion actual del usuario y mostrarla en el mapa
     final direcciones = await placemarkFromCoordinates(latitud, longitud,
         localeIdentifier: "es_CL");
+    direccionEncontrada[0] = true;
+    direccionEncontrada[1] = direcciones[0].street.toString();
+    print(direccionEncontrada);
     //mostrar direcciones en consola
     print(direcciones[0].street);
     print(direcciones[0].subAdministrativeArea);
@@ -105,7 +167,7 @@ class DireccionApp extends State<DireccionPage> {
     print(direcciones[0].country);
     final cameraPosition = CameraPosition(
       target: coordenadas,
-      zoom: 15,
+      zoom: 18,
     );
 
     googleMapController
@@ -116,13 +178,21 @@ class DireccionApp extends State<DireccionPage> {
         position: coordenadas,
         infoWindow: InfoWindow(title: "Ubicacion actual"));
 
-    setState(() {
-      markersList.add(marker);
-    });
+    _mostrarMarcador(marker);
   }
 
   _guardarDireccion() {
     print(direccionEncontrada[1]);
+
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => InfoPage(
+                widget.nombre_apellido,
+                widget.nombre_usuario,
+                widget.edad,
+                widget.telefono,
+                direccionEncontrada[1].toString())));
   }
 
   Future<void> _handlePressButton() async {
@@ -175,6 +245,8 @@ class DireccionApp extends State<DireccionPage> {
     final lng = detail.result.geometry!.location.lng;
 
     markersList.clear();
+    //Si direccionEncontrada[0] es false, dejar de mostrar el marcador de la ubicacion actual del usuario
+
     markersList.add(Marker(
         markerId: const MarkerId("0"),
         position: LatLng(lat, lng),

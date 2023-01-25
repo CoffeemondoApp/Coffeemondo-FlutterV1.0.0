@@ -12,8 +12,17 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+//Obtener variable desde direccion.dart
+
 class InfoPage extends StatefulWidget {
-  const InfoPage({super.key});
+  final String nombreapellido_escrito;
+  final String nombreusuario_escrito;
+  final String telefono_escrito;
+  final String edad_escrito;
+  final String direccion_encontrada;
+  const InfoPage(this.nombreapellido_escrito, this.nombreusuario_escrito,
+      this.edad_escrito, this.telefono_escrito, this.direccion_encontrada,
+      {super.key});
 
   @override
   InfoApp createState() => InfoApp();
@@ -37,7 +46,7 @@ class InfoApp extends State<InfoPage> {
 
   String? errorMessage = '';
   bool isLogin = true;
-
+  bool fechaSeleccionada = false;
   // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
 
@@ -75,15 +84,21 @@ class InfoApp extends State<InfoPage> {
   }
 
   mostrarMapa() {
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => const DireccionPage()));
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DireccionPage(
+                _controladornombreApellido.text,
+                _controladornombreUsuario.text,
+                _controladoredad.text,
+                _controladortelefono.text,
+                _controladordireccion.text)));
   }
 
   String nombre = '';
   String nickname = '';
   String cumpleanos = '';
   String telefono = '';
-  String direccion = '';
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
@@ -137,6 +152,7 @@ class InfoApp extends State<InfoPage> {
 
   var mes_nacimiento = '';
   void getMes(numero_mes) {
+    fechaSeleccionada = true;
     var meses = [
       'Enero',
       'Febrero',
@@ -225,6 +241,9 @@ class InfoApp extends State<InfoPage> {
                 mes_nacimiento +
                 ' de ' +
                 pickeddate.year.toString();
+            print(string_fecha);
+            print("esta es la fecha ingresada");
+
             _controladoredad.text = string_fecha;
           });
         }
@@ -343,7 +362,7 @@ class InfoApp extends State<InfoPage> {
               borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
             ),
             border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.location_city_outlined,
+            prefixIcon: Icon(Icons.location_on,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
             hintText: 'D i r e c c i o n',
             hintStyle: TextStyle(
@@ -381,10 +400,30 @@ class InfoApp extends State<InfoPage> {
 
   Widget build(BuildContext context) {
     //          VALORES INICIALES TEXTFIELD EDITAR INFORMACION
-    _controladornombreApellido.text = nombre;
-    _controladornombreUsuario.text = nickname;
-    _controladoredad.text = cumpleanos;
-    _controladortelefono.text = telefono;
+    print(widget.direccion_encontrada);
+    print(fechaSeleccionada);
+    //si widget.direccion_encontrada es null, entonces se muestra la direccion del usuario
+    if (widget.direccion_encontrada == '') {
+      print("esta vacia");
+      if (nombre.isNotEmpty &&
+          nickname.isNotEmpty &&
+          cumpleanos.isNotEmpty &&
+          telefono.isNotEmpty) {
+        _controladornombreApellido.text = nombre;
+        _controladornombreUsuario.text = nickname;
+        _controladortelefono.text = telefono;
+        _controladoredad.text = cumpleanos;
+      } else {
+        print("los atributos del usuario estan vacios");
+      }
+    } else {
+      print("esta es la direccion encontrada: ${widget.direccion_encontrada}");
+      _controladornombreApellido.text = widget.nombreapellido_escrito;
+      _controladornombreUsuario.text = widget.nombreusuario_escrito;
+      _controladortelefono.text = widget.telefono_escrito;
+      _controladoredad.text = widget.edad_escrito;
+      _controladordireccion.text = widget.direccion_encontrada;
+    }
 
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),

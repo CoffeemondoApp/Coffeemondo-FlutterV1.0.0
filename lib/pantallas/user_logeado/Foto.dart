@@ -451,7 +451,8 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => InfoPage()),
+                      MaterialPageRoute(
+                          builder: (context) => InfoPage('', '', '', '', '')),
                     );
                   },
                 ),

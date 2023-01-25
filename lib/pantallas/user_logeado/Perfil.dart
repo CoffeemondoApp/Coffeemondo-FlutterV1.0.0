@@ -47,6 +47,7 @@ class PerfilApp extends State<PerfilPage> {
   final TextEditingController _controladortelefono = TextEditingController();
   final TextEditingController _controladornombreUsuario =
       TextEditingController();
+  final TextEditingController _controladordireccion = TextEditingController();
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
@@ -311,6 +312,37 @@ class PerfilApp extends State<PerfilPage> {
     );
   }
 
+  Widget _Direccion(
+    TextEditingController controller,
+  ) {
+    return TextField(
+        controller: controller,
+        readOnly: true,
+        // onChanged: (((value) => validarCorreo())),
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 14.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
+        ),
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.location_on,
+                color: Color.fromARGB(255, 255, 79, 52), size: 24),
+            hintText: 'D i r e c c i o n',
+            hintStyle: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148),
+            )));
+  }
+
   // Widget de boton para cerrar sesion
   Widget botonCerrarSesion() {
     return Container(
@@ -365,6 +397,9 @@ class PerfilApp extends State<PerfilPage> {
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
             child: _Telefono(_controladortelefono)),
+        Padding(
+            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
+            child: _Direccion(_controladordireccion)),
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 15, right: 40),
             child: botonCerrarSesion()),
@@ -478,7 +513,8 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => InfoPage()),
+                      MaterialPageRoute(
+                          builder: (context) => InfoPage('', '', '', '', '')),
                     );
                   },
                 ),
