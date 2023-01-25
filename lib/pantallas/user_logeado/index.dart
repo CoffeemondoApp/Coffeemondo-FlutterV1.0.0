@@ -51,17 +51,17 @@ class IndexPageState extends State<IndexPage> {
     return ElevatedButton(
       onPressed: () {},
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(100),
+        borderRadius: BorderRadius.circular(160),
         child: urlImage != ''
             ? Image.network(
                 urlImage,
-                width: 220,
-                height: 220,
+                width: 120,
+                height: 120,
                 fit: BoxFit.cover,
               )
             : Image.asset(
                 'assets/user_img.png',
-                width: 220,
+                width: 120,
               ),
       ),
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
@@ -70,45 +70,17 @@ class IndexPageState extends State<IndexPage> {
 
   Widget AppBarcus() {
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 150,
-      color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
-      child: Stack(
-        children: <Widget>[
-          ClipPath(
-            clipper: BackgroundAppBar(),
+      //darle un ancho y alto al container respecto al tamaño de la pantalla
+
+      height: 200,
+      color: Color.fromARGB(0, 0, 0, 0),
+      child: Column(
+        children: [
+          Container(
+            height: 160,
+            color: Color.fromARGB(255, 84, 14, 148),
           ),
-          Positioned(
-              left: MediaQuery.of(context).size.width / 2 - 39,
-              top: 50,
-              child: Container(height: 65, width: 65, child: FotoPerfil())),
-          Positioned(
-            left: MediaQuery.of(context).size.width / 2 - 39,
-            top: 50,
-            child: CustomPaint(
-              painter: HalfCirclePainter(
-                  color: Color.fromARGB(255, 255, 79, 52),
-                  fillColor: Color.fromARGB(0xff, 0x52, 0x01, 0x9b)),
-              child: Container(
-                width: 65,
-                height: 65,
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 15,
-            child: Center(
-              child: Text(
-                "Bienvenido $nombre !",
-                style: TextStyle(
-                  color: Color.fromARGB(255, 255, 79, 52),
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
+          Container()
         ],
       ),
     );
@@ -116,11 +88,112 @@ class IndexPageState extends State<IndexPage> {
 
   @override
   Widget build(BuildContext context) {
+    //Variables para la barra de progreso
+    var ancho_progressbar = 200.0;
+    var puntaje_actual = 180.0;
+    var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
+    var puntaje_nivel = 200.0;
+    var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
+    var porcentaje = puntaje_actual / puntaje_nivel;
+    var nivel = 1;
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(150),
-        child: AppBarcus(),
+        preferredSize: Size.fromHeight(170),
+        child: Stack(
+          children: [
+            AppBarcus(),
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.1),
+                  child: FotoPerfil(),
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.06),
+                      child: Text(
+                        'Bienvenido $nombre!',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.05),
+                        child: //Crear barra de progreso para mostrar el nivel del usuario
+                            Column(
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.35),
+                                  child: Text(
+                                    'Nivel $nivel',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Text(
+                                  '$puntaje_actual_string/$puntaje_nivel_string',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height *
+                                      0.01),
+                              width: puntaje_nivel,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      child: Text(
+                                        '${(porcentaje * 100).toStringAsFixed(0)}%',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    width: ancho_progressbar * porcentaje,
+                                    height: 25,
+                                    decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 255, 79, 52),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
+                )
+              ],
+            )
+          ],
+        ),
       ),
       bottomNavigationBar: CustomBottomBar(),
     );
