@@ -35,6 +35,7 @@ class PerfilApp extends State<PerfilPage> {
   String nickname = '';
   String cumpleanos = '';
   String telefono = '';
+  String direccion = '';
   String urlImage = '';
 
   String? errorMessage = '';
@@ -64,6 +65,7 @@ class PerfilApp extends State<PerfilPage> {
         nickname = userData.data()!['nickname'];
         cumpleanos = userData.data()!['cumpleanos'];
         telefono = userData.data()!['telefono'];
+        direccion = userData.data()!['direccion'];
         urlImage = userData.data()!['urlImage'];
       });
     });
@@ -335,7 +337,7 @@ class PerfilApp extends State<PerfilPage> {
             border: OutlineInputBorder(),
             prefixIcon: Icon(Icons.location_on,
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
-            hintText: 'D i r e c c i o n',
+            hintText: direccion,
             hintStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w900,

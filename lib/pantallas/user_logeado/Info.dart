@@ -71,6 +71,7 @@ class InfoApp extends State<InfoPage> {
       docRef.update({
         'nombre': _controladornombreApellido.text,
         'nickname': _controladornombreUsuario.text,
+        'direccion': _controladordireccion.text,
         'cumpleanos': _controladoredad.text,
         'telefono': _controladortelefono.text,
       });
@@ -99,6 +100,7 @@ class InfoApp extends State<InfoPage> {
   String nickname = '';
   String cumpleanos = '';
   String telefono = '';
+  String direccion = '';
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
@@ -113,6 +115,7 @@ class InfoApp extends State<InfoPage> {
         // Se setea en variables la informacion recopilada del usuario extraido de los campos de la BD de FireStore
         nombre = userData.data()!['nombre'];
         nickname = userData.data()!['nickname'];
+        direccion = userData.data()!['direccion'];
         cumpleanos = userData.data()!['cumpleanos'];
         telefono = userData.data()!['telefono'];
       });
@@ -413,6 +416,7 @@ class InfoApp extends State<InfoPage> {
         _controladornombreUsuario.text = nickname;
         _controladortelefono.text = telefono;
         _controladoredad.text = cumpleanos;
+        _controladordireccion.text = direccion;
       } else {
         print("los atributos del usuario estan vacios");
       }

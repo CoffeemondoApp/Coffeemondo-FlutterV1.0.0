@@ -44,6 +44,7 @@ class LoginApp extends State<Login> {
           'nombre': 'Sin informacion de nombre y apellido',
           'urlImage': 'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
           'telefono': 'Sin informacion de telefono',
+          'direccion': 'Sin informacion de direccion',
         });
       }
       Navigator.pushReplacement(
@@ -72,7 +73,7 @@ class LoginApp extends State<Login> {
           'nickname': 'sin informacion de nombre de usuario',
           'nombre': 'Sin informacion de nombre y apellido',
           'urlImage': 'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
-          'telefono': 'Sin informacion de telefono',
+          'direccion': 'Sin informacion de direccion',
         });
       }
       Navigator.push(
