@@ -355,9 +355,7 @@ class PerfilApp extends State<PerfilPage> {
           painter: BackgroundButton1(),
           child: InkWell(
             onTap: () => [
-              cerrarSesion(),
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => Login()))
+              _MostrarAlerta(context),
             ],
             child: Center(
               child: Text(
@@ -371,6 +369,38 @@ class PerfilApp extends State<PerfilPage> {
           ),
         ),
       ),
+    );
+  }
+
+  //Widget AlerDialog
+
+  Widget AlertaCerrarSesion() {
+    return AlertDialog(
+      title: Text('Cerrar Sesion'),
+      content: Text('Usted desea cerrar su sesion en este dispositivo?'),
+      actions: <Widget>[
+        FloatingActionButton(
+          child: Text('Si'),
+          onPressed: () {
+            cerrarSesion();
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Login()));
+          },
+        ),
+        FloatingActionButton(
+            child: Text('No'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }),
+      ],
+    );
+  }
+
+  //Mostrar AlerDialog
+  Future<void> _MostrarAlerta(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (_) => AlertaCerrarSesion(),
     );
   }
 
