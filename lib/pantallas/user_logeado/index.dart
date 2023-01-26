@@ -19,6 +19,12 @@ String nombre = '';
 String nickname = '';
 String cumpleanos = '';
 String urlImage = '';
+var puntaje_actual = 180.0;
+var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
+var puntaje_nivel = 200.0;
+var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
+var porcentaje = puntaje_actual / puntaje_nivel;
+var nivel = 1;
 
 class IndexPageState extends State<IndexPage> {
   @override
@@ -87,15 +93,86 @@ class IndexPageState extends State<IndexPage> {
   }
 
   @override
+  Widget _textoAppBar() {
+    return (Text(
+      'Bienvenido $nombre!',
+      style: TextStyle(
+          color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+    ));
+  }
+
+  @override
+  Widget _textoProgressBar() {
+    return (Row(
+      children: [
+        Padding(
+          padding:
+              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.35),
+          child: Text(
+            'Nivel $nivel',
+            style: TextStyle(
+                color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Text(
+          '$puntaje_actual_string/$puntaje_nivel_string',
+          style: TextStyle(
+              color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+      ],
+    ));
+  }
+
+  @override
+  Widget _barraProgressBar() {
+    return (Container(
+      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
+      width: puntaje_nivel,
+      height: 25,
+      decoration: BoxDecoration(
+        color: Color.fromARGB(111, 0, 0, 0),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Container(
+            child: Container(
+              margin: EdgeInsets.only(top: 3),
+              child: Text(
+                '${(porcentaje * 100).toStringAsFixed(0)}%',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            width: puntaje_nivel * porcentaje,
+            height: 25,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 255, 79, 52),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ],
+      ),
+    ));
+  }
+
+  @override
+  Widget _ProgressBar() {
+    return (Column(
+      children: [
+        _textoProgressBar(),
+        _barraProgressBar(),
+      ],
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     //Variables para la barra de progreso
-    var ancho_progressbar = 200.0;
-    var puntaje_actual = 180.0;
-    var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
-    var puntaje_nivel = 200.0;
-    var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
-    var porcentaje = puntaje_actual / puntaje_nivel;
-    var nivel = 1;
+
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: PreferredSize(
@@ -113,81 +190,15 @@ class IndexPageState extends State<IndexPage> {
                 Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.06),
-                      child: Text(
-                        'Bienvenido $nombre!',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.06),
+                        child: _textoAppBar()),
                     Padding(
                         padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.05),
-                        child: //Crear barra de progreso para mostrar el nivel del usuario
-                            Column(
-                          children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      right: MediaQuery.of(context).size.width *
-                                          0.35),
-                                  child: Text(
-                                    'Nivel $nivel',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Text(
-                                  '$puntaje_actual_string/$puntaje_nivel_string',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height *
-                                      0.01),
-                              width: puntaje_nivel,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 3),
-                                      child: Text(
-                                        '${(porcentaje * 100).toStringAsFixed(0)}%',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                    width: ancho_progressbar * porcentaje,
-                                    height: 25,
-                                    decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 255, 79, 52),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )),
+                            top: MediaQuery.of(context).size.height * 0.09),
+                        child:
+                            _ProgressBar() //Crear barra de progreso para mostrar el nivel del usuario
+                        ),
                   ],
                 )
               ],

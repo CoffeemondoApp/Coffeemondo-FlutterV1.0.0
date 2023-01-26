@@ -46,7 +46,10 @@ class InfoApp extends State<InfoPage> {
 
   String? errorMessage = '';
   bool isLogin = true;
-  bool fechaSeleccionada = false;
+  // Este estado define si el usuario aun no ha editado ningun textField,
+  //si edita alguno, se dejan de recibir en tiempo real los datos de la bbdd
+  //para asi poder modificar los campos sin ser reseteados
+  bool estadoInicial = true;
   // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
 
@@ -127,6 +130,11 @@ class InfoApp extends State<InfoPage> {
     TextEditingController controller,
   ) {
     return TextField(
+        onTap: () {
+          setState(() {
+            estadoInicial = false;
+          });
+        },
         controller: controller,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
@@ -155,7 +163,6 @@ class InfoApp extends State<InfoPage> {
 
   var mes_nacimiento = '';
   void getMes(numero_mes) {
-    fechaSeleccionada = true;
     var meses = [
       'Enero',
       'Febrero',
@@ -246,7 +253,7 @@ class InfoApp extends State<InfoPage> {
                 pickeddate.year.toString();
             print(string_fecha);
             print("esta es la fecha ingresada");
-
+            estadoInicial = false;
             _controladoredad.text = string_fecha;
           });
         }
@@ -276,6 +283,12 @@ class InfoApp extends State<InfoPage> {
     TextEditingController controller,
   ) {
     return TextField(
+        onTap: () {
+          setState(() {
+            estadoInicial = false;
+          });
+        },
+        //darle un texto inicial al textfield para que se vea el texto de ejemplo y no el hinttext que es el texto que se muestra cuando no hay nada escrito
         controller: controller,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
@@ -313,6 +326,11 @@ class InfoApp extends State<InfoPage> {
     TextEditingController controller,
   ) {
     return TextField(
+        onTap: () {
+          setState(() {
+            estadoInicial = false;
+          });
+        },
         keyboardType: TextInputType.phone,
         inputFormatters: [maskFormatter],
         controller: controller,
@@ -349,7 +367,7 @@ class InfoApp extends State<InfoPage> {
         inputFormatters: [maskFormatter],
         controller: controller,
         readOnly: true,
-        onTap: (() => mostrarMapa()),
+        onTap: (() => {mostrarMapa(), estadoInicial = false}),
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
@@ -404,14 +422,15 @@ class InfoApp extends State<InfoPage> {
   Widget build(BuildContext context) {
     //          VALORES INICIALES TEXTFIELD EDITAR INFORMACION
     print(widget.direccion_encontrada);
-    print(fechaSeleccionada);
+    print(estadoInicial);
     //si widget.direccion_encontrada es null, entonces se muestra la direccion del usuario
     if (widget.direccion_encontrada == '') {
       print("esta vacia");
       if (nombre.isNotEmpty &&
           nickname.isNotEmpty &&
           cumpleanos.isNotEmpty &&
-          telefono.isNotEmpty) {
+          telefono.isNotEmpty &&
+          estadoInicial == true) {
         _controladornombreApellido.text = nombre;
         _controladornombreUsuario.text = nickname;
         _controladortelefono.text = telefono;
