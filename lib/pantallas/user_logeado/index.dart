@@ -28,7 +28,7 @@ num puntaje_nivel = 200;
 var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
 var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 1;
-var niveluser ;
+var niveluser;
 var inicio = '';
 
 //Crear lista de niveles con sus respectivos datos
@@ -293,9 +293,27 @@ class IndexPageState extends State<IndexPage> {
         puntaje_actual += 10;
         porcentaje = puntaje_actual / puntaje_nivel;
         puntaje_actual_string = puntaje_actual.toString();
-        _visible = !_visible;
       });
     }
+
+    //Crear funcion para detectar cuando el nivel inicial es diferente al nivel actual
+    _subirNivel() {
+      if (nivel != niveluser) {
+        setState(() {
+          niveluser = nivel;
+          _visible = !_visible;
+          //Cambiar estado de _visible luego de 3 segundos
+          Future.delayed(Duration(seconds: 3), () {
+            setState(() {
+              _visible = !_visible;
+            });
+          });
+        });
+      }
+    }
+
+    _subirNivel();
+    print(nivel.toString() + ' ' + niveluser.toString());
 
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
