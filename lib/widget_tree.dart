@@ -24,6 +24,11 @@ class WidgetTree extends StatefulWidget {
 class _WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
+    //Crear funcion para obtener la hora, minuto y segundo actual
+    String _obtenerHoraInicial() {
+      return DateTime.now().toString();
+    }
+
     return StreamBuilder(
       // Se llama la clase Auth de auth.dart
       stream: Auth().authStateChanges,
@@ -31,7 +36,7 @@ class _WidgetTreeState extends State<WidgetTree> {
         if (snapshot.hasData) {
           // Si existe informacion de usuario redirige a HomePage
           // PerfilPage == editar perfil -o- Index == pagina index por defecto usuario
-          return const IndexPage();
+          return IndexPage((_obtenerHoraInicial()));
         } else {
           // Si no existe informacion de usuario redirige a LoginPage para iniciar o registrar un usuario
           return const MyApp();

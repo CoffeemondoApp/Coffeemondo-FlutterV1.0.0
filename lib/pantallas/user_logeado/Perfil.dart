@@ -14,7 +14,8 @@ import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/login.dart';
 
 class PerfilPage extends StatefulWidget {
-  const PerfilPage({super.key});
+  final String tiempo_inicio;
+  const PerfilPage(this.tiempo_inicio, {super.key});
 
   @override
   PerfilApp createState() => PerfilApp();
@@ -405,6 +406,8 @@ class PerfilApp extends State<PerfilPage> {
   }
 
   Widget build(BuildContext context) {
+    print('esto pasa ' + widget.tiempo_inicio);
+    print('fecha actual' + DateTime.now().toString());
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: AppBarcustom(),
@@ -556,7 +559,8 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => IndexPage()),
+                      MaterialPageRoute(
+                          builder: (context) => IndexPage(inicio)),
                     );
                   },
                 ),

@@ -92,8 +92,8 @@ class FotoApp extends State<FotoPage> {
       docRef.update({'urlImage': await subirImagen()});
       print('Ingreso de informacion exitoso.');
       // Una vez que se sube la imagen y se reemplaza el campo de urlImage por la de la imagen alojada en Storage, se redirige al usuario a InfoUser para ver su informacion
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage('0')));
     } catch (e) {
       print("Error al intentar ingresar informacion");
     }
@@ -444,7 +444,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PerfilPage()),
+                      MaterialPageRoute(builder: (context) => PerfilPage('0')),
                     );
                   },
                 ),

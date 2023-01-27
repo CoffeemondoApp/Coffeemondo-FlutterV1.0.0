@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,8 @@ import 'Perfil.dart';
 import 'dart:math' as math;
 
 class IndexPage extends StatefulWidget {
-  const IndexPage({super.key});
+  final String tiempo_inicio;
+  const IndexPage(this.tiempo_inicio, {super.key});
 
   @override
   IndexPageState createState() => IndexPageState();
@@ -19,12 +22,49 @@ String nombre = '';
 String nickname = '';
 String cumpleanos = '';
 String urlImage = '';
-var puntaje_actual = 180.0;
+num puntaje_actual = 180;
 var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
-var puntaje_nivel = 200.0;
+num puntaje_nivel = 200;
 var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
 var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 1;
+var inicio = '';
+
+//Crear lista de niveles con sus respectivos datos
+List<Map<String, dynamic>> niveles = [
+  {'nivel': 1, 'puntaje_nivel': 400, 'porcentaje': 0.0},
+  {'nivel': 2, 'puntaje_nivel': 800, 'porcentaje': 0.0},
+  {'nivel': 3, 'puntaje_nivel': 1200, 'porcentaje': 0.0},
+  {'nivel': 4, 'puntaje_nivel': 1600, 'porcentaje': 0.0},
+  {'nivel': 5, 'puntaje_nivel': 2000, 'porcentaje': 0.0},
+  {'nivel': 6, 'puntaje_nivel': 2400, 'porcentaje': 0.0},
+  {'nivel': 7, 'puntaje_nivel': 2800, 'porcentaje': 0.0},
+  {'nivel': 8, 'puntaje_nivel': 3200, 'porcentaje': 0.0},
+  {'nivel': 9, 'puntaje_nivel': 3600, 'porcentaje': 0.0},
+  {'nivel': 10, 'puntaje_nivel': 4000, 'porcentaje': 0.0},
+  {'nivel': 11, 'puntaje_nivel': 4400, 'porcentaje': 0.0},
+  {'nivel': 12, 'puntaje_nivel': 4800, 'porcentaje': 0.0},
+  {'nivel': 13, 'puntaje_nivel': 5200, 'porcentaje': 0.0},
+  {'nivel': 14, 'puntaje_nivel': 5600, 'porcentaje': 0.0},
+  {'nivel': 15, 'puntaje_nivel': 6000, 'porcentaje': 0.0},
+  {'nivel': 16, 'puntaje_nivel': 6400, 'porcentaje': 0.0},
+  {'nivel': 17, 'puntaje_nivel': 6800, 'porcentaje': 0.0},
+  {'nivel': 18, 'puntaje_nivel': 7200, 'porcentaje': 0.0},
+];
+//Crear funcion que retorne en una lista el nivel del usuario y el porcentaje de progreso
+List<Map<String, dynamic>> getNivel() {
+  for (var i = 0; i < niveles.length; i++) {
+    if (puntaje_actual < niveles[i]['puntaje_nivel']) {
+      nivel = niveles[i]['nivel'];
+      porcentaje = puntaje_actual / niveles[i]['puntaje_nivel'];
+      puntaje_nivel = niveles[i]['puntaje_nivel'];
+      break;
+    }
+  }
+  return [
+    {'nivel': nivel, 'porcentaje': porcentaje, 'puntaje_nivel': puntaje_nivel},
+  ];
+}
 
 class IndexPageState extends State<IndexPage> {
   @override
@@ -32,6 +72,7 @@ class IndexPageState extends State<IndexPage> {
     super.initState();
     // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
     _getdata();
+    print('Inicio: ' + widget.tiempo_inicio);
   }
 
   // Mostrar informacion del usuario en pantalla
@@ -49,6 +90,7 @@ class IndexPageState extends State<IndexPage> {
         nickname = userData.data()!['nickname'];
         cumpleanos = userData.data()!['cumpleanos'];
         urlImage = userData.data()!['urlImage'];
+        inicio = widget.tiempo_inicio;
       });
     });
   }
@@ -103,19 +145,22 @@ class IndexPageState extends State<IndexPage> {
 
   @override
   Widget _textoProgressBar() {
+    //Obtener nivel de getNivel()
+    int nivel_usuario = getNivel()[0]['nivel'];
+    int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
     return (Row(
       children: [
         Padding(
           padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.35),
+              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
           child: Text(
-            'Nivel $nivel',
+            'Nivel $nivel_usuario',
             style: TextStyle(
                 color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
-          '$puntaje_actual_string/$puntaje_nivel_string',
+          '$puntaje_actual_string/$puntaje_nivel',
           style: TextStyle(
               color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
         ),
@@ -126,8 +171,9 @@ class IndexPageState extends State<IndexPage> {
   @override
   Widget _barraProgressBar() {
     return (Container(
-      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
-      width: puntaje_nivel,
+      margin: EdgeInsets.only(
+          top: MediaQuery.of(context).size.height * 0.01, right: 100),
+      width: 100,
       height: 25,
       decoration: BoxDecoration(
         color: Color.fromARGB(111, 0, 0, 0),
@@ -147,7 +193,7 @@ class IndexPageState extends State<IndexPage> {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            width: puntaje_nivel * porcentaje,
+            width: 100,
             height: 25,
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 255, 79, 52),
@@ -169,10 +215,42 @@ class IndexPageState extends State<IndexPage> {
     ));
   }
 
+  //Funcion para calcular cuanto tiempo lleva el usuario en la aplicacion y actualizar el puntaje
+  String _calcularTiempo() {
+    //Se obtiene la fecha y hora actual
+    var now = new DateTime.now();
+    //Se obtiene la fecha y hora de inicio de sesion
+    var inicio = DateTime.parse(widget.tiempo_inicio);
+    //Se calcula la diferencia entre la fecha y hora actual y la fecha y hora de inicio de sesion
+    var diferencia = now.difference(inicio);
+    //Se calcula el tiempo en minutos
+    var tiempo_hora = diferencia.inHours;
+    var tiempo_minutos = diferencia.inMinutes;
+    var tiempo_segundos = diferencia.inSeconds;
+
+    return '$tiempo_hora/$tiempo_minutos/$tiempo_segundos';
+  }
+
   @override
   Widget build(BuildContext context) {
-    //Variables para la barra de progreso
+    //imprimir el tiempo que lleva el usuario en la aplicacion
+    print(_calcularTiempo());
 
+    _recompensa() {
+      if (int.parse(_calcularTiempo().split('/')[2]) == 10) {
+        print('Recompensa por estar 10 secs en la app, has ganado 10 pts');
+        setState(() {
+          puntaje_actual += 10;
+          porcentaje = puntaje_actual / puntaje_nivel;
+          puntaje_actual_string = puntaje_actual.toString();
+        });
+      }
+    }
+
+    //Hacer que _recompensa se ejecute todo el tiempo
+    //Timer.periodic(Duration(seconds: 2), (timer) {
+    //_recompensa();
+    //});
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: PreferredSize(
@@ -195,7 +273,7 @@ class IndexPageState extends State<IndexPage> {
                         child: _textoAppBar()),
                     Padding(
                         padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.09),
+                            top: MediaQuery.of(context).size.height * 0.055),
                         child:
                             _ProgressBar() //Crear barra de progreso para mostrar el nivel del usuario
                         ),
@@ -204,6 +282,22 @@ class IndexPageState extends State<IndexPage> {
               ],
             )
           ],
+        ),
+      ),
+      body: //Crear boton al centro para mostrar el retorn de la funcion _calcularTiempo()
+          Center(
+        child: ElevatedButton(
+          onPressed: () {
+            print(_calcularTiempo());
+            //aumentar en 10 el puntaje actual
+            setState(() {
+              puntaje_actual += 10;
+              porcentaje = puntaje_actual / puntaje_nivel;
+              puntaje_actual_string = puntaje_actual.toString();
+            });
+            //ejecutar funcion nivelActual
+          },
+          child: Text('Subir 100pts'),
         ),
       ),
       bottomNavigationBar: CustomBottomBar(),
@@ -354,10 +448,11 @@ class CustomBottomBar extends StatelessWidget {
                   text: 'Configuracion',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
+                    //Exportar la variable tiempo_inicio
                     Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => PerfilPage()),
-                    );
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PerfilPage(inicio)));
                   },
                 ),
               ]),

@@ -42,13 +42,14 @@ class LoginApp extends State<Login> {
           'cumpleanos': 'Sin informacion de edad',
           'nickname': 'Sin informacion de nombre de usuario',
           'nombre': 'Sin informacion de nombre y apellido',
-          'urlImage': 'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
+          'urlImage':
+              'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
           'telefono': 'Sin informacion de telefono',
           'direccion': 'Sin informacion de direccion',
         });
       }
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage('0')));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No se ha encontrado un usuario asociado a este email.');
@@ -73,12 +74,13 @@ class LoginApp extends State<Login> {
           'nickname': 'sin informacion de nombre de usuario',
           'nombre': 'Sin informacion de nombre y apellido',
           'telefono': 'Sin informacion de telefono',
-          'urlImage': 'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
+          'urlImage':
+              'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
           'direccion': 'Sin informacion de direccion',
         });
       }
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage('0')));
       print('Inicio de sesion con google satisfactorio.');
     } on FirebaseAuthException catch (e) {
       print(e.message);

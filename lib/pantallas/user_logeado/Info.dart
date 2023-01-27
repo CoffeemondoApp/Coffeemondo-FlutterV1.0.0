@@ -80,8 +80,8 @@ class InfoApp extends State<InfoPage> {
       });
       print('Ingreso de informacion exitoso.');
       // Una vez actualizada la informacion, se devuelve a InfoUser para mostrar su nueva informacion
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const PerfilPage()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage('0')));
     } catch (e) {
       print("Error al intentar ingresar informacion");
     }
@@ -393,6 +393,8 @@ class InfoApp extends State<InfoPage> {
             )));
   }
 
+  //Funcion para saber cuanto tiempo lleva el usuario en la app
+
   Widget BotonEditarInfo() {
     return Container(
       child: Container(
@@ -588,7 +590,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PerfilPage()),
+                      MaterialPageRoute(builder: (context) => PerfilPage('0')),
                     );
                   },
                 ),
@@ -612,7 +614,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => IndexPage()),
+                      MaterialPageRoute(builder: (context) => IndexPage('0')),
                     );
                   },
                 ),
