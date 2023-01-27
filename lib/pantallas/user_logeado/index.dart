@@ -56,7 +56,15 @@ List<Map<String, dynamic>> getNivel() {
   for (var i = 0; i < niveles.length; i++) {
     if (puntaje_actual < niveles[i]['puntaje_nivel']) {
       nivel = niveles[i]['nivel'];
-      porcentaje = puntaje_actual / niveles[i]['puntaje_nivel'];
+      porcentaje = (puntaje_actual) / niveles[i]['puntaje_nivel'];
+      //Cuando sube de nivel se reinicia el porcentaje
+      if (nivel > 1) {
+        porcentaje =
+            (puntaje_actual.toDouble() - niveles[i - 1]['puntaje_nivel']) /
+                (niveles[i]['puntaje_nivel'] - niveles[i - 1]['puntaje_nivel']);
+        print((niveles[i]['puntaje_nivel'] - puntaje_actual.toDouble()));
+      }
+
       puntaje_nivel = niveles[i]['puntaje_nivel'];
       break;
     }
@@ -137,7 +145,7 @@ class IndexPageState extends State<IndexPage> {
   @override
   Widget _textoAppBar() {
     return (Text(
-      'Bienvenido $nombre!',
+      "Bienvenido $nickname !",
       style: TextStyle(
           color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
     ));
@@ -170,10 +178,11 @@ class IndexPageState extends State<IndexPage> {
 
   @override
   Widget _barraProgressBar() {
+    print(porcentaje);
+    print(puntaje_actual);
     return (Container(
-      margin: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * 0.01, right: 100),
-      width: 100,
+      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
+      width: 200,
       height: 25,
       decoration: BoxDecoration(
         color: Color.fromARGB(111, 0, 0, 0),
@@ -182,18 +191,20 @@ class IndexPageState extends State<IndexPage> {
       child: Row(
         children: [
           Container(
-            child: Container(
-              margin: EdgeInsets.only(top: 3),
-              child: Text(
-                '${(porcentaje * 100).toStringAsFixed(0)}%',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            width: 100,
+            child: (porcentaje > 0.15)
+                ? Container(
+                    margin: EdgeInsets.only(top: 3),
+                    child: Text(
+                      '${(porcentaje * 100).toStringAsFixed(0)}%',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : Container(),
+            width: 200 * porcentaje,
             height: 25,
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 255, 79, 52),
@@ -368,7 +379,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 15,
             child: Center(
               child: Text(
-                "Bienvenido $nombre !",
+                "Bienvenido $nickname !",
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,
