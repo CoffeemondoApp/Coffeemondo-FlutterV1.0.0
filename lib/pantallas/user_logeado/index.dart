@@ -83,6 +83,8 @@ class IndexPageState extends State<IndexPage> {
     print('Inicio: ' + widget.tiempo_inicio);
   }
 
+  bool _visible = true;
+
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
     // Se declara en user al usuario actual
@@ -164,13 +166,13 @@ class IndexPageState extends State<IndexPage> {
           child: Text(
             'Nivel $nivel_usuario',
             style: TextStyle(
-                color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
           '$puntaje_actual_string/$puntaje_nivel',
           style: TextStyle(
-              color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
       ],
     ));
@@ -198,8 +200,8 @@ class IndexPageState extends State<IndexPage> {
                       '${(porcentaje * 100).toStringAsFixed(0)}%',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
+                          color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
+                          fontSize: 15,
                           fontWeight: FontWeight.bold),
                     ),
                   )
@@ -258,10 +260,41 @@ class IndexPageState extends State<IndexPage> {
       }
     }
 
+    @override
+    Widget _tituloContainer() {
+      return (Text(
+        'Felicitaciones!',
+        style: TextStyle(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+      ));
+    }
+
+    @override
+    Widget _cuerpoContainer() {
+      return (Text(
+        'Enhorabuena! Has subido al nivel $nivel.',
+        style: TextStyle(
+            color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+      ));
+    }
+
     //Hacer que _recompensa se ejecute todo el tiempo
     //Timer.periodic(Duration(seconds: 2), (timer) {
     //_recompensa();
     //});
+
+    //Crear funcion para actualizar el puntaje
+    _subirPuntos() {
+      print(_calcularTiempo());
+      //aumentar en 10 el puntaje actual
+      setState(() {
+        puntaje_actual += 10;
+        porcentaje = puntaje_actual / puntaje_nivel;
+        puntaje_actual_string = puntaje_actual.toString();
+        _visible = !_visible;
+      });
+    }
+
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: PreferredSize(
@@ -295,21 +328,52 @@ class IndexPageState extends State<IndexPage> {
           ],
         ),
       ),
-      body: //Crear boton al centro para mostrar el retorn de la funcion _calcularTiempo()
-          Center(
-        child: ElevatedButton(
-          onPressed: () {
-            print(_calcularTiempo());
-            //aumentar en 10 el puntaje actual
-            setState(() {
-              puntaje_actual += 10;
-              porcentaje = puntaje_actual / puntaje_nivel;
-              puntaje_actual_string = puntaje_actual.toString();
-            });
-            //ejecutar funcion nivelActual
-          },
-          child: Text('Subir 100pts'),
-        ),
+      body: //Crear contenedor morado con margen
+          Column(
+        children: [
+          AnimatedOpacity(
+            opacity: _visible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 1500),
+            child: Container(
+              margin: EdgeInsets.only(
+                  top: MediaQuery.of(context).size.height * 0.02,
+                  left: MediaQuery.of(context).size.width * 0.05,
+                  right: MediaQuery.of(context).size.width * 0.05),
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.15,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: //Crear columna que contenga el titulo y el cuerpo del container
+                  Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.02),
+                    child: _tituloContainer(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.04),
+                    child: _cuerpoContainer(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          //Crear boton para subir puntos
+          Padding(
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
+            child: ElevatedButton(
+              onPressed: () {
+                _subirPuntos();
+              },
+              child: Text('Subir puntos'),
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: CustomBottomBar(),
     );

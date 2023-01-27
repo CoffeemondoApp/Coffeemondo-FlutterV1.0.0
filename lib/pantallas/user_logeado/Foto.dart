@@ -14,7 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class FotoPage extends StatefulWidget {
-  const FotoPage({super.key});
+  final String inicio;
+  const FotoPage(this.inicio, {super.key});
 
   @override
   FotoApp createState() => FotoApp();
@@ -459,7 +460,8 @@ class CustomBottomBar extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => InfoPage('', '', '', '', '')),
+                          builder: (context) =>
+                              InfoPage(inicio, '', '', '', '', '')),
                     );
                   },
                 ),

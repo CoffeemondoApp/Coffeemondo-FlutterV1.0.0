@@ -15,20 +15,26 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 //Obtener variable desde direccion.dart
 
 class InfoPage extends StatefulWidget {
+  final String inicio;
   final String nombreapellido_escrito;
   final String nombreusuario_escrito;
   final String telefono_escrito;
   final String edad_escrito;
   final String direccion_encontrada;
-  const InfoPage(this.nombreapellido_escrito, this.nombreusuario_escrito,
-      this.edad_escrito, this.telefono_escrito, this.direccion_encontrada,
+  const InfoPage(
+      this.inicio,
+      this.nombreapellido_escrito,
+      this.nombreusuario_escrito,
+      this.edad_escrito,
+      this.telefono_escrito,
+      this.direccion_encontrada,
       {super.key});
 
   @override
   InfoApp createState() => InfoApp();
 }
 
-String tab = '';
+var largo_nombre_usuario = 15;
 
 class InfoApp extends State<InfoPage> {
   @override
@@ -92,6 +98,7 @@ class InfoApp extends State<InfoPage> {
         context,
         MaterialPageRoute(
             builder: (context) => DireccionPage(
+                inicio,
                 _controladornombreApellido.text,
                 _controladornombreUsuario.text,
                 _controladoredad.text,
@@ -283,6 +290,7 @@ class InfoApp extends State<InfoPage> {
     TextEditingController controller,
   ) {
     return TextField(
+        maxLength: largo_nombre_usuario,
         onTap: () {
           setState(() {
             estadoInicial = false;
@@ -474,7 +482,7 @@ class InfoApp extends State<InfoPage> {
             padding: EdgeInsets.only(
                 left: MediaQuery.of(context).size.width * 0.10,
                 right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.03),
+                top: MediaQuery.of(context).size.height * 0.004),
             child: _Edad(_controladoredad)),
         Padding(
             padding: EdgeInsets.only(
@@ -600,7 +608,7 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FotoPage()),
+                      MaterialPageRoute(builder: (context) => FotoPage(inicio)),
                     );
                   },
                 ),
@@ -614,7 +622,8 @@ class CustomBottomBar extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => IndexPage('0')),
+                      MaterialPageRoute(
+                          builder: (context) => IndexPage(inicio)),
                     );
                   },
                 ),

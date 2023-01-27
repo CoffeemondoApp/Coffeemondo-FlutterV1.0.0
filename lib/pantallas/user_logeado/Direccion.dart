@@ -11,13 +11,14 @@ import 'package:geocoding/geocoding.dart';
 import 'dart:async';
 
 class DireccionPage extends StatefulWidget {
+  final String inicio;
   final String nombre_apellido;
   final String nombre_usuario;
   final String edad;
   final String telefono;
   final String direccion;
-  const DireccionPage(this.nombre_apellido, this.nombre_usuario, this.edad,
-      this.telefono, this.direccion,
+  const DireccionPage(this.inicio, this.nombre_apellido, this.nombre_usuario,
+      this.edad, this.telefono, this.direccion,
       {super.key});
 
   @override
@@ -188,6 +189,7 @@ class DireccionApp extends State<DireccionPage> {
         context,
         MaterialPageRoute(
             builder: (context) => InfoPage(
+                widget.inicio,
                 widget.nombre_apellido,
                 widget.nombre_usuario,
                 widget.edad,
