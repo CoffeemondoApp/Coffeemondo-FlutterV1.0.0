@@ -28,6 +28,7 @@ num puntaje_nivel = 200;
 var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
 var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 1;
+var niveluser ;
 var inicio = '';
 
 //Crear lista de niveles con sus respectivos datos
@@ -79,8 +80,8 @@ class IndexPageState extends State<IndexPage> {
   void initState() {
     super.initState();
     // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
-    _getdata();
     print('Inicio: ' + widget.tiempo_inicio);
+    _getdata();
   }
 
   bool _visible = true;
@@ -100,6 +101,7 @@ class IndexPageState extends State<IndexPage> {
         nickname = userData.data()!['nickname'];
         cumpleanos = userData.data()!['cumpleanos'];
         urlImage = userData.data()!['urlImage'];
+        niveluser = userData.data()!['nivel'];
         inicio = widget.tiempo_inicio;
       });
     });
@@ -164,7 +166,7 @@ class IndexPageState extends State<IndexPage> {
           padding:
               EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
           child: Text(
-            'Nivel $nivel_usuario',
+            'Nivel $niveluser',
             style: TextStyle(
                 color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           ),
