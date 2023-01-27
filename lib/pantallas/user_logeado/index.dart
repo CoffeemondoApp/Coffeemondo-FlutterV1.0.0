@@ -27,7 +27,7 @@ var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
 num puntaje_nivel = 200;
 var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
 var porcentaje = puntaje_actual / puntaje_nivel;
-var nivel = 1;
+var nivel = 0;
 var niveluser;
 var inicio = '';
 
@@ -84,7 +84,7 @@ class IndexPageState extends State<IndexPage> {
     _getdata();
   }
 
-  bool _visible = true;
+  bool _visible = false;
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
