@@ -76,6 +76,11 @@ List<Map<String, dynamic>> getNivel() {
 }
 
 class IndexPageState extends State<IndexPage> {
+    // Se declara la instancia de firebase en la variable _firebaseAuth
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
+  User? get currentUser => _firebaseAuth.currentUser;
   @override
   void initState() {
     super.initState();
@@ -300,6 +305,15 @@ class IndexPageState extends State<IndexPage> {
     _subirNivel() {
       if (nivel != niveluser) {
         setState(() {
+          
+          final DocumentReference docRef = FirebaseFirestore.instance
+              .collection("users")
+              .doc(currentUser?.uid);
+          // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
+          docRef.update({ 
+            'nivel': nivel,
+          });
+          print('Nivel nuevo asignado en Firestore.');
           niveluser = nivel;
           _visible = !_visible;
           //Cambiar estado de _visible luego de 3 segundos
