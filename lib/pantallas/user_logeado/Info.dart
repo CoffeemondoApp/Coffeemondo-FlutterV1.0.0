@@ -442,7 +442,11 @@ class InfoApp extends State<InfoPage> {
           telefono.isNotEmpty &&
           estadoInicial == true) {
         _controladornombreApellido.text = nombre;
-        _controladornombreUsuario.text = nickname;
+        if (nickname == 'Sin informacion de nombre de usuario') {
+          _controladornombreUsuario.text = 'Sin usuario';
+        } else {
+          _controladornombreUsuario.text = nickname;
+        }
         _controladortelefono.text = telefono;
         _controladoredad.text = cumpleanos;
         _controladordireccion.text = direccion;

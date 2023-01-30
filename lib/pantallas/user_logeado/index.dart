@@ -76,7 +76,7 @@ List<Map<String, dynamic>> getNivel() {
 }
 
 class IndexPageState extends State<IndexPage> {
-    // Se declara la instancia de firebase en la variable _firebaseAuth
+  // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
@@ -154,7 +154,9 @@ class IndexPageState extends State<IndexPage> {
   @override
   Widget _textoAppBar() {
     return (Text(
-      "Bienvenido $nickname !",
+      (nickname != 'Sin informacion de nombre de usuario')
+          ? "Bienvenido $nickname !"
+          : ("Bienvenido anonimo !"),
       style: TextStyle(
           color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
     ));
@@ -305,12 +307,11 @@ class IndexPageState extends State<IndexPage> {
     _subirNivel() {
       if (nivel != niveluser) {
         setState(() {
-          
           final DocumentReference docRef = FirebaseFirestore.instance
               .collection("users")
               .doc(currentUser?.uid);
           // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
-          docRef.update({ 
+          docRef.update({
             'nivel': nivel,
           });
           print('Nivel nuevo asignado en Firestore.');
@@ -477,7 +478,9 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 15,
             child: Center(
               child: Text(
-                "Bienvenido $nickname !",
+                (nickname != 'Sin informacion de nombre de usuario')
+                    ? "Bienvenido $nickname !"
+                    : ("Bienvenido anonimo !"),
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,
