@@ -2,6 +2,7 @@
 
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/login.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:coffeemondo/pantallas/iconos.dart';
@@ -17,10 +18,13 @@ class RegistroApp extends State<Registro> {
   bool _obscureText = true;
   bool obs = true;
   bool obs_icon = true;
+  String error_register = '';
+  bool _visible_errormsj = false;
 
   // Obtener los strings ingresados por el usuario para verificar su cuenta en firebase
   final TextEditingController _controladoremail = TextEditingController();
   final TextEditingController _controladorcontrasena = TextEditingController();
+  final TextEditingController _controladorcontrasena2 = TextEditingController();
 
   Future<void> createUserWithEmailAndPassword() async {
     try {
@@ -39,7 +43,11 @@ class RegistroApp extends State<Registro> {
       if (e.code == 'weak-password') {
         print('Tu contrasena es muy debil.');
       } else if (e.code == 'email-already-in-use') {
-        print('Este correo electronico ya esta registrado.');
+        error_register = 'El correo electronico ya esta en uso.';
+        setState(() {
+          _visible_errormsj = true;
+        });
+        print(error_register);
       }
     } catch (e) {
       print(e);
@@ -51,10 +59,11 @@ class RegistroApp extends State<Registro> {
     TextEditingController controller,
   ) {
     return TextField(
+        onTap: () => _visible_errormsj = false,
         controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 12.0,
+          fontSize: 14.0,
           height: 2.0,
           fontWeight: FontWeight.w900,
         ),
@@ -63,18 +72,18 @@ class RegistroApp extends State<Registro> {
               // width: 0.0 produces a thin "hairline" border
               borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
             ),
-            enabledBorder: UnderlineInputBorder(
+            enabledBorder: const UnderlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide: BorderSide(color: Colors.grey, width: 0.0),
+              borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
             ),
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             prefixIcon: Icon(Icons.account_circle_outlined,
                 color: Color.fromARGB(255, 255, 79, 52)),
             suffixIcon:
                 Icon(Icons.check, color: Color.fromARGB(255, 84, 14, 148)),
             hintText: 'C o r r e o   e l e c t r o n i c o ',
             hintStyle: TextStyle(
-              fontSize: 12.0,
+              fontSize: 14.0,
               fontWeight: FontWeight.w900,
               color: Color.fromARGB(255, 84, 14, 148),
             )));
@@ -84,10 +93,11 @@ class RegistroApp extends State<Registro> {
     TextEditingController controller,
   ) {
     return TextField(
+        onTap: () => _visible_errormsj = false,
         controller: controller,
         style: const TextStyle(
           color: Color.fromARGB(255, 84, 14, 148),
-          fontSize: 12.0,
+          fontSize: 14.0,
           height: 2.0,
           fontWeight: FontWeight.w900,
         ),
@@ -119,13 +129,107 @@ class RegistroApp extends State<Registro> {
           ),
           hintText: 'P a s s w o r d',
           hintStyle: const TextStyle(
-              fontSize: 12.0,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w900,
+              color: Color.fromARGB(255, 84, 14, 148)),
+        ));
+  }
+
+  Widget _mensajeError() {
+    if (_visible_errormsj == true) {
+      return Text(
+        error_register,
+        style: TextStyle(
+          color: Color.fromARGB(255, 255, 79, 52),
+          fontSize: 14.0,
+          height: 2.0,
+        ),
+      );
+    } else {
+      return const Text('');
+    }
+  }
+
+  //Crear widget container para mostrar mensaje de error
+  Widget _error() {
+    return Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Error al crear la cuenta',
+          style: TextStyle(
+            color: Color.fromARGB(255, 255, 79, 52),
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 0.0),
+              child: Icon(Icons.error_outline,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 40),
+            ),
+            Padding(
+                padding: EdgeInsets.only(left: 10.0), child: _mensajeError()),
+          ],
+        ))
+      ],
+    ));
+  }
+
+  Widget _Contrasena2(
+    TextEditingController controller,
+  ) {
+    return TextField(
+        onTap: () => _visible_errormsj = false,
+        controller: controller,
+        style: const TextStyle(
+          color: Color.fromARGB(255, 84, 14, 148),
+          fontSize: 14.0,
+          height: 2.0,
+          fontWeight: FontWeight.w900,
+        ),
+        obscureText: obs,
+        decoration: InputDecoration(
+          focusedBorder: const UnderlineInputBorder(
+            // width: 0.0 produces a thin "hairline" border
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          enabledBorder: const UnderlineInputBorder(
+            // width: 0.0 produces a thin "hairline" border
+            borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+          ),
+          border: const OutlineInputBorder(),
+          prefixIcon: const Icon(Icons.lock_outline,
+              color: Color.fromARGB(255, 255, 79, 52), size: 20),
+          suffixIcon: IconButton(
+            icon: obs_icon == true
+                ? const Icon(Icons.remove_red_eye,
+                    color: Color.fromARGB(255, 255, 79, 52), size: 20)
+                : const Icon(Icons.remove_red_eye_outlined,
+                    color: Color.fromARGB(255, 255, 79, 52), size: 20),
+            onPressed: () {
+              setState(() {
+                obs == true ? obs = false : obs = true;
+                obs_icon == true ? obs_icon = false : obs_icon = true;
+              });
+            },
+          ),
+          hintText: 'C o n f i r m a r   P a s s w o r d',
+          hintStyle: const TextStyle(
+              fontSize: 14.0,
               fontWeight: FontWeight.w900,
               color: Color.fromARGB(255, 84, 14, 148)),
         ));
   }
 
   Widget BotonRegistrarse() {
+    final bool isValid = EmailValidator.validate(_controladoremail.text);
     return Container(
       child: Container(
         width: 250,
@@ -134,7 +238,35 @@ class RegistroApp extends State<Registro> {
           painter: BackgroundButton1(),
           child: InkWell(
             onTap: () {
-              createUserWithEmailAndPassword();
+              if (_controladoremail.text == '') {
+                setState(() {
+                  error_register = 'Debes ingresar un correo electronico.';
+                  _visible_errormsj = true;
+                });
+              } else if (_controladorcontrasena.text == '') {
+                setState(() {
+                  error_register = 'Debes ingresar una contraseña.';
+                  _visible_errormsj = true;
+                });
+              } else if (_controladorcontrasena2.text == '') {
+                setState(() {
+                  error_register = 'Debes confirmar la contraseña.';
+                  _visible_errormsj = true;
+                });
+              } else if (!isValid) {
+                setState(() {
+                  error_register = 'El correo electronico no es valido.';
+                  _visible_errormsj = true;
+                });
+              } else if (_controladorcontrasena.text !=
+                  _controladorcontrasena2.text) {
+                setState(() {
+                  error_register = 'Las contraseñas no coinciden.';
+                  _visible_errormsj = true;
+                });
+              } else {
+                createUserWithEmailAndPassword();
+              }
             },
             child: Center(
               child: Text(
@@ -151,6 +283,27 @@ class RegistroApp extends State<Registro> {
     );
   }
 
+  Widget _error2() {
+    return (AnimatedOpacity(
+      opacity: _visible_errormsj ? 1.0 : 0.0,
+      duration: Duration(milliseconds: 1500),
+      child: Container(
+        margin: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.02,
+            left: MediaQuery.of(context).size.width * 0.01,
+            right: MediaQuery.of(context).size.width * 0.01),
+        width: MediaQuery.of(context).size.width * 0.94,
+        height: MediaQuery.of(context).size.height * 0.12,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: //Crear columna que contenga el titulo y el cuerpo del container
+            _error(),
+      ),
+    ));
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
@@ -165,7 +318,11 @@ class RegistroApp extends State<Registro> {
                 padding: EdgeInsets.only(left: 50, top: 10, right: 40),
                 child: _Contrasena(_controladorcontrasena)),
             Padding(
-              padding: EdgeInsets.only(left: 20, top: 200, right: 10),
+                padding: EdgeInsets.only(left: 50, top: 10, right: 40),
+                child: _Contrasena2(_controladorcontrasena2)),
+            Padding(padding: EdgeInsets.only(top: 10), child: _error2()),
+            Padding(
+              padding: EdgeInsets.only(left: 20, top: 40, right: 10),
               child: BotonRegistrarse(),
             ),
           ],

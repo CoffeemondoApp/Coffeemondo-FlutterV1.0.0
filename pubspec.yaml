@@ -52,6 +52,7 @@ dependencies:
   awesome_snackbar_content: ^0.1.0
   flutter_google_places: ^0.3.0
   geocoding: ^2.0.5
+  email_validator: ^2.1.17
   
 flutter_native_splash:
   color: "#E64921"
