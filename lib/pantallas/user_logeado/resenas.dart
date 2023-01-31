@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
+import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,13 +10,18 @@ import '../../firebase/autenticacion.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
-class IndexPage extends StatefulWidget {
+class ResenasPage extends StatefulWidget {
   final String tiempo_inicio;
-  const IndexPage(this.tiempo_inicio, {super.key});
+  const ResenasPage(this.tiempo_inicio, {super.key});
 
   @override
-  IndexPageState createState() => IndexPageState();
+  ResenasPageState createState() => ResenasPageState();
 }
+
+double _width_mr1 = 0.0;
+double _height_mr1 = 0.0;
+double _width_mr2 = 0.9;
+double _height_mr2 = 0.3;
 
 String tab = '';
 // Declaracion de variables de informaicon de usuario
@@ -32,6 +37,8 @@ var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 0;
 var niveluser;
 var inicio = '';
+bool misResenas = false;
+bool misResenas2 = false;
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -77,7 +84,7 @@ List<Map<String, dynamic>> getNivel() {
   ];
 }
 
-class IndexPageState extends State<IndexPage> {
+class ResenasPageState extends State<ResenasPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late GoogleMapController googleMapController;
@@ -323,79 +330,152 @@ class IndexPageState extends State<IndexPage> {
       ));
     }
 
-    Widget _containerMapa() {
-      return (Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.3,
+    @override
+    Widget _mostrarMenuOpciones() {
+      return (AnimatedContainer(
+          width: MediaQuery.of(context).size.width * _width_mr2,
+          height: (misResenas)
+              ? MediaQuery.of(context).size.height * _height_mr2
+              : MediaQuery.of(context).size.height * _height_mr1,
           decoration: BoxDecoration(
-            color: Color.fromARGB(0, 0, 0, 0),
-            borderRadius: BorderRadius.circular(20),
+            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)),
           ),
-          child: Stack(
-            children: [
-              Container(
-                margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.056,
-                  bottom: MediaQuery.of(context).size.height * 0.056,
-                ),
-                //Mostrar mapa en el container
-
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.12,
-                    right: MediaQuery.of(context).size.width * 0.12),
-                child: GoogleMap(
-                  mapType: MapType.hybrid,
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(-33.454572, -70.6559607),
-                    zoom: 10,
-                  ),
-                  onMapCreated: (GoogleMapController controller) {
-                    googleMapController = controller;
-                  },
-                ),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(0, 1, 155, 27),
-                ),
-              ),
-            ],
-          )));
+          duration: Duration(seconds: 1),
+          // Proporciona una curva opcional para hacer que la animación se sienta más suave.
+          curve: Curves.fastOutSlowIn,
+          child:
+              (misResenas2) //Crear columna que contenga el titulo y el cuerpo del container
+                  ? Column(
+                      children: [
+                        Container(
+                            margin: EdgeInsets.only(
+                                top:
+                                    MediaQuery.of(context).size.height * 0.015),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 79, 52),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Crear reseña',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.01),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 79, 52),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Reseñas anteriores',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.01),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.08,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 79, 52),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Reseñas anteriores',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                      ],
+                    )
+                  : Container()));
     }
 
     Widget _bodyIndex() {
-      _subirPuntos() {
-        print(_calcularTiempo());
-        //aumentar en 10 el puntaje actual
-        setState(() {
-          puntaje_actual += 10;
-          porcentaje = puntaje_actual / puntaje_nivel;
-          puntaje_actual_string = puntaje_actual.toString();
-        });
-      }
-
-      return (Column(
-        children: [
-          _containerMensajeNivel(),
-          Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
-          Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.05),
-            child: ElevatedButton(
-              onPressed: () {
-                _subirPuntos();
-              },
-              child: Text('Subir puntos'),
-            ),
-          ),
-        ],
+      return (Center(
+        child: Column(
+          children: [
+            Center(
+                child: Container(
+                    //Hacer que el container despliegue un menu de opciones al presionarlo
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            misResenas = !misResenas;
+                          });
+                          if (!misResenas2) {
+                            Timer(
+                              const Duration(milliseconds: 1100),
+                              () {
+                                setState(() {
+                                  misResenas2 = !misResenas2;
+                                });
+                                print("mis reseñas = $misResenas");
+                              },
+                            );
+                          } else {
+                            setState(() {
+                              misResenas2 = !misResenas2;
+                            });
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.02),
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: MediaQuery.of(context).size.height * 0.15,
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20))),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: MediaQuery.of(context).size.width *
+                                        0.2),
+                                child: Icon(Icons.reviews,
+                                    color: Colors.white, size: 45),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 15),
+                                child: Text(
+                                  'Mis reseñas',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 25),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )))),
+            _mostrarMenuOpciones()
+          ],
+        ),
       ));
     }
-
     //Hacer que _recompensa se ejecute todo el tiempo
     //Timer.periodic(Duration(seconds: 2), (timer) {
     //_recompensa();
@@ -595,22 +675,23 @@ class CustomBottomBar extends StatelessWidget {
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               gap: 8,
+              selectedIndex: 1,
               padding: EdgeInsets.all(16),
               tabs: [
                 GButton(
                   icon: Icons.home,
                   text: ' inicio',
-                ),
-                GButton(
-                  icon: Icons.reviews,
-                  text: 'Reseñas',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ResenasPage(inicio)));
+                            builder: (context) => IndexPage(inicio)));
                   },
+                ),
+                GButton(
+                  icon: Icons.reviews,
+                  text: 'Reseñas',
                 ),
                 GButton(
                   icon: Icons.search,
