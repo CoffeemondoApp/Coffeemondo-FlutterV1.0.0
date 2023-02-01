@@ -53,6 +53,8 @@ dependencies:
   flutter_google_places: ^0.3.0
   geocoding: ^2.0.5
   email_validator: ^2.1.17
+  autocomplete_textfield: ^2.0.1
+  dropdown_textfield: ^1.0.8
   
 flutter_native_splash:
   color: "#E64921"

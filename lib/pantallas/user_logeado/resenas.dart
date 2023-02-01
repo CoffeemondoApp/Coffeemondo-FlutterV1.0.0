@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,6 +39,11 @@ var niveluser;
 var inicio = '';
 bool misResenas = false;
 bool misResenas2 = false;
+bool crearResena = false;
+int _tazas = 0;
+int pregunta = 0;
+var _cafeteriaSeleccionada = 'Cafetería 1';
+var _productoSeleccionado = 'Producto 1';
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -61,6 +66,9 @@ List<Map<String, dynamic>> niveles = [
   {'nivel': 17, 'puntaje_nivel': 6800, 'porcentaje': 0.0},
   {'nivel': 18, 'puntaje_nivel': 7200, 'porcentaje': 0.0},
 ];
+
+//Crear lista con nombre de cafeterias
+
 //Crear funcion que retorne en una lista el nivel del usuario y el porcentaje de progreso
 List<Map<String, dynamic>> getNivel() {
   for (var i = 0; i < niveles.length; i++) {
@@ -330,12 +338,511 @@ class ResenasPageState extends State<ResenasPage> {
       ));
     }
 
+    Widget _textoPregunta() {
+      var texto_pregunta = '';
+      switch (pregunta) {
+        case 0:
+          {
+            texto_pregunta = '¿Cómo describirías la atmósfera de la cafetería?';
+          }
+          break;
+        case 1:
+          {
+            texto_pregunta =
+                '¿Cómo describirías la comida y bebidas que ofrecen?';
+          }
+          break;
+        case 2:
+          {
+            texto_pregunta =
+                '¿Qué tan rápido y eficiente es el servicio de meseros?';
+          }
+          break;
+        case 3:
+          {
+            texto_pregunta =
+                '¿El precio de los productos es justo por su calidad?';
+          }
+          break;
+        case 4:
+          {
+            texto_pregunta =
+                '¿Qué tan frecuentemente visitarías la cafetería nuevamente?';
+          }
+          break;
+        case 5:
+          {
+            texto_pregunta =
+                '¿Recomendarías la cafetería a amigos y familiares?';
+          }
+          break;
+        case 6:
+          {
+            texto_pregunta =
+                '¿Qué tan accesible es la ubicación de la cafetería?';
+          }
+          break;
+        case 7:
+          {
+            texto_pregunta = '¿El personal es amable y servicial?';
+          }
+          break;
+        case 8:
+          {
+            texto_pregunta =
+                '¿La cafetería ofrece opciones para personas con necesidades alimentarias especiales?';
+          }
+          break;
+        case 9:
+          {
+            texto_pregunta =
+                '¿Estás satisfecho con la experiencia en general en la cafetería?';
+          }
+          break;
+      }
+      return (Text(texto_pregunta,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: (_tazas != 0)
+                  ? Color.fromARGB(255, 255, 79, 52)
+                  : Color.fromARGB(255, 255, 255, 255),
+              //color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold)));
+    }
+
+    @override
+    Widget _dropdownCafeteria() {
+      return (
+          //Crear dropdown de cafeterias
+          DropdownButtonFormField<String>(
+        value: _cafeteriaSeleccionada,
+        enableFeedback: false,
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+        ),
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 0x52, 0x01, 0x9b)))),
+        iconSize: 24,
+        menuMaxHeight: 150,
+        elevation: 4,
+        dropdownColor: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+        style: TextStyle(color: Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+        onChanged: (String? newValue) {
+          setState(() {
+            _cafeteriaSeleccionada = newValue!;
+          });
+        },
+        items: <String>[
+          'Cafetería 1',
+          'Cafetería 2',
+          'Cafetería 3',
+          'Cafetería 4',
+          'Cafetería 5',
+          'Cafetería 6',
+          'Cafetería 7',
+          'Cafetería 8',
+          'Cafetería 9',
+          'Cafetería 10',
+          'Cafetería 11',
+          'Cafetería 12',
+          'Cafetería 13',
+          'Cafetería 14',
+          'Cafetería 15',
+          'Cafetería 16',
+          'Cafetería 17',
+          'Cafetería 18',
+        ].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Color.fromARGB(255, 255, 79, 52)),
+            ),
+          );
+        }).toList(),
+      ));
+    }
+
+    @override
+    Widget _dropdownProductos() {
+      return ( //Crear dropdown de cafeterias
+          DropdownButton<String>(
+        alignment: Alignment.center,
+        value: _productoSeleccionado,
+        icon: Icon(
+          Icons.arrow_drop_down,
+          color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+        ),
+        iconSize: 24,
+        elevation: 1,
+        style: TextStyle(color: Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+        underline: Container(
+          height: 0,
+          color: Color.fromARGB(0, 29, 19, 39),
+        ),
+        onChanged: (String? newValue) {
+          setState(() {
+            _productoSeleccionado = newValue!;
+          });
+        },
+        items: <String>[
+          //Crear lista de productos de cafeteria
+          'Producto 1',
+          'Producto 2',
+          'Producto 3',
+          'Producto 4',
+          'Producto 5',
+          'Producto 6',
+          'Producto 7',
+          'Producto 8',
+        ].map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          );
+        }).toList(),
+      ));
+    }
+
+    @override
+    Widget _mostrarCrearResena() {
+      print(_tazas);
+      const size_taza = 30.0;
+      return (AnimatedContainer(
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: (crearResena)
+              ? (pregunta == 10)
+                  ? 255
+                  : 220
+              : 0,
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 255, 79, 52),
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20)),
+          ),
+          duration: Duration(seconds: 1),
+          // Proporciona una curva opcional para hacer que la animación se sienta más suave.
+          curve: Curves.fastOutSlowIn,
+          child: (crearResena)
+              ? Column(
+                  children: [
+                    //Crear dropdown textfield para seleccionar la cafeteria a la que se le va a hacer la reseña
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                            //color: Color.fromARGB(255, 255, 255, 255))
+                            ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      left: 10, right: 10, top: 4),
+                                  child: Icon(Icons.coffee_maker_outlined,
+                                      color: Color.fromARGB(
+                                          255, 0x52, 0x01, 0x9b)),
+                                ),
+                                Container(
+                                  width: 200,
+                                  margin: EdgeInsets.only(
+                                      left: 10, right: 10, top: 4),
+                                  child: _dropdownCafeteria(),
+                                ),
+                                //_dropdownProductos(),
+                              ],
+                            ),
+                            Container(
+                              height: 2,
+                              color: Color.fromARGB(255, 84, 14, 148),
+                            )
+                          ],
+                        )),
+                    (pregunta != 10)
+                        ? Container(
+                            margin: EdgeInsets.only(top: 20),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            //decoration: BoxDecoration(color: Colors.white),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              (_tazas == 1)
+                                                  ? _tazas = 0
+                                                  : _tazas = 1;
+                                            });
+                                          },
+                                          child: Icon(
+                                            (_tazas == 1 ||
+                                                    _tazas == 2 ||
+                                                    _tazas == 3 ||
+                                                    _tazas == 4 ||
+                                                    _tazas == 5)
+                                                ? Icons.coffee
+                                                : Icons.coffee_outlined,
+                                            color: Color.fromARGB(
+                                                255, 84, 14, 148),
+                                            size: size_taza,
+                                          )),
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              (_tazas == 2)
+                                                  ? _tazas = 0
+                                                  : _tazas = 2;
+                                            });
+                                          },
+                                          child: Icon(
+                                            (_tazas == 2 ||
+                                                    _tazas == 3 ||
+                                                    _tazas == 4 ||
+                                                    _tazas == 5)
+                                                ? Icons.coffee
+                                                : Icons.coffee_outlined,
+                                            color: Color.fromARGB(
+                                                255, 84, 14, 148),
+                                            size: size_taza,
+                                          )),
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              (_tazas == 3)
+                                                  ? _tazas = 0
+                                                  : _tazas = 3;
+                                            });
+                                          },
+                                          child: Icon(
+                                            (_tazas == 3 ||
+                                                    _tazas == 4 ||
+                                                    _tazas == 5)
+                                                ? Icons.coffee
+                                                : Icons.coffee_outlined,
+                                            color: Color.fromARGB(
+                                                255, 84, 14, 148),
+                                            size: size_taza,
+                                          )),
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              (_tazas == 4)
+                                                  ? _tazas = 0
+                                                  : _tazas = 4;
+                                            });
+                                          },
+                                          child: Icon(
+                                            (_tazas == 4 || _tazas == 5)
+                                                ? Icons.coffee
+                                                : Icons.coffee_outlined,
+                                            color: Color.fromARGB(
+                                                255, 84, 14, 148),
+                                            size: size_taza,
+                                          )),
+                                      GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              (_tazas == 5)
+                                                  ? _tazas = 0
+                                                  : _tazas = 5;
+                                            });
+                                          },
+                                          child: Icon(
+                                            (_tazas == 5)
+                                                ? Icons.coffee
+                                                : Icons.coffee_outlined,
+                                            color: Color.fromARGB(
+                                                255, 84, 14, 148),
+                                            size: size_taza,
+                                          )),
+                                    ],
+                                  ),
+                                  Text(' $_tazas/5',
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold))
+                                ],
+                              ),
+                            ))
+                        : Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(top: 20),
+                                  child: Text('La clasificacion es de 1 a 5',
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                                Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.7,
+                                    decoration: BoxDecoration(
+                                        //color: Colors.white,
+                                        ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.coffee_outlined,
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          size: 30,
+                                        ),
+                                        Icon(
+                                          Icons.coffee_outlined,
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          size: 30,
+                                        ),
+                                        Icon(
+                                          Icons.coffee_outlined,
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          size: 30,
+                                        ),
+                                        Icon(
+                                          Icons.coffee_outlined,
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          size: 30,
+                                        ),
+                                        Icon(
+                                          Icons.coffee_outlined,
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                          size: 30,
+                                        ),
+                                      ],
+                                    )),
+                                TextFormField(
+                                    //controller: _controller,
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 84, 14, 148),
+                                      fontSize: 14.0,
+                                      height: 2.0,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                    decoration: InputDecoration(
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromARGB(
+                                                  255, 84, 14, 148)),
+                                        ),
+                                        enabledBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Color.fromARGB(
+                                                  255, 84, 14, 148)),
+                                        ),
+                                        border: OutlineInputBorder(),
+                                        prefixIcon: Icon(
+                                            Icons.feedback_outlined,
+                                            color: Color.fromARGB(
+                                                255, 84, 14, 148),
+                                            size: 24),
+                                        hintText:
+                                            'Desea agregar algun comentario...',
+                                        hintStyle: TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w900,
+                                          color:
+                                              Color.fromARGB(255, 84, 14, 148),
+                                        ))),
+                                GestureDetector(
+                                  onTap: () {
+                                    //ira test.dart
+                                  },
+                                  child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.7,
+                                      height: 40,
+                                      margin: EdgeInsets.only(top: 10),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromARGB(255, 84, 14, 148),
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20),
+                                            bottomLeft: Radius.circular(20),
+                                            bottomRight: Radius.circular(20)),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Generar clasificacion y comentario',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      )),
+                                )
+                              ],
+                            ),
+                          ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (_tazas != 0) {
+                            pregunta += 1;
+                          }
+                          _tazas = 0;
+                        });
+                      },
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: (pregunta != 10) ? 60 : 0,
+                          margin: EdgeInsets.only(top: 20),
+                          decoration: BoxDecoration(
+                            color: (_tazas != 0)
+                                ? Color.fromARGB(255, 84, 14, 148)
+                                : Color.fromARGB(0, 255, 79, 52),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                                bottomRight: Radius.circular(20)),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: _textoPregunta(),
+                          )),
+                    )
+                  ],
+                )
+              : Container()));
+    }
+
     @override
     Widget _mostrarMenuOpciones() {
+      print(crearResena);
       return (AnimatedContainer(
           width: MediaQuery.of(context).size.width * _width_mr2,
           height: (misResenas)
-              ? MediaQuery.of(context).size.height * _height_mr2
+              ? (crearResena)
+                  ? MediaQuery.of(context).size.height / 1.5
+                  : MediaQuery.of(context).size.height * _height_mr2
               : MediaQuery.of(context).size.height * _height_mr1,
           decoration: BoxDecoration(
             color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
@@ -350,67 +857,114 @@ class ResenasPageState extends State<ResenasPage> {
               (misResenas2) //Crear columna que contenga el titulo y el cuerpo del container
                   ? Column(
                       children: [
-                        Container(
-                            margin: EdgeInsets.only(
-                                top:
-                                    MediaQuery.of(context).size.height * 0.015),
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 255, 79, 52),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Crear reseña',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                        AnimatedOpacity(
+                          opacity: misResenas2 ? 1.0 : 0.0,
+                          duration: Duration(milliseconds: 3000),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                crearResena = !crearResena;
+                                pregunta = 0;
+                                _tazas = 0;
+                              });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height *
+                                      0.015),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20))),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Crear reseña',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            )),
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.01),
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 255, 79, 52),
-                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Reseñas anteriores',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )),
-                        Container(
-                            margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.01),
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.08,
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 255, 79, 52),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                'Reseñas anteriores',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )),
+                          ),
+                        ),
+                        _mostrarCrearResena(),
+                        AnimatedOpacity(
+                            opacity: misResenas2 ? 1.0 : 0.0,
+                            duration: Duration(milliseconds: 3000),
+                            child: Container(
+                                margin: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.01),
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.08,
+                                decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Reseñas anteriores',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ))),
+                        AnimatedOpacity(
+                            opacity: misResenas2 ? 1.0 : 0.0,
+                            duration: Duration(milliseconds: 3000),
+                            child: Container(
+                                margin: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.01),
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.08,
+                                decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Reseñas guardadas',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ))),
                       ],
                     )
                   : Container()));
+    }
+
+    abrirMisResenas() {
+      setState(() {
+        misResenas = !misResenas;
+      });
+      if (!misResenas2) {
+        Timer(
+          const Duration(milliseconds: 900),
+          () {
+            setState(() {
+              misResenas2 = !misResenas2;
+            });
+            print("mis reseñas = $misResenas");
+          },
+        );
+      } else {
+        setState(() {
+          misResenas2 = !misResenas2;
+        });
+      }
     }
 
     Widget _bodyIndex() {
@@ -422,24 +976,7 @@ class ResenasPageState extends State<ResenasPage> {
                     //Hacer que el container despliegue un menu de opciones al presionarlo
                     child: GestureDetector(
                         onTap: () {
-                          setState(() {
-                            misResenas = !misResenas;
-                          });
-                          if (!misResenas2) {
-                            Timer(
-                              const Duration(milliseconds: 1100),
-                              () {
-                                setState(() {
-                                  misResenas2 = !misResenas2;
-                                });
-                                print("mis reseñas = $misResenas");
-                              },
-                            );
-                          } else {
-                            setState(() {
-                              misResenas2 = !misResenas2;
-                            });
-                          }
+                          abrirMisResenas();
                         },
                         child: Container(
                           margin: EdgeInsets.only(
@@ -543,7 +1080,7 @@ class ResenasPageState extends State<ResenasPage> {
           ],
         ),
       ),
-      body: _bodyIndex(),
+      body: SingleChildScrollView(child: _bodyIndex()),
       bottomNavigationBar: CustomBottomBar(),
     );
   }
