@@ -44,6 +44,7 @@ int _tazas = 0;
 int pregunta = 0;
 var _cafeteriaSeleccionada = 'Cafetería 1';
 var _productoSeleccionado = 'Producto 1';
+List<int> calificaciones = [];
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -413,6 +414,7 @@ class ResenasPageState extends State<ResenasPage> {
 
     @override
     Widget _dropdownCafeteria() {
+      bool presionado = false;
       return (
           //Crear dropdown de cafeterias
           DropdownButtonFormField<String>(
@@ -431,6 +433,11 @@ class ResenasPageState extends State<ResenasPage> {
         elevation: 4,
         dropdownColor: Color.fromARGB(255, 0x52, 0x01, 0x9b),
         style: TextStyle(color: Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+        onTap: () {
+          setState(() {
+            presionado = true;
+          });
+        },
         onChanged: (String? newValue) {
           setState(() {
             _cafeteriaSeleccionada = newValue!;
@@ -515,9 +522,47 @@ class ResenasPageState extends State<ResenasPage> {
     }
 
     @override
+    Widget textFieldLista() {
+      return (Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 10, right: 10, top: 4),
+                child: Icon(Icons.coffee_maker_outlined,
+                    color: Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+              ),
+              Container(
+                width: 200,
+                margin: EdgeInsets.only(left: 10, right: 10, top: 4),
+                child: _dropdownCafeteria(),
+              ),
+              //_dropdownProductos(),
+            ],
+          ),
+          Container(
+            height: 2,
+            color: Color.fromARGB(255, 84, 14, 148),
+          )
+        ],
+      ));
+    }
+
+    @override
     Widget _mostrarCrearResena() {
       print(_tazas);
       const size_taza = 30.0;
+      var promedio = 0.0;
+      if (pregunta == 10) {
+        print(calificaciones);
+        var suma_calificaciones = 0;
+        for (int i = 0; i < calificaciones.length; i++) {
+          suma_calificaciones += calificaciones[i];
+        }
+        promedio = suma_calificaciones / calificaciones.length;
+        print(promedio);
+      }
       return (AnimatedContainer(
           width: MediaQuery.of(context).size.width * 0.8,
           height: (crearResena)
@@ -543,32 +588,43 @@ class ResenasPageState extends State<ResenasPage> {
                         decoration: BoxDecoration(
                             //color: Color.fromARGB(255, 255, 255, 255))
                             ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      left: 10, right: 10, top: 4),
-                                  child: Icon(Icons.coffee_maker_outlined,
-                                      color: Color.fromARGB(
-                                          255, 0x52, 0x01, 0x9b)),
-                                ),
-                                Container(
-                                  width: 200,
-                                  margin: EdgeInsets.only(
-                                      left: 10, right: 10, top: 4),
-                                  child: _dropdownCafeteria(),
-                                ),
-                                //_dropdownProductos(),
-                              ],
+                        child: //dropdownCafeteria(),
+                            //textFieldLista()
+                            Padding(
+                          padding: EdgeInsets.only(top: 0),
+                          child: TextFormField(
+                            onChanged: (value) {
+                              setState(() {
+                                pregunta = 0;
+                                _tazas = 0;
+                                calificaciones = [];
+                              });
+                            },
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                                fontWeight: FontWeight.bold),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.coffee_maker_outlined,
+                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                                size: 29,
+                              ),
+                              hintText: 'Nombre cafetería',
+                              hintStyle: TextStyle(
+                                  color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                                  fontWeight: FontWeight.bold),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+                              ),
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+                              ),
                             ),
-                            Container(
-                              height: 2,
-                              color: Color.fromARGB(255, 84, 14, 148),
-                            )
-                          ],
+                          ),
                         )),
                     (pregunta != 10)
                         ? Container(
@@ -689,7 +745,8 @@ class ResenasPageState extends State<ResenasPage> {
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(top: 20),
-                                  child: Text('La clasificacion es de 1 a 5',
+                                  child: Text(
+                                      'La clasificacion es de $promedio',
                                       style: TextStyle(
                                           color:
                                               Color.fromARGB(255, 84, 14, 148),
@@ -807,6 +864,7 @@ class ResenasPageState extends State<ResenasPage> {
                         setState(() {
                           if (_tazas != 0) {
                             pregunta += 1;
+                            calificaciones.add(_tazas);
                           }
                           _tazas = 0;
                         });
