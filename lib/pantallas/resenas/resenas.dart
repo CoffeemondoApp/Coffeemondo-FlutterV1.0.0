@@ -1,23 +1,18 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings, prefer_const_constructors, sort_child_properties_last
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
-import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../firebase/autenticacion.dart';
-import '../resenas/resenas.dart';
-import 'Perfil.dart';
 import 'dart:math' as math;
 
-class IndexPage extends StatefulWidget {
-  final String tiempo_inicio;
-  const IndexPage(this.tiempo_inicio, {super.key});
+class ResenaPage extends StatefulWidget {
+  const ResenaPage({super.key});
 
   @override
-  IndexPageState createState() => IndexPageState();
+  ResenaPageState createState() => ResenaPageState();
 }
 
 String tab = '';
@@ -79,21 +74,23 @@ List<Map<String, dynamic>> getNivel() {
   ];
 }
 
-class IndexPageState extends State<IndexPage> {
+class ResenaPageState extends State<ResenaPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  late GoogleMapController googleMapController;
+
   // Si existe un usuario logeado, este asigna a currentUser la propiedad currentUser del Auth de FIREBASE
   User? get currentUser => _firebaseAuth.currentUser;
   @override
   void initState() {
     super.initState();
     // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
-    print('Inicio: ' + widget.tiempo_inicio);
     _getdata();
   }
 
   bool _visible = false;
+
+  CollectionReference resenas =
+      FirebaseFirestore.instance.collection('resenas');
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
@@ -111,7 +108,6 @@ class IndexPageState extends State<IndexPage> {
         cumpleanos = userData.data()!['cumpleanos'];
         urlImage = userData.data()!['urlImage'];
         niveluser = userData.data()!['nivel'];
-        inicio = widget.tiempo_inicio;
       });
     });
   }
@@ -241,188 +237,9 @@ class IndexPageState extends State<IndexPage> {
     ));
   }
 
-  //Funcion para calcular cuanto tiempo lleva el usuario en la aplicacion y actualizar el puntaje
-  String _calcularTiempo() {
-    //Se obtiene la fecha y hora actual
-    var now = new DateTime.now();
-    //Se obtiene la fecha y hora de inicio de sesion
-    var inicio = DateTime.parse(widget.tiempo_inicio);
-    //Se calcula la diferencia entre la fecha y hora actual y la fecha y hora de inicio de sesion
-    var diferencia = now.difference(inicio);
-    //Se calcula el tiempo en minutos
-    var tiempo_hora = diferencia.inHours;
-    var tiempo_minutos = diferencia.inMinutes;
-    var tiempo_segundos = diferencia.inSeconds;
-
-    return '$tiempo_hora/$tiempo_minutos/$tiempo_segundos';
-  }
 
   @override
   Widget build(BuildContext context) {
-    //imprimir el tiempo que lleva el usuario en la aplicacion
-    print(_calcularTiempo());
-
-    _recompensa() {
-      if (int.parse(_calcularTiempo().split('/')[2]) == 10) {
-        print('Recompensa por estar 10 secs en la app, has ganado 10 pts');
-        setState(() {
-          puntaje_actual += 10;
-          porcentaje = puntaje_actual / puntaje_nivel;
-          puntaje_actual_string = puntaje_actual.toString();
-        });
-      }
-    }
-
-    @override
-    Widget _tituloContainer() {
-      return (Text(
-        'Felicitaciones!',
-        style: TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-      ));
-    }
-
-    @override
-    Widget _cuerpoContainer() {
-      return (Text(
-        'Enhorabuena! Has subido al nivel $nivel.',
-        style: TextStyle(
-            color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-      ));
-    }
-
-    Widget _containerMensajeNivel() {
-      return (AnimatedOpacity(
-        opacity: _visible ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 1500),
-        child: Container(
-          margin: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.02,
-              left: MediaQuery.of(context).size.width * 0.05,
-              right: MediaQuery.of(context).size.width * 0.05),
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: (!_visible) ? 0 : MediaQuery.of(context).size.height * 0.15,
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: //Crear columna que contenga el titulo y el cuerpo del container
-              Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.02),
-                child: _tituloContainer(),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.04),
-                child: _cuerpoContainer(),
-              ),
-            ],
-          ),
-        ),
-      ));
-    }
-
-    Widget _containerMapa() {
-      return (Container(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: MediaQuery.of(context).size.height * 0.3,
-          decoration: BoxDecoration(
-            color: Color.fromARGB(0, 0, 0, 0),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Stack(
-            children: [
-              Container(
-                margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.056,
-                  bottom: MediaQuery.of(context).size.height * 0.056,
-                ),
-                //Mostrar mapa en el container
-
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.12,
-                    right: MediaQuery.of(context).size.width * 0.12),
-                child: GoogleMap(
-                  mapType: MapType.hybrid,
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(-33.454572, -70.6559607),
-                    zoom: 10,
-                  ),
-                  onMapCreated: (GoogleMapController controller) {
-                    googleMapController = controller;
-                  },
-                ),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(0, 1, 155, 27),
-                ),
-              ),
-            ],
-          )));
-    }
-
-    Widget _bodyIndex() {
-      _subirPuntos() {
-        print(_calcularTiempo());
-        //aumentar en 10 el puntaje actual
-        setState(() {
-          puntaje_actual += 10;
-          porcentaje = puntaje_actual / puntaje_nivel;
-          puntaje_actual_string = puntaje_actual.toString();
-        });
-      }
-
-      return (Column(
-        children: [
-          _containerMensajeNivel(),
-          Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
-          Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
-            child: ElevatedButton(
-              onPressed: () {
-                _subirPuntos();
-              },
-              child: Text('Subir puntos'),
-            ),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => crearResenaPage()));;
-              },
-              child: Text('Crear resena'),
-            ),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResenaPage()));;
-              },
-              child: Text('Ver resenas'),
-            ),
-          ),
-        ],
-      ));
-    }
 
     //Hacer que _recompensa se ejecute todo el tiempo
     //Timer.periodic(Duration(seconds: 2), (timer) {
@@ -430,6 +247,14 @@ class IndexPageState extends State<IndexPage> {
     //});
 
     //Crear funcion para actualizar el puntaje
+    _subirPuntos() {
+      //aumentar en 10 el puntaje actual
+      setState(() {
+        puntaje_actual += 10;
+        porcentaje = puntaje_actual / puntaje_nivel;
+        puntaje_actual_string = puntaje_actual.toString();
+      });
+    }
 
     //Crear funcion para detectar cuando el nivel inicial es diferente al nivel actual
     _subirNivel() {
@@ -491,7 +316,76 @@ class IndexPageState extends State<IndexPage> {
           ],
         ),
       ),
-      body: _bodyIndex(),
+      body: //Crear contenedor morado con margen
+          Column(
+        children: [
+          AnimatedOpacity(
+            opacity: _visible ? 1.0 : 0.0,
+            duration: Duration(milliseconds: 1500),
+            child: Container(
+              child: //Crear columna que contenga el titulo y el cuerpo del container
+                  Column(
+                children: [
+                ],
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.centerRight,
+            height: 400,
+            child: StreamBuilder(
+              stream: resenas
+                  .orderBy("fechaCreacion", descending: true)
+                  .snapshots(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  final documents = snapshot.data.docs;
+                  return ListView.builder(
+                    itemCount: documents.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final document = documents[index];
+                      return ListTile(
+                        title: Text(
+                          document.data()['cafeteria'],
+                          textAlign: TextAlign.center,
+                        ),
+                        subtitle: 
+                        Column(                        
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text("Por: " + document.data()['nickname_usuario']),
+                            Image.network(document.data()['urlFotografia'], width: 700, height: 200),
+                            Text(document.data()['comentario']),
+                            SizedBox(height: 5),
+                            Text(document.data()['reseña']),
+                            Text("Publicado el " + document.data()['fechaCreacion']),   
+                        currentUser?.uid == document.data()['uid_usuario']
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  resenas.doc(document.id).delete();
+                                },
+                                child: Text('Borrar Reseña'),
+                              )
+                            : Container(),
+                            Divider(
+                              color: Colors.black,
+                              height: 20,
+                              thickness: 1,
+                              indent: 20,
+                              endIndent: 20,
+                            )
+                      ],
+                    ),
+                  );
+                },
+              );
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+      ),
+    ]),
       bottomNavigationBar: CustomBottomBar(),
     );
   }
@@ -627,18 +521,11 @@ class CustomBottomBar extends StatelessWidget {
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' inicio',
+                  text: 'Home',
                 ),
                 GButton(
-                  icon: Icons.reviews,
-                  text: 'Reseñas',
-                  onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResenasPage(inicio)));
-                  },
+                  icon: Icons.favorite_border,
+                  text: 'Guardados',
                 ),
                 GButton(
                   icon: Icons.search,
