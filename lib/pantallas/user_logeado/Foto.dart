@@ -277,7 +277,7 @@ class FotoApp extends State<FotoPage> {
           painter: BackgroundButton1(),
           child: InkWell(
             onTap: () {
-              guardarFotoUsuario();
+              AlertaGuardarFoto();
             },
             child: Center(
               child: Text(
@@ -291,6 +291,64 @@ class FotoApp extends State<FotoPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget AlertaGuardarFoto() {
+    return AlertDialog(
+      title: Text(
+        'Actualizar foto de perfil',
+        style: TextStyle(
+          color: Color.fromARGB(255, 255, 79, 52),
+        ),
+      ),
+      content: Text(
+        '¿Usted desea actualizar la foto de perfil con la imagen seleccionada?',
+        style: TextStyle(
+          color: Color.fromARGB(255, 255, 79, 52),
+        ),
+      ),
+      backgroundColor: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
+      actions: <Widget>[
+        InkWell(
+            child: Container(
+              width: 50,
+              height: 50,
+              child: Center(
+                child: Text(
+                  'Si',
+                  style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)),
+                ),
+              ),
+            ),
+            onTap: () {
+              guardarFotoUsuario();
+              Navigator.of(context).pop();
+            }),
+        InkWell(
+          child: Container(
+            width: 50,
+            height: 50,
+            child: Center(
+              child: Text(
+                'No',
+                style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+            ),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
+  //Mostrar AlerDialog
+  Future<void> _MostrarAlerta(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (_) => AlertaGuardarFoto(),
     );
   }
 

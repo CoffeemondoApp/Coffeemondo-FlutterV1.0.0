@@ -377,22 +377,52 @@ class PerfilApp extends State<PerfilPage> {
 
   Widget AlertaCerrarSesion() {
     return AlertDialog(
-      title: Text('Cerrar Sesion'),
-      content: Text('Usted desea cerrar su sesion en este dispositivo?'),
+      title: Text(
+        'Cerrar sesión',
+        style: TextStyle(
+          color: Color.fromARGB(255, 255, 79, 52),
+        ),
+      ),
+      content: Text(
+        '¿Usted desea cerrar su sesión en este dispositivo?',
+        style: TextStyle(
+          color: Color.fromARGB(255, 255, 79, 52),
+        ),
+      ),
+      backgroundColor: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
       actions: <Widget>[
-        FloatingActionButton(
-          child: Text('Si'),
-          onPressed: () {
+        InkWell(
+          child: Container(
+            width: 50,
+            height: 50,
+            child: Center(
+              child: Text(
+                'Si',
+                style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+            ),
+          ),
+          onTap: () {
             cerrarSesion();
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => Login()));
           },
         ),
-        FloatingActionButton(
-            child: Text('No'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
+        InkWell(
+          child: Container(
+            width: 50,
+            height: 50,
+            child: Center(
+              child: Text(
+                'No',
+                style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+            ),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+        ),
       ],
     );
   }

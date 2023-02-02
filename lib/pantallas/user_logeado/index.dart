@@ -399,10 +399,9 @@ class IndexPageState extends State<IndexPage> {
                 EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => crearResenaPage()));;
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => crearResenaPage()));
+                ;
               },
               child: Text('Crear resena'),
             ),
@@ -412,10 +411,9 @@ class IndexPageState extends State<IndexPage> {
                 EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResenaPage()));;
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ResenaPage()));
+                ;
               },
               child: Text('Ver resenas'),
             ),
@@ -622,8 +620,8 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              gap: 8,
-              padding: EdgeInsets.all(16),
+              gap: 6,
+              padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
@@ -631,7 +629,7 @@ class CustomBottomBar extends StatelessWidget {
                 ),
                 GButton(
                   icon: Icons.reviews,
-                  text: 'Reseñas',
+                  text: 'Mis Reseñas',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
                     Navigator.push(
@@ -641,11 +639,23 @@ class CustomBottomBar extends StatelessWidget {
                   },
                 ),
                 GButton(
+                  icon: Icons.menu_book,
+                  text: 'Mis Recetas',
+                ),
+                GButton(
+                  icon: Icons.stars,
+                  text: 'Mis logros',
+                ),
+                GButton(
+                  icon: Icons.favorite,
+                  text: 'Favoritos',
+                ),
+                GButton(
                   icon: Icons.search,
                   text: 'Busqueda',
                 ),
                 GButton(
-                  icon: Icons.settings,
+                  icon: Icons.account_circle,
                   text: 'Configuracion',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
