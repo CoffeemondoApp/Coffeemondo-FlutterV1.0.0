@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, prefer_const_constructors, sort_child_properties_last
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffeemondo/pantallas/resenas/editarResena.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ String tab = '';
 // Declaracion de variables de informaicon de usuario
 String nombre = '';
 String nickname = '';
+String cafeteria = '';
 String cumpleanos = '';
 String urlImage = '';
 num puntaje_actual = 180;
@@ -280,6 +282,8 @@ class ResenaPageState extends State<ResenaPage> {
       }
     }
 
+String idResena;
+
     _subirNivel();
     print(nivel.toString() + ' ' + niveluser.toString());
 
@@ -354,18 +358,75 @@ class ResenaPageState extends State<ResenaPage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text("Por: " + document.data()['nickname_usuario']),
-                            Image.network(document.data()['urlFotografia'], width: 700, height: 200),
+                            Image.network(document.data()['urlFotografia'], width: 200, height: 200),
                             Text(document.data()['comentario']),
                             SizedBox(height: 5),
                             Text(document.data()['reseña']),
                             Text("Publicado el " + document.data()['fechaCreacion']),   
                         currentUser?.uid == document.data()['uid_usuario']
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  resenas.doc(document.id).delete();
-                                },
-                                child: Text('Borrar Reseña'),
-                              )
+                            ?//widget con dos botones para editar y eliminar la reseña
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () { 
+                                    //editar reseña
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditarResena(
+                                          idResena: document.id,
+                                          cafeteria: document.data()['cafeteria'],
+                                          comentario: document.data()['comentario'],
+                                          resena: document.data()['reseña'],
+                                          urlFoto: document.data()['urlFotografia'],
+
+                                        ),
+                                      ),
+                                    );
+                                   },
+                                  child: Text("Editar")
+                                  //editar
+                                ),
+                                SizedBox(width: 10),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("Eliminar"),
+                                          content: Text(
+                                              "¿Está seguro que desea eliminar esta reseña?"),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Cancelar"),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                FirebaseFirestore.instance
+                                                    .collection("resenas")
+                                                    //exportar id de la reseña para llevarla a otra pagina
+
+                                                    .doc(document.id)
+                                                    .delete();
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Eliminar"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: Text("Eliminar"),
+                                ),
+                              ],
+                            )
+
                             : Container(),
                             Divider(
                               color: Colors.black,
