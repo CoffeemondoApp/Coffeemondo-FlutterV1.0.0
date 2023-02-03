@@ -87,8 +87,9 @@ bool comentario_presionado = false;
 String direccion = '';
 bool imagenSeleccionada = false;
 String imageFilePath = '';
+bool nombre_cafeteria = false;
 
-TextEditingController _cafeteriaController = TextEditingController();
+TextEditingController _nombreCafeteriaController = TextEditingController();
 TextEditingController _comentarioController = TextEditingController();
 TextEditingController _direccionController = TextEditingController();
 TextEditingController _fotoController = TextEditingController();
@@ -911,6 +912,18 @@ class ResenasPageState extends State<ResenasPage> {
 
     _openCamera(BuildContext context) async {
       imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+      if (imageFile != null) {
+        setState(() {
+          imageFilePath = imageFile!.path;
+          imagenSeleccionada = true;
+        });
+        print('image: $imageFilePath');
+      } else {
+        imagenSeleccionada = false;
+        return;
+      }
+      //obtener nombre de imagen antes de ser guardada
+
       setState(() {});
     }
 
@@ -1096,6 +1109,43 @@ class ResenasPageState extends State<ResenasPage> {
     }
 
     @override
+    Widget _textFieldNombreCafeteria(TextEditingController controller) {
+      return (TextFormField(
+        controller: controller,
+        onChanged: (value) {
+          setState(() {
+            pregunta = 0;
+            _tazas = 0;
+            calificaciones = [];
+          });
+        },
+        readOnly: nombre_cafeteria,
+        style: TextStyle(
+            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            fontWeight: FontWeight.bold),
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.coffee_maker_outlined,
+            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            size: 34,
+          ),
+          hintText: 'Nombre cafetería',
+          hintStyle: TextStyle(
+              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+              fontWeight: FontWeight.bold),
+          enabledBorder: UnderlineInputBorder(
+            borderSide:
+                BorderSide(color: Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide:
+                BorderSide(color: Color.fromARGB(255, 0x52, 0x01, 0x9b)),
+          ),
+        ),
+      ));
+    }
+
+    @override
     Widget _mostrarCrearResena() {
       print(_tazas);
       const size_taza = 30.0;
@@ -1144,41 +1194,9 @@ class ResenasPageState extends State<ResenasPage> {
                         child: //dropdownCafeteria(),
                             //textFieldLista()
                             Padding(
-                          padding: EdgeInsets.only(top: 0),
-                          child: TextFormField(
-                            onChanged: (value) {
-                              setState(() {
-                                pregunta = 0;
-                                _tazas = 0;
-                                calificaciones = [];
-                              });
-                            },
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                                fontWeight: FontWeight.bold),
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.coffee_maker_outlined,
-                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                                size: 34,
-                              ),
-                              hintText: 'Nombre cafetería',
-                              hintStyle: TextStyle(
-                                  color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                                  fontWeight: FontWeight.bold),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:
-                                        Color.fromARGB(255, 0x52, 0x01, 0x9b)),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:
-                                        Color.fromARGB(255, 0x52, 0x01, 0x9b)),
-                              ),
-                            ),
-                          ),
-                        )),
+                                padding: EdgeInsets.only(top: 0),
+                                child: _textFieldNombreCafeteria(
+                                    _nombreCafeteriaController))),
                     (pregunta != 10)
                         ? Container(
                             margin: EdgeInsets.only(top: 20),
@@ -1193,11 +1211,14 @@ class ResenasPageState extends State<ResenasPage> {
                                     children: [
                                       GestureDetector(
                                           onTap: () {
-                                            setState(() {
-                                              (_tazas == 1)
-                                                  ? _tazas = 0
-                                                  : _tazas = 1;
-                                            });
+                                            if (_nombreCafeteriaController
+                                                .text.isNotEmpty) {
+                                              setState(() {
+                                                (_tazas == 1)
+                                                    ? _tazas = 0
+                                                    : _tazas = 1;
+                                              });
+                                            }
                                           },
                                           child: Icon(
                                             (_tazas == 1 ||
@@ -1213,11 +1234,14 @@ class ResenasPageState extends State<ResenasPage> {
                                           )),
                                       GestureDetector(
                                           onTap: () {
-                                            setState(() {
-                                              (_tazas == 2)
-                                                  ? _tazas = 0
-                                                  : _tazas = 2;
-                                            });
+                                            if (_nombreCafeteriaController
+                                                .text.isNotEmpty) {
+                                              setState(() {
+                                                (_tazas == 2)
+                                                    ? _tazas = 0
+                                                    : _tazas = 2;
+                                              });
+                                            }
                                           },
                                           child: Icon(
                                             (_tazas == 2 ||
@@ -1232,11 +1256,14 @@ class ResenasPageState extends State<ResenasPage> {
                                           )),
                                       GestureDetector(
                                           onTap: () {
-                                            setState(() {
-                                              (_tazas == 3)
-                                                  ? _tazas = 0
-                                                  : _tazas = 3;
-                                            });
+                                            if (_nombreCafeteriaController
+                                                .text.isNotEmpty) {
+                                              setState(() {
+                                                (_tazas == 3)
+                                                    ? _tazas = 0
+                                                    : _tazas = 3;
+                                              });
+                                            }
                                           },
                                           child: Icon(
                                             (_tazas == 3 ||
@@ -1250,11 +1277,14 @@ class ResenasPageState extends State<ResenasPage> {
                                           )),
                                       GestureDetector(
                                           onTap: () {
-                                            setState(() {
-                                              (_tazas == 4)
-                                                  ? _tazas = 0
-                                                  : _tazas = 4;
-                                            });
+                                            if (_nombreCafeteriaController
+                                                .text.isNotEmpty) {
+                                              setState(() {
+                                                (_tazas == 4)
+                                                    ? _tazas = 0
+                                                    : _tazas = 4;
+                                              });
+                                            }
                                           },
                                           child: Icon(
                                             (_tazas == 4 || _tazas == 5)
@@ -1266,11 +1296,14 @@ class ResenasPageState extends State<ResenasPage> {
                                           )),
                                       GestureDetector(
                                           onTap: () {
-                                            setState(() {
-                                              (_tazas == 5)
-                                                  ? _tazas = 0
-                                                  : _tazas = 5;
-                                            });
+                                            if (_nombreCafeteriaController
+                                                .text.isNotEmpty) {
+                                              setState(() {
+                                                (_tazas == 5)
+                                                    ? _tazas = 0
+                                                    : _tazas = 5;
+                                              });
+                                            }
                                           },
                                           child: Icon(
                                             (_tazas == 5)
@@ -1338,6 +1371,7 @@ class ResenasPageState extends State<ResenasPage> {
                           if (_tazas != 0) {
                             pregunta += 1;
                             calificaciones.add(_tazas);
+                            nombre_cafeteria = true;
                           }
                           _tazas = 0;
                         });
@@ -1400,6 +1434,10 @@ class ResenasPageState extends State<ResenasPage> {
                                 pregunta = 0;
                                 _tazas = 0;
                                 calificado = false;
+                                nombre_cafeteria = false;
+                                _direccionController.text = '';
+                                _nombreCafeteriaController.text = '';
+                                imagenSeleccionada = false;
                               });
                             },
                             child: Container(
