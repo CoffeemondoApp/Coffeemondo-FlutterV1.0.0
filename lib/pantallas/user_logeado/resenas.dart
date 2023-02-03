@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:coffeemondo/pantallas/resenas/resenas.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -71,6 +73,7 @@ var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 0;
 var niveluser;
 var inicio = '';
+var promedio ;
 bool misResenas = false;
 bool misResenas2 = false;
 bool crearResena = false;
@@ -152,6 +155,49 @@ class ResenasPageState extends State<ResenasPage> {
   }
 
   bool _visible = false;
+  
+  PlatformFile? pickedFile;
+  UploadTask? uploadTask;
+
+  // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
+  Future subirImagen() async {
+    // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
+    final path = 'resena_resena_image/${_cafeteriaController.text}.jpg';
+    final file = File(pickedFile!.path!);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+    final urlUserImage = await snapshot.ref.getDownloadURL();
+
+    // Se retorna la url de la imagen para llamarla desde la funcion de guardarInformacion
+    return urlUserImage;
+  }
+
+
+  // Funcion para crear y guardar resena en la BD de Firestore
+  Future<void> guardarResena() async {
+    DateTime now = DateTime.now();
+    try {
+      // Se busca la coleccion 'resenas' de la BD de Firestore
+      final DocumentReference docRef =
+          FirebaseFirestore.instance.collection("resenas").doc();
+      // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
+      docRef.set({
+        'cafeteria': cafeteria,
+        'comentario': _comentarioController.text,
+        'urlFotografia': await subirImagen(),
+        'direccion': _direccionController.text,
+        'uid_usuario': currentUser?.uid,
+        'nickname_usuario': nickname,
+        'fechaCreacion': "${now.day}/${now.month}/${now.year} a las ${now.hour}:${now.minute}",
+      });
+      print('Ingreso de resena exitoso.');
+    } catch (e) {
+      print("Error al intentar ingresar resena");
+    }
+  }
 
   // Mostrar informacion del usuario en pantalla
   void _getdata() async {
@@ -1035,13 +1081,11 @@ class ResenasPageState extends State<ResenasPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        'Generar reseña',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 255, 79, 52),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                      ElevatedButton(
+                        onPressed: () {
+                          guardarResena();
+                        },
+                        child: Text("Crear Reseña"),
                       ),
                     ],
                   )),
@@ -1089,6 +1133,7 @@ class ResenasPageState extends State<ResenasPage> {
           curve: Curves.fastOutSlowIn,
           child: (crearResena)
               ? Column(
+
                   children: [
                     //Crear dropdown textfield para seleccionar la cafeteria a la que se le va a hacer la reseña
                     Container(
