@@ -865,7 +865,7 @@ class ResenasPageState extends State<ResenasPage> {
     }
 
     _openCamera(BuildContext context) async {
-      imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
       if (imageFile != null) {
         setState(() {
           imageFilePath = imageFile!.path;
@@ -1391,6 +1391,7 @@ class ResenasPageState extends State<ResenasPage> {
                                 calificado = false;
                                 nombre_cafeteria = false;
                                 _direccionController.text = '';
+                                _nombreCafeteriaController.text = '';
                                 imagenSeleccionada = false;
                               });
                             },
