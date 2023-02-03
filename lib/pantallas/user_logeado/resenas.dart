@@ -163,7 +163,7 @@ class ResenasPageState extends State<ResenasPage> {
   // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
   Future subirImagen() async {
     // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
-    final path = 'resena_resena_image/${_cafeteriaController.text}.jpg';
+    final path = 'resena_resena_image/${"PENDIENTE"}.jpg';
     final file = File(pickedFile!.path!);
 
     final ref = FirebaseStorage.instance.ref().child(path);
