@@ -55,6 +55,8 @@ dependencies:
   email_validator: ^2.1.17
   autocomplete_textfield: ^2.0.1
   dropdown_textfield: ^1.0.8
+  smooth_star_rating: ^1.1.1
+  image_picker: ^0.8.6+1
   
 flutter_native_splash:
   color: "#E64921"

@@ -1,14 +1,48 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../firebase/autenticacion.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
+
+class HalfFilledIcon extends StatelessWidget {
+  final IconData? icon;
+  final int size;
+  double fill;
+
+  HalfFilledIcon(this.fill, this.icon, this.size);
+  @override
+  Widget build(BuildContext context) {
+    return ShaderMask(
+      blendMode: BlendMode.srcATop,
+      shaderCallback: (Rect rect) {
+        return LinearGradient(
+          stops: [0, fill, fill],
+          colors: [
+            Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            Color.fromARGB(255, 0x52, 0x01, 0x9b).withOpacity(0)
+          ],
+        ).createShader(rect);
+      },
+      child: SizedBox(
+        width: size.toDouble(),
+        height: size.toDouble(),
+        child: Icon(icon,
+            size: size.toDouble(), color: Color.fromARGB(255, 255, 79, 52)),
+      ),
+    );
+  }
+}
 
 class ResenasPage extends StatefulWidget {
   final String tiempo_inicio;
@@ -45,6 +79,16 @@ int pregunta = 0;
 var _cafeteriaSeleccionada = 'Cafetería 1';
 var _productoSeleccionado = 'Producto 1';
 List<int> calificaciones = [];
+bool calificado = false;
+bool comentario_presionado = false;
+String direccion = '';
+bool imagenSeleccionada = false;
+String imageFilePath = '';
+
+TextEditingController _cafeteriaController = TextEditingController();
+TextEditingController _comentarioController = TextEditingController();
+TextEditingController _direccionController = TextEditingController();
+TextEditingController _fotoController = TextEditingController();
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -550,6 +594,464 @@ class ResenasPageState extends State<ResenasPage> {
     }
 
     @override
+    Widget _tazasRanking(double promedio) {
+      return (Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            (!calificado)
+                ? Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: Text(
+                        'La clasificacion es de ' +
+                            promedio.toStringAsFixed(1) +
+                            ' tazas',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 84, 14, 148),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold)),
+                  )
+                : Container(),
+            Container(
+                margin: EdgeInsets.only(
+                    top: (!calificado) ? 10 : 0, left: (!calificado) ? 0 : 109),
+                width: (!calificado)
+                    ? MediaQuery.of(context).size.width * 0.7
+                    : MediaQuery.of(context).size.width * 0.4,
+                decoration: BoxDecoration(
+                    //color: Colors.white,
+                    ),
+                child: Row(
+                  mainAxisAlignment: (!calificado)
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
+                  children: [
+                    //Crear iconos de tazas de acuerdo a la calificacion promedio de la tienda
+                    HalfFilledIcon(
+                      (promedio >= 1) ? 1 : promedio,
+                      Icons.coffee,
+                      30,
+                    ),
+                    HalfFilledIcon(
+                      (promedio >= 2) ? 1 : promedio - 1,
+                      Icons.coffee,
+                      30,
+                    ),
+                    HalfFilledIcon(
+                      (promedio >= 3) ? 1 : promedio - 2,
+                      Icons.coffee,
+                      30,
+                    ),
+                    HalfFilledIcon(
+                      (promedio >= 4) ? 1 : promedio - 3,
+                      Icons.coffee,
+                      30,
+                    ),
+                    HalfFilledIcon(
+                      (promedio >= 5) ? 1 : promedio - 4,
+                      Icons.coffee,
+                      30,
+                    ),
+                  ],
+                ))
+          ],
+        ),
+      ));
+    }
+
+    @override
+    Widget _textFieldComentario(TextEditingController _controller) {
+      return (TextFormField(
+          maxLength: 119,
+          controller: _controller,
+          style: const TextStyle(
+            color: Color.fromARGB(255, 84, 14, 148),
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 84, 14, 148)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 84, 14, 148)),
+              ),
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.feedback_outlined,
+                  color: Color.fromARGB(255, 84, 14, 148), size: 24),
+              hintText: 'Desea agregar algun comentario...',
+              hintStyle: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: Color.fromARGB(255, 84, 14, 148),
+              ))));
+    }
+
+    @override
+    Widget _FormComentario(double promedio) {
+      return (Padding(
+        padding: EdgeInsets.only(top: 0),
+        child: Container(
+          //decoration:
+          //  BoxDecoration(color: Colors.white),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 5),
+                    width: 40,
+                    height: 40,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Color.fromARGB(255, 84, 14, 148), width: 3),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20)),
+                      ),
+                      child: Text(
+                        '$promedio',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 84, 14, 148),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      alignment: Alignment(0, 0),
+                    ),
+                    decoration: BoxDecoration(
+                        //color: Colors.red,
+                        ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        //color: Colors.blue,
+                        ),
+                    child: Column(children: [
+                      Container(
+                        child: _tazasRanking(promedio),
+                        margin: EdgeInsets.only(top: 5),
+                        decoration: BoxDecoration(
+                            //color: Colors.white,
+                            ),
+                      ),
+                      GestureDetector(
+                        child: AnimatedContainer(
+                            duration: Duration(seconds: 1),
+                            // Proporciona una curva opcional para hacer que la animación se sienta más suave.
+                            curve: Curves.fastOutSlowIn,
+                            width: MediaQuery.of(context).size.width * 0.67,
+                            height: comentario_presionado ? 70 : 17,
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 84, 14, 148),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                  bottomRight: Radius.circular(20)),
+                            ),
+                            margin: EdgeInsets.only(left: 5),
+                            child: Container(
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(left: 5),
+                              child: Text(
+                                (_comentarioController.text != '')
+                                    ? _comentarioController.text
+                                    : 'Sin comentarios...',
+                                textAlign: TextAlign.start,
+                                overflow: comentario_presionado
+                                    ? TextOverflow.visible
+                                    : TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 79, 52),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            )),
+                        onTap: () {
+                          setState(() {
+                            comentario_presionado = !comentario_presionado;
+                          });
+                        },
+                      )
+                    ]),
+                  ),
+                ],
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 1,
+                color: Color.fromARGB(255, 84, 14, 148),
+              )
+            ],
+          ),
+        ),
+      ));
+    }
+
+    navegarDireccion() async {
+      final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DireccionPage(
+                  widget.tiempo_inicio, '', '', '', '', '', 'cr')));
+      setState(() {
+        _direccionController.text = result;
+      });
+      print('este es el resultado: $result');
+    }
+
+    @override
+    Widget textFieldDireccion(TextEditingController controller) {
+      return (TextFormField(
+        readOnly: true,
+        controller: controller,
+        onTap: () {
+          //Navegar hacia direccion.dart
+          navegarDireccion();
+        },
+        //controller: _comentarioController,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.location_on,
+            color: Color.fromARGB(255, 84, 14, 148),
+            size: 34,
+          ),
+          hintText: 'Ubicacion de la cafeteria/hogar',
+          hintStyle: TextStyle(
+              color: Color.fromARGB(255, 84, 14, 148),
+              fontSize: 16,
+              fontWeight: FontWeight.bold),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color.fromARGB(255, 84, 14, 148)),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Color.fromARGB(255, 84, 14, 148)),
+          ),
+        ),
+        style: TextStyle(
+            color: Color.fromARGB(255, 84, 14, 148),
+            fontSize: 16,
+            fontWeight: FontWeight.bold),
+      ));
+    }
+
+    //List<XFile> imageFile;
+    XFile? imageFile;
+
+    _openGallery(BuildContext context) async {
+      //imageFile = await ImagePicker().pickMultiImage();
+      imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (imageFile != null) {
+        setState(() {
+          imageFilePath = imageFile!.path;
+          imagenSeleccionada = true;
+        });
+        print('image: $imageFilePath');
+      } else {
+        imagenSeleccionada = false;
+        return;
+      }
+      //obtener nombre de imagen antes de ser guardada
+
+      setState(() {});
+    }
+
+    _openCamera(BuildContext context) async {
+      imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+      setState(() {});
+    }
+
+    XFile pickedFile;
+    final ImagePicker _picker = ImagePicker();
+
+    Future<void> _showSelectionDialog(BuildContext context) {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                backgroundColor: Color.fromARGB(255, 84, 14, 148),
+                title: Text(
+                  "¿Desde donde quieres seleccionar la imagen?",
+                  style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)),
+                ),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      GestureDetector(
+                        child: Container(
+                          height: 40,
+                          child: Center(
+                              child: Text(
+                            "Galeria",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 84, 14, 148),
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          )),
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 79, 52),
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
+                        onTap: () {
+                          _openGallery(context);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Padding(padding: EdgeInsets.all(8.0)),
+                      GestureDetector(
+                        child: Container(
+                          height: 40,
+                          child: Center(
+                              child: Text(
+                            "Camara",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 84, 14, 148),
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          )),
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 79, 52),
+                              borderRadius: BorderRadius.circular(20.0)),
+                        ),
+                        onTap: () {
+                          _openCamera(context);
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  ),
+                ));
+          });
+    }
+
+    @override
+    Widget _inputsFormCR() {
+      return (Container(
+        child: Column(
+          children: [
+            Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: textFieldDireccion(_direccionController)),
+            Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: GestureDetector(
+                    onTap: () {
+                      //Seleccionar foto de la galeria
+                      if (imagenSeleccionada == false) {
+                        _showSelectionDialog(context);
+                      }
+                    },
+                    child: Column(
+                      children: [
+                        Container(
+                            margin: EdgeInsets.only(top: 5, bottom: 4),
+                            //decoration: BoxDecoration(color: Colors.blue),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Icon(
+                                    Icons.camera_alt,
+                                    color: Color.fromARGB(255, 84, 14, 148),
+                                    size: 34,
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                    child: (!imagenSeleccionada)
+                                        ? Text(
+                                            'Foto de la cafeteria/producto',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 84, 14, 148),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.6,
+                                            decoration: BoxDecoration(
+                                                //color: Colors.white
+                                                ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  child: Text(
+                                                    'Foto seleccionada',
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 84, 14, 148),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  //Mostrar foto alojada en imageFilePath
+                                                  width: 30,
+                                                  height: 30,
+                                                  child: Image.file(
+                                                    File(imageFilePath),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              ],
+                                            )))
+                              ],
+                            )),
+                        Container(
+                            height: 1,
+                            margin: EdgeInsets.only(top: 5),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 84, 14, 148),
+                            ))
+                      ],
+                    ))),
+            Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Container(
+                  width: 300,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 84, 14, 148),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Generar reseña',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  )),
+            ),
+          ],
+        ),
+      ));
+    }
+
+    @override
     Widget _mostrarCrearResena() {
       print(_tazas);
       const size_taza = 30.0;
@@ -563,12 +1065,18 @@ class ResenasPageState extends State<ResenasPage> {
         promedio = suma_calificaciones / calificaciones.length;
         print(promedio);
       }
+      print('el largo del comentario es ' +
+          _comentarioController.text.length.toString());
       return (AnimatedContainer(
           width: MediaQuery.of(context).size.width * 0.8,
           height: (crearResena)
-              ? (pregunta == 10)
-                  ? 255
-                  : 220
+              ? (pregunta == 10 && !calificado)
+                  ? 275
+                  : (calificado)
+                      ? comentario_presionado
+                          ? 360
+                          : 310
+                      : 200
               : 0,
           decoration: BoxDecoration(
             color: Color.fromARGB(255, 255, 79, 52),
@@ -607,7 +1115,7 @@ class ResenasPageState extends State<ResenasPage> {
                               prefixIcon: Icon(
                                 Icons.coffee_maker_outlined,
                                 color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                                size: 29,
+                                size: 34,
                               ),
                               hintText: 'Nombre cafetería',
                               hintStyle: TextStyle(
@@ -738,127 +1246,47 @@ class ResenasPageState extends State<ResenasPage> {
                                 ],
                               ),
                             ))
-                        : Container(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(top: 20),
-                                  child: Text(
-                                      'La clasificacion es de $promedio',
-                                      style: TextStyle(
+                        : (!calificado)
+                            ? Container(
+                                child: Column(
+                                children: [
+                                  _tazasRanking(promedio),
+                                  _textFieldComentario(_comentarioController),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        calificado = true;
+                                      });
+                                    },
+                                    child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.7,
+                                        height: 40,
+                                        margin: EdgeInsets.only(top: 10),
+                                        decoration: BoxDecoration(
                                           color:
                                               Color.fromARGB(255, 84, 14, 148),
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                                Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.7,
-                                    decoration: BoxDecoration(
-                                        //color: Colors.white,
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20),
+                                              bottomLeft: Radius.circular(20),
+                                              bottomRight: Radius.circular(20)),
                                         ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.coffee_outlined,
-                                          color:
-                                              Color.fromARGB(255, 84, 14, 148),
-                                          size: 30,
-                                        ),
-                                        Icon(
-                                          Icons.coffee_outlined,
-                                          color:
-                                              Color.fromARGB(255, 84, 14, 148),
-                                          size: 30,
-                                        ),
-                                        Icon(
-                                          Icons.coffee_outlined,
-                                          color:
-                                              Color.fromARGB(255, 84, 14, 148),
-                                          size: 30,
-                                        ),
-                                        Icon(
-                                          Icons.coffee_outlined,
-                                          color:
-                                              Color.fromARGB(255, 84, 14, 148),
-                                          size: 30,
-                                        ),
-                                        Icon(
-                                          Icons.coffee_outlined,
-                                          color:
-                                              Color.fromARGB(255, 84, 14, 148),
-                                          size: 30,
-                                        ),
-                                      ],
-                                    )),
-                                TextFormField(
-                                    //controller: _controller,
-                                    style: const TextStyle(
-                                      color: Color.fromARGB(255, 84, 14, 148),
-                                      fontSize: 14.0,
-                                      height: 2.0,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                    decoration: InputDecoration(
-                                        focusedBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Color.fromARGB(
-                                                  255, 84, 14, 148)),
-                                        ),
-                                        enabledBorder: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: Color.fromARGB(
-                                                  255, 84, 14, 148)),
-                                        ),
-                                        border: OutlineInputBorder(),
-                                        prefixIcon: Icon(
-                                            Icons.feedback_outlined,
-                                            color: Color.fromARGB(
-                                                255, 84, 14, 148),
-                                            size: 24),
-                                        hintText:
-                                            'Desea agregar algun comentario...',
-                                        hintStyle: TextStyle(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w900,
-                                          color:
-                                              Color.fromARGB(255, 84, 14, 148),
-                                        ))),
-                                GestureDetector(
-                                  onTap: () {
-                                    //ira test.dart
-                                  },
-                                  child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.7,
-                                      height: 40,
-                                      margin: EdgeInsets.only(top: 10),
-                                      decoration: BoxDecoration(
-                                        color: Color.fromARGB(255, 84, 14, 148),
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20),
-                                            bottomLeft: Radius.circular(20),
-                                            bottomRight: Radius.circular(20)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Generar clasificacion y comentario',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
-                                )
-                              ],
-                            ),
-                          ),
+                                        child: Center(
+                                          child: Text(
+                                            'Generar clasificacion y comentario',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )),
+                                  )
+                                ],
+                              ))
+                            : _FormComentario(promedio),
+                    (calificado) ? _inputsFormCR() : Container(),
                     GestureDetector(
                       onTap: () {
                         setState(() {
@@ -899,7 +1327,9 @@ class ResenasPageState extends State<ResenasPage> {
           width: MediaQuery.of(context).size.width * _width_mr2,
           height: (misResenas)
               ? (crearResena)
-                  ? MediaQuery.of(context).size.height / 1.5
+                  ? (calificado)
+                      ? MediaQuery.of(context).size.height / 1.15
+                      : MediaQuery.of(context).size.height / 1.4
                   : MediaQuery.of(context).size.height * _height_mr2
               : MediaQuery.of(context).size.height * _height_mr1,
           decoration: BoxDecoration(
@@ -924,6 +1354,7 @@ class ResenasPageState extends State<ResenasPage> {
                                 crearResena = !crearResena;
                                 pregunta = 0;
                                 _tazas = 0;
+                                calificado = false;
                               });
                             },
                             child: Container(

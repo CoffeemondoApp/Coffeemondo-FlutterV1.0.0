@@ -17,8 +17,9 @@ class DireccionPage extends StatefulWidget {
   final String edad;
   final String telefono;
   final String direccion;
+  final String origen;
   const DireccionPage(this.inicio, this.nombre_apellido, this.nombre_usuario,
-      this.edad, this.telefono, this.direccion,
+      this.edad, this.telefono, this.direccion, this.origen,
       {super.key});
 
   @override
@@ -184,17 +185,20 @@ class DireccionApp extends State<DireccionPage> {
 
   _guardarDireccion() {
     print(direccionEncontrada[1]);
-
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => InfoPage(
-                widget.inicio,
-                widget.nombre_apellido,
-                widget.nombre_usuario,
-                widget.edad,
-                widget.telefono,
-                direccionEncontrada[1].toString())));
+    if (widget.origen == 'ip') {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => InfoPage(
+                  widget.inicio,
+                  widget.nombre_apellido,
+                  widget.nombre_usuario,
+                  widget.edad,
+                  widget.telefono,
+                  direccionEncontrada[1].toString())));
+    } else if (widget.origen == 'cr') {
+      Navigator.pop(context, direccionEncontrada[1].toString());
+    }
   }
 
   Future<void> _handlePressButton() async {

@@ -103,7 +103,8 @@ class InfoApp extends State<InfoPage> {
                 _controladornombreUsuario.text,
                 _controladoredad.text,
                 _controladortelefono.text,
-                _controladordireccion.text)));
+                _controladordireccion.text,
+                'ip')));
   }
 
   String nombre = '';
