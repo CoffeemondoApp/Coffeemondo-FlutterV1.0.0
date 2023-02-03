@@ -1074,7 +1074,7 @@ class ResenasPageState extends State<ResenasPage> {
                   ? 275
                   : (calificado)
                       ? comentario_presionado
-                          ? 360
+                          ? 365
                           : 310
                       : 200
               : 0,
