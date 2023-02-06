@@ -176,6 +176,15 @@ class ResenasPageState extends State<ResenasPage> {
     return urlUserImage;
   }
 
+  Future seleccionarImagen() async {
+    final resultado = await FilePicker.platform.pickFiles();
+    if (resultado == null) return;
+
+    setState(() {
+      pickedFile = resultado.files.first;
+    });
+  }
+
 
   // Funcion para crear y guardar resena en la BD de Firestore
   Future<void> guardarResena() async {
@@ -196,6 +205,10 @@ class ResenasPageState extends State<ResenasPage> {
       });
       print('Ingreso de resena exitoso.');
     } catch (e) {
+      print(cafeteria);
+      print(_comentarioController.text);
+      print(_direccionController.text);
+
       print("Error al intentar ingresar resena");
     }
   }
@@ -959,7 +972,7 @@ class ResenasPageState extends State<ResenasPage> {
                               borderRadius: BorderRadius.circular(20.0)),
                         ),
                         onTap: () {
-                          _openGallery(context);
+                          seleccionarImagen();
                           Navigator.pop(context);
                         },
                       ),
