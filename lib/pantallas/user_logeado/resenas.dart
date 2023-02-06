@@ -159,10 +159,12 @@ class ResenasPageState extends State<ResenasPage> {
   bool _visible = false;
   UploadTask? uploadTask;
 
+  final DocumentReference docRef =
+          FirebaseFirestore.instance.collection("resenas").doc();
+
   // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
   Future subirImagen() async {
-    // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
-    final path = 'resena_resena_image/${_nombreCafeteriaController}.jpg';
+    final path = 'resena_resena_image/${docRef.id}.jpg';
     final file = File(imageFile!.path);
 
     final ref = FirebaseStorage.instance.ref().child(path);
@@ -219,9 +221,6 @@ class ResenasPageState extends State<ResenasPage> {
   Future<void> guardarResena() async {
     DateTime now = DateTime.now();
     try {
-      // Se busca la coleccion 'resenas' de la BD de Firestore
-      final DocumentReference docRef =
-          FirebaseFirestore.instance.collection("resenas").doc();
       // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
       docRef.set({
         'cafeteria': _nombreCafeteriaController.text,
