@@ -198,6 +198,7 @@ class ResenasPageState extends State<ResenasPage> {
         'cafeteria': cafeteria,
         'comentario': _comentarioController.text,
         'urlFotografia': await subirImagen(),
+        'reseña': promedio,
         'direccion': _direccionController.text,
         'uid_usuario': currentUser?.uid,
         'nickname_usuario': nickname,
