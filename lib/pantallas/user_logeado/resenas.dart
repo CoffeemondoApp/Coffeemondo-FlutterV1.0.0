@@ -88,7 +88,7 @@ String direccion = '';
 bool imagenSeleccionada = false;
 String imageFilePath = '';
 bool nombre_cafeteria = false;
-var promedio_string;
+String promedio_string = '';
 
 TextEditingController _nombreCafeteriaController = TextEditingController();
 TextEditingController _comentarioController = TextEditingController();
@@ -1159,7 +1159,7 @@ class ResenasPageState extends State<ResenasPage> {
         promedio = suma_calificaciones / calificaciones.length;
         print(promedio);
         setState(() {
-          promedio_string = promedio.toDouble();
+          promedio_string = promedio.toString();
         });
       }
       print('el largo del comentario es ' +
