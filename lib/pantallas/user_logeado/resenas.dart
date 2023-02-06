@@ -73,14 +73,14 @@ var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 0;
 var niveluser;
 var inicio = '';
-var promedio ;
+var promedio;
 bool misResenas = false;
 bool misResenas2 = false;
 bool crearResena = false;
 int _tazas = 0;
 int pregunta = 0;
-var _cafeteriaSeleccionada = 'Cafetería 1';
-var _productoSeleccionado = 'Producto 1';
+var _cafeteriaSeleccionada = '';
+var _productoSeleccionado = '';
 List<int> calificaciones = [];
 bool calificado = false;
 bool comentario_presionado = false;
@@ -156,15 +156,14 @@ class ResenasPageState extends State<ResenasPage> {
   }
 
   bool _visible = false;
-  
-  PlatformFile? pickedFile;
+
   UploadTask? uploadTask;
 
   // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
   Future subirImagen() async {
     // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
     final path = 'resena_resena_image/${"PENDIENTE"}.jpg';
-    final file = File(pickedFile!.path!);
+    final file = File(imageFile!.path);
 
     final ref = FirebaseStorage.instance.ref().child(path);
     uploadTask = ref.putFile(file);
@@ -177,14 +176,55 @@ class ResenasPageState extends State<ResenasPage> {
   }
 
   Future seleccionarImagen() async {
-    final resultado = await FilePicker.platform.pickFiles();
+    final resultado = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (resultado == null) return;
 
     setState(() {
-      pickedFile = resultado.files.first;
+      imageFile = resultado; 
     });
   }
 
+  
+    //List<XFile> imageFile;
+    XFile? imageFile;
+
+    _openGallery(BuildContext context) async {
+      //imageFile = await ImagePicker().pickMultiImage();
+      imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (imageFile != null) {
+        setState(() {
+          imageFilePath = imageFile!.path;
+          imagenSeleccionada = true;
+        });
+        print('image: $imageFilePath');
+      } else {
+        imagenSeleccionada = false;
+        return;
+      }
+      //obtener nombre de imagen antes de ser guardada
+
+      setState(() {});
+    }
+
+    _openCamera(BuildContext context) async {
+      imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+      if (imageFile != null) {
+        setState(() {
+          imageFilePath = imageFile!.path;
+          imagenSeleccionada = true;
+        });
+        print('image: $imageFilePath');
+      } else {
+        imagenSeleccionada = false;
+        return;
+      }
+      //obtener nombre de imagen antes de ser guardada
+
+      setState(() {});
+    }
+
+   
+    final ImagePicker _picker = ImagePicker();
 
   // Funcion para crear y guardar resena en la BD de Firestore
   Future<void> guardarResena() async {
@@ -195,21 +235,20 @@ class ResenasPageState extends State<ResenasPage> {
           FirebaseFirestore.instance.collection("resenas").doc();
       // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
       docRef.set({
-        'cafeteria': cafeteria,
+        'cafeteria': _cafeteriaSeleccionada,
         'comentario': _comentarioController.text,
         'urlFotografia': await subirImagen(),
-        'reseña': promedio,
+        'reseña': promedio.toString(),
         'direccion': _direccionController.text,
         'uid_usuario': currentUser?.uid,
         'nickname_usuario': nickname,
-        'fechaCreacion': "${now.day}/${now.month}/${now.year} a las ${now.hour}:${now.minute}",
+        'fechaCreacion':
+            "${now.day}/${now.month}/${now.year} a las ${now.hour}:${now.minute}",
       });
+      print(cafeteria);
       print('Ingreso de resena exitoso.');
     } catch (e) {
       print(cafeteria);
-      print(_comentarioController.text);
-      print(_direccionController.text);
-
       print("Error al intentar ingresar resena");
     }
   }
@@ -903,46 +942,6 @@ class ResenasPageState extends State<ResenasPage> {
       ));
     }
 
-    //List<XFile> imageFile;
-    XFile? imageFile;
-
-    _openGallery(BuildContext context) async {
-      //imageFile = await ImagePicker().pickMultiImage();
-      imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (imageFile != null) {
-        setState(() {
-          imageFilePath = imageFile!.path;
-          imagenSeleccionada = true;
-        });
-        print('image: $imageFilePath');
-      } else {
-        imagenSeleccionada = false;
-        return;
-      }
-      //obtener nombre de imagen antes de ser guardada
-
-      setState(() {});
-    }
-
-    _openCamera(BuildContext context) async {
-      imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
-      if (imageFile != null) {
-        setState(() {
-          imageFilePath = imageFile!.path;
-          imagenSeleccionada = true;
-        });
-        print('image: $imageFilePath');
-      } else {
-        imagenSeleccionada = false;
-        return;
-      }
-      //obtener nombre de imagen antes de ser guardada
-
-      setState(() {});
-    }
-
-    XFile pickedFile;
-    final ImagePicker _picker = ImagePicker();
 
     Future<void> _showSelectionDialog(BuildContext context) {
       return showDialog(
@@ -1197,7 +1196,6 @@ class ResenasPageState extends State<ResenasPage> {
           curve: Curves.fastOutSlowIn,
           child: (crearResena)
               ? Column(
-
                   children: [
                     //Crear dropdown textfield para seleccionar la cafeteria a la que se le va a hacer la reseña
                     Container(
