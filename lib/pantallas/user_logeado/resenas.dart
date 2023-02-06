@@ -88,6 +88,7 @@ String direccion = '';
 bool imagenSeleccionada = false;
 String imageFilePath = '';
 bool nombre_cafeteria = false;
+String promedio_string = '';
 
 TextEditingController _nombreCafeteriaController = TextEditingController();
 TextEditingController _comentarioController = TextEditingController();
@@ -156,13 +157,12 @@ class ResenasPageState extends State<ResenasPage> {
   }
 
   bool _visible = false;
-
   UploadTask? uploadTask;
 
   // Funcion para subir al Firebase Storage la imagen seleccionada por el usuario
   Future subirImagen() async {
     // Se reemplaza el nombre de la imagen por el correo del usuario, asi es mas facil identificar que imagen es de quien dentro de Storage
-    final path = 'resena_resena_image/${"PENDIENTE"}.jpg';
+    final path = 'resena_resena_image/${_nombreCafeteriaController}.jpg';
     final file = File(imageFile!.path);
 
     final ref = FirebaseStorage.instance.ref().child(path);
@@ -174,17 +174,6 @@ class ResenasPageState extends State<ResenasPage> {
     // Se retorna la url de la imagen para llamarla desde la funcion de guardarInformacion
     return urlUserImage;
   }
-
-  Future seleccionarImagen() async {
-    final resultado = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (resultado == null) return;
-
-    setState(() {
-      imageFile = resultado; 
-    });
-  }
-
-  
     //List<XFile> imageFile;
     XFile? imageFile;
 
@@ -235,20 +224,18 @@ class ResenasPageState extends State<ResenasPage> {
           FirebaseFirestore.instance.collection("resenas").doc();
       // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
       docRef.set({
-        'cafeteria': _cafeteriaSeleccionada,
+        'cafeteria': _nombreCafeteriaController.text,
         'comentario': _comentarioController.text,
         'urlFotografia': await subirImagen(),
-        'reseña': promedio.toString(),
+        'reseña': promedio_string,
         'direccion': _direccionController.text,
         'uid_usuario': currentUser?.uid,
         'nickname_usuario': nickname,
         'fechaCreacion':
             "${now.day}/${now.month}/${now.year} a las ${now.hour}:${now.minute}",
       });
-      print(cafeteria);
       print('Ingreso de resena exitoso.');
     } catch (e) {
-      print(cafeteria);
       print("Error al intentar ingresar resena");
     }
   }
@@ -972,7 +959,7 @@ class ResenasPageState extends State<ResenasPage> {
                               borderRadius: BorderRadius.circular(20.0)),
                         ),
                         onTap: () {
-                          seleccionarImagen();
+                          _openGallery(context);
                           Navigator.pop(context);
                         },
                       ),
@@ -1124,7 +1111,7 @@ class ResenasPageState extends State<ResenasPage> {
     @override
     Widget _textFieldNombreCafeteria(TextEditingController controller) {
       return (TextFormField(
-        controller: controller,
+        controller: _nombreCafeteriaController,
         onChanged: (value) {
           setState(() {
             pregunta = 0;
@@ -1171,6 +1158,9 @@ class ResenasPageState extends State<ResenasPage> {
         }
         promedio = suma_calificaciones / calificaciones.length;
         print(promedio);
+        setState(() {
+          promedio_string = promedio.toStringAsFixed(1);
+        });
       }
       print('el largo del comentario es ' +
           _comentarioController.text.length.toString());
@@ -1448,7 +1438,6 @@ class ResenasPageState extends State<ResenasPage> {
                                 calificado = false;
                                 nombre_cafeteria = false;
                                 _direccionController.text = '';
-                                _nombreCafeteriaController.text = '';
                                 imagenSeleccionada = false;
                               });
                             },
