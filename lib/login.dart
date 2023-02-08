@@ -40,6 +40,7 @@ class LoginApp extends State<Login> {
         // Crear un nuevo documento para el usuario
         await FirebaseFirestore.instance.collection("users").doc(uid).set({
           'cumpleanos': 'Sin informacion de edad',
+          'email': _controladoremail.text,
           'nickname': 'Sin informacion de nombre de usuario',
           'nombre': 'Sin informacion de nombre y apellido',
           'urlImage':
@@ -72,13 +73,15 @@ class LoginApp extends State<Login> {
         // Crear un nuevo documento para el usuario
         await FirebaseFirestore.instance.collection("users").doc(uid).set({
           'cumpleanos': 'Sin informacion de edad',
-          'nickname': 'sin informacion de nombre de usuario',
-          'nombre': 'Sin informacion de nombre y apellido',
-          'telefono': 'Sin informacion de telefono',
-          'urlImage':
-              'https://firebasestorage.googleapis.com/v0/b/coffeemondo-365813.appspot.com/o/profile_profile_image%2Fuser_img.png?alt=media&token=bd00aebc-7161-41ba-9303-9d3354d8fb37',
+          'nickname': "Sin informacion de nombre de usuario",
+          'email': resultado!.user!.email,
+          'nombre': resultado!.user!.displayName,
+          'telefono': 'Sin informacion de telefono',      
+          'urlImage': resultado!.user!.photoURL, 
           'direccion': 'Sin informacion de direccion',
           'nivel': 1,
+          //todos los comandos de user con google
+
         });
       }
       Navigator.push(context,
