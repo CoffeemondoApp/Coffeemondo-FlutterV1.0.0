@@ -277,7 +277,11 @@ class FotoApp extends State<FotoPage> {
           painter: BackgroundButton1(),
           child: InkWell(
             onTap: () {
-              AlertaGuardarFoto();
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertaGuardarFoto();
+                  });
             },
             child: Center(
               child: Text(
