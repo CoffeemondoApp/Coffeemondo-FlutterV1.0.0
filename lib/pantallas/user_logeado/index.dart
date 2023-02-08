@@ -31,7 +31,7 @@ var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
 num puntaje_nivel = 200;
 var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
 var porcentaje = puntaje_actual / puntaje_nivel;
-var nivel = 0;
+var nivel = 1;
 var niveluser;
 var inicio = '';
 
@@ -58,16 +58,19 @@ List<Map<String, dynamic>> niveles = [
 ];
 //Crear funcion que retorne en una lista el nivel del usuario y el porcentaje de progreso
 List<Map<String, dynamic>> getNivel() {
+  var nivel_actual = nivel;
+  var nivel_usuario = 0;
   for (var i = 0; i < niveles.length; i++) {
-    if (puntaje_actual < niveles[i]['puntaje_nivel']) {
-      nivel = niveles[i]['nivel'];
+    if (puntaje_actual <= niveles[i]['puntaje_nivel']) {
+      nivel_usuario = niveles[i]['nivel'];
+      //print('nivel $nivel_usuario');
       porcentaje = (puntaje_actual) / niveles[i]['puntaje_nivel'];
       //Cuando sube de nivel se reinicia el porcentaje
-      if (nivel > 1) {
+      if (i > 1) {
         porcentaje =
             (puntaje_actual.toDouble() - niveles[i - 1]['puntaje_nivel']) /
                 (niveles[i]['puntaje_nivel'] - niveles[i - 1]['puntaje_nivel']);
-        print((niveles[i]['puntaje_nivel'] - puntaje_actual.toDouble()));
+        //print((niveles[i]['puntaje_nivel'] - puntaje_actual.toDouble()));
       }
 
       puntaje_nivel = niveles[i]['puntaje_nivel'];
@@ -75,7 +78,12 @@ List<Map<String, dynamic>> getNivel() {
     }
   }
   return [
-    {'nivel': nivel, 'porcentaje': porcentaje, 'puntaje_nivel': puntaje_nivel},
+    {
+      'nivel': nivel_usuario,
+      'porcentaje': porcentaje,
+      'puntaje_nivel': puntaje_nivel,
+      'nivel actual': nivel_actual
+    },
   ];
 }
 
@@ -110,8 +118,9 @@ class IndexPageState extends State<IndexPage> {
         nickname = userData.data()!['nickname'];
         cumpleanos = userData.data()!['cumpleanos'];
         urlImage = userData.data()!['urlImage'];
-        niveluser = userData.data()!['nivel'];
+        nivel = userData.data()!['nivel'];
         inicio = widget.tiempo_inicio;
+        puntaje_actual = int.parse(userData.data()!['puntaje']);
       });
     });
   }
@@ -166,24 +175,65 @@ class IndexPageState extends State<IndexPage> {
     ));
   }
 
+  _subirNivel() async {
+    //Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    //Se crea una instancia de la base de datos de Firebase
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    //Se crea una instancia de la coleccion de usuarios
+    CollectionReference users = db.collection('users');
+    //Se crea una instancia del documento del usuario actual
+    DocumentReference documentReference = users.doc(user?.uid);
+    //Se actualiza el nivel del usuario
+    documentReference.update({'nivel': nivel});
+  }
+
+  _subirPuntaje() {
+    //Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    //Se crea una instancia de la base de datos de Firebase
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    //Se crea una instancia de la coleccion de usuarios
+    CollectionReference users = db.collection('users');
+    //Se crea una instancia del documento del usuario actual
+    DocumentReference documentReference = users.doc(user?.uid);
+    //Se actualiza el nivel del usuario
+    documentReference.update({'puntaje': puntaje_actual.toString()});
+  }
+
   @override
   Widget _textoProgressBar() {
     //Obtener nivel de getNivel()
     int nivel_usuario = getNivel()[0]['nivel'];
+    //Obtener nivel actual de getNivel()
+    int nivel_actual = getNivel()[0]['nivel actual'];
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
+    print('$nivel_usuario = $nivel_actual');
+    //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
+    if (nivel_usuario != nivel_actual) {
+      nivel = nivel_usuario;
+      print('Nivel actualizado: $nivel');
+      _subirNivel();
+    }
+    //Hacer que una funcion se ejecute cada 30 segundos
+    Timer.periodic(Duration(seconds: 30), (timer) {
+      _subirPuntaje();
+      print("puntaje subido a la base de datos {puntaje: $puntaje_actual}");
+    });
+
     return (Row(
       children: [
         Padding(
           padding:
               EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
           child: Text(
-            'Nivel $niveluser',
+            'Nivel $nivel_usuario',
             style: TextStyle(
                 color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
-          '$puntaje_actual_string/$puntaje_nivel',
+          '$puntaje_actual/$puntaje_nivel',
           style: TextStyle(
               color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
@@ -205,7 +255,9 @@ class IndexPageState extends State<IndexPage> {
       ),
       child: Row(
         children: [
-          Container(
+          AnimatedContainer(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
             child: (porcentaje > 0.15)
                 ? Container(
                     margin: EdgeInsets.only(top: 3),
@@ -430,30 +482,7 @@ class IndexPageState extends State<IndexPage> {
     //Crear funcion para actualizar el puntaje
 
     //Crear funcion para detectar cuando el nivel inicial es diferente al nivel actual
-    _subirNivel() {
-      if (nivel != niveluser) {
-        setState(() {
-          final DocumentReference docRef = FirebaseFirestore.instance
-              .collection("users")
-              .doc(currentUser?.uid);
-          // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
-          docRef.update({
-            'nivel': nivel,
-          });
-          print('Nivel nuevo asignado en Firestore.');
-          niveluser = nivel;
-          _visible = !_visible;
-          //Cambiar estado de _visible luego de 3 segundos
-          Future.delayed(Duration(seconds: 3), () {
-            setState(() {
-              _visible = !_visible;
-            });
-          });
-        });
-      }
-    }
 
-    _subirNivel();
     print(nivel.toString() + ' ' + niveluser.toString());
 
     return Scaffold(

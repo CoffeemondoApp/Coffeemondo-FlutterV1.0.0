@@ -90,6 +90,64 @@ String imageFilePath = '';
 bool nombre_cafeteria = false;
 String promedio_string = '';
 
+//Reseñas anteriores
+
+bool resenasAnteriores = false;
+bool comentarioRA_presionado = false;
+String comentarioRA_presionado_key = '';
+bool abrirCalificacion = false;
+double alto_calificacion = 0.0;
+bool resenaSubida = false;
+
+//Crear JSON de resena
+Map<String, dynamic> resena1 = {
+  'key': '1',
+  'Cafeteria': 'CoffeeMondo1',
+  'Calificacion': '1.5',
+  'Comentario':
+      'El restaurante ha estado excelente, muy buen ambiente y buena musica',
+  'Direccion': '',
+  'Foto': '',
+  'Usuario': 'Carlos Vasquez',
+  'Fecha': '',
+};
+
+Map<String, dynamic> resena2 = {
+  'key': '2',
+  'Cafeteria': 'CoffeeMondo2',
+  'Calificacion': '2.6',
+  'Comentario':
+      'La cafeteria ha estado muy buena en estos dias de cuarentena, muy buen servicio y buena comida, en especial el cafe',
+  'Direccion': '',
+  'Foto': '',
+  'Usuario': 'Brayan Bahamondes',
+  'Fecha': '',
+};
+
+Map<String, dynamic> resena3 = {
+  'key': '3',
+  'Cafeteria': 'CoffeeMondo3',
+  'Calificacion': '5',
+  'Comentario': '',
+  'Direccion': '',
+  'Foto': '',
+  'Usuario': 'Jose Sepulveda',
+  'Fecha': '',
+};
+
+Map<String, dynamic> resena4 = {
+  'key': '4',
+  'Cafeteria': 'CoffeeMondo4',
+  'Calificacion': '1.8',
+  'Comentario': '',
+  'Direccion': '',
+  'Foto': '',
+  'Usuario': 'Felipe Opazo',
+  'Fecha': ''
+};
+
+//List<Map<String, dynamic>> resenas = [resena1, resena2, resena3, resena4];
+CollectionReference resenas = FirebaseFirestore.instance.collection('resenas');
 TextEditingController _nombreCafeteriaController = TextEditingController();
 TextEditingController _comentarioController = TextEditingController();
 TextEditingController _direccionController = TextEditingController();
@@ -226,13 +284,14 @@ class ResenasPageState extends State<ResenasPage> {
         'cafeteria': _nombreCafeteriaController.text,
         'comentario': _comentarioController.text,
         'urlFotografia': await subirImagen(),
-        'reseña': promedio_string,
+        'reseña': calificaciones,
         'direccion': _direccionController.text,
         'uid_usuario': currentUser?.uid,
         'nickname_usuario': nickname,
         'fechaCreacion':
             "${now.day}/${now.month}/${now.year} a las ${now.hour}:${now.minute}",
       });
+
       print('Ingreso de resena exitoso.');
     } catch (e) {
       print("Error al intentar ingresar resena");
@@ -1085,6 +1144,54 @@ class ResenasPageState extends State<ResenasPage> {
           )));
     }
 
+    _subirPuntos(int puntos) {
+      print(_calcularTiempo());
+      //aumentar en 10 el puntaje actual
+      setState(() {
+        puntaje_actual += puntos;
+        porcentaje = puntaje_actual / puntaje_nivel;
+        puntaje_actual_string = puntaje_actual.toString();
+      });
+    }
+
+    Future<void> mostrarResenaSubida(BuildContext context) {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 84, 14, 148),
+              title: Text(
+                'Reseña subida',
+                style: TextStyle(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(
+                        'La reseña se ha subido correctamente, Su puntaje sera incrementado en un par de segundos',
+                        style:
+                            TextStyle(color: Color.fromARGB(255, 255, 79, 52))),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Aceptar',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 255, 79, 52))),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    //Ejecutar la funcion subir puntos luego de dos segundos
+                    Future.delayed(Duration(seconds: 2), () {
+                      _subirPuntos(100);
+                    });
+                  },
+                ),
+              ],
+            );
+          });
+    }
+
     @override
     Widget botonCrearResena() {
       return (Container(
@@ -1103,7 +1210,8 @@ class ResenasPageState extends State<ResenasPage> {
             children: [
               GestureDetector(
                 onTap: () {
-                  guardarResena();
+                  //guardarResena();
+                  mostrarResenaSubida(context);
                 },
                 child: Text(
                   "Crear Reseña",
@@ -1419,6 +1527,430 @@ class ResenasPageState extends State<ResenasPage> {
     }
 
     @override
+    Widget calificacionTazas(double calificacion) {
+      return (Row(
+        children: [
+          //Crear iconos de tazas de acuerdo a la calificacion promedio de la tienda
+          HalfFilledIcon(
+            (calificacion >= 1) ? 1 : calificacion,
+            Icons.coffee,
+            20,
+          ),
+          HalfFilledIcon(
+            (calificacion >= 2) ? 1 : calificacion - 1,
+            Icons.coffee,
+            20,
+          ),
+          HalfFilledIcon(
+            (calificacion >= 3) ? 1 : calificacion - 2,
+            Icons.coffee,
+            20,
+          ),
+          HalfFilledIcon(
+            (calificacion >= 4) ? 1 : calificacion - 3,
+            Icons.coffee,
+            20,
+          ),
+          HalfFilledIcon(
+            (calificacion >= 5) ? 1 : calificacion - 4,
+            Icons.coffee,
+            20,
+          ),
+        ],
+      ));
+    }
+
+    void definirAltoCalificacion() {
+      if (abrirCalificacion) {
+        setState(() {
+          alto_calificacion = 100;
+        });
+      } else {
+        setState(() {
+          alto_calificacion = 20;
+        });
+      }
+    }
+
+    Widget moduloCalificaciones(List<Object> calificaciones) {
+      List<Widget> lista = [];
+      lista.add(Container());
+      print(calificaciones);
+      return (Container());
+    }
+
+    @override
+    Widget moduloResenasAnteriores() {
+      definirAltoCalificacion();
+      return (AnimatedContainer(
+        width: MediaQuery.of(context).size.width * 0.8,
+        height: (resenasAnteriores) ? 350 : 0,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 255, 79, 52),
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20),
+              bottomRight: Radius.circular(20)),
+        ),
+        duration: Duration(seconds: 1),
+        // Proporciona una curva opcional para hacer que la animación se sienta más suave.
+        curve: Curves.fastOutSlowIn,
+        child: Container(
+            alignment: Alignment.centerRight,
+            child: StreamBuilder(
+                stream: resenas
+                    .orderBy("fechaCreacion", descending: true)
+                    .snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.active) {
+                    final documents = snapshot.data.docs;
+                    return ListView.builder(
+                        itemCount: documents.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final document = documents[index];
+                          var promedio_calificaciones = 0.0;
+                          var suma_calificaciones = 0.0;
+                          for (int i = 0; i < document['reseña'].length; i++) {
+                            suma_calificaciones += document['reseña'][i];
+                          }
+                          promedio_calificaciones =
+                              suma_calificaciones / document['reseña'].length;
+                          return (Container(
+                              margin:
+                                  EdgeInsets.only(top: 10, left: 10, right: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Color.fromARGB(255, 84, 14, 148),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 10, left: 20, right: 20),
+                                        child: Icon(
+                                          Icons.account_circle_outlined,
+                                          color:
+                                              Color.fromARGB(255, 255, 79, 52),
+                                          size: 30,
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        child: Text(
+                                          document['nickname_usuario'],
+                                          style: TextStyle(
+                                              color: Color.fromARGB(
+                                                  255, 255, 79, 52),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 10,
+                                            left: 10,
+                                            right: 10,
+                                            bottom: 5),
+                                        child: Image.network(
+                                            document.data()['urlFotografia'],
+                                            width: 120,
+                                            height: 120),
+                                      ),
+                                      Container(
+                                        alignment: Alignment.topLeft,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.39,
+                                        //color: Colors.white,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            (!abrirCalificacion)
+                                                ? Container(
+                                                    child: Text(
+                                                    document
+                                                        .data()['cafeteria'],
+                                                    style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            255, 255, 79, 52)),
+                                                  ))
+                                                : Container(),
+                                            GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    abrirCalificacion =
+                                                        !abrirCalificacion;
+                                                  });
+                                                },
+                                                child: AnimatedContainer(
+                                                    duration:
+                                                        Duration(seconds: 5),
+                                                    curve: Curves.fastOutSlowIn,
+                                                    height: alto_calificacion,
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    decoration: BoxDecoration(
+                                                        color: Color.fromARGB(
+                                                            255, 255, 79, 52),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20)),
+                                                    child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 10),
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                calificacionTazas(
+                                                                    promedio_calificaciones),
+                                                                Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              10),
+                                                                  child: Text(
+                                                                    promedio_calificaciones
+                                                                        .toString(),
+                                                                    style: TextStyle(
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            84,
+                                                                            14,
+                                                                            148),
+                                                                        fontSize:
+                                                                            16),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            (abrirCalificacion)
+                                                                ? moduloCalificaciones(
+                                                                    document.data()[
+                                                                        'reseña'])
+                                                                : Container(),
+                                                          ],
+                                                        )))),
+                                            (!abrirCalificacion)
+                                                ? Container(
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    decoration: BoxDecoration(
+                                                        color: Color.fromARGB(
+                                                            255, 255, 79, 52),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20)),
+                                                    child: Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 10, right: 10),
+                                                      width: 150,
+                                                      child: Text(
+                                                        (document.data()[
+                                                                    'comentario'] ==
+                                                                '')
+                                                            ? 'Sin comentario'
+                                                            : document.data()[
+                                                                'comentario'],
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    84,
+                                                                    14,
+                                                                    148)),
+                                                      ),
+                                                    ))
+                                                : Container(),
+                                            (!abrirCalificacion)
+                                                ? Container(
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    child: Text(
+                                                      document
+                                                          .data()['direccion'],
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              79,
+                                                              52)),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            (!abrirCalificacion)
+                                                ? Container(
+                                                    margin:
+                                                        EdgeInsets.only(top: 5),
+                                                    child: Text(
+                                                      document.data()[
+                                                          'fechaCreacion'],
+                                                      style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              255,
+                                                              79,
+                                                              52)),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          print('Editar reseña');
+                                        },
+                                        child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.22,
+                                            decoration: BoxDecoration(
+                                                color: Color.fromARGB(
+                                                    255, 255, 79, 52),
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            margin: EdgeInsets.only(
+                                                top: 10, bottom: 10, right: 5),
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 5, right: 5),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Icon(
+                                                    Icons.edit,
+                                                    color: Color.fromARGB(
+                                                        255, 84, 14, 148),
+                                                    size: 20,
+                                                  ),
+                                                  Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 5),
+                                                      child: Text(
+                                                        'Editar',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    84,
+                                                                    14,
+                                                                    148),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )),
+                                                ],
+                                              ),
+                                            )),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          print('Eliminar reseña');
+                                        },
+                                        child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.22,
+                                            decoration: BoxDecoration(
+                                                color: Color.fromARGB(
+                                                    255, 255, 79, 52),
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            margin: EdgeInsets.only(
+                                                top: 10, bottom: 10, left: 5),
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 5, right: 5),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Icon(
+                                                    Icons.delete,
+                                                    color: Color.fromARGB(
+                                                        255, 84, 14, 148),
+                                                    size: 20,
+                                                  ),
+                                                  Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 5),
+                                                      child: Text(
+                                                        'Eliminar',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    84,
+                                                                    14,
+                                                                    148),
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      )),
+                                                ],
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              )));
+                        });
+                  } else {
+                    return (Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'No hay reseñas',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'Crea reseña y gana puntos de recompensa!!!',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ));
+                  }
+                })),
+      ));
+    }
+
+    @override
     Widget moduloMisResenas() {
       return (Column(
         children: [
@@ -1464,25 +1996,33 @@ class ResenasPageState extends State<ResenasPage> {
           AnimatedOpacity(
               opacity: misResenas2 ? 1.0 : 0.0,
               duration: Duration(milliseconds: 3000),
-              child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.01),
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 79, 52),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Reseñas anteriores',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ))),
+              child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      resenasAnteriores = !resenasAnteriores;
+                    });
+                  },
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.01),
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.08,
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 255, 79, 52),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20))),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Reseñas anteriores',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )))),
+          moduloResenasAnteriores(),
           AnimatedOpacity(
               opacity: misResenas2 ? 1.0 : 0.0,
               duration: Duration(milliseconds: 3000),
@@ -1509,18 +2049,30 @@ class ResenasPageState extends State<ResenasPage> {
       ));
     }
 
+    double alto_moduloResenas() {
+      if (misResenas) {
+        if (crearResena) {
+          if (calificado) {
+            return MediaQuery.of(context).size.height / 1.15;
+          } else {
+            return MediaQuery.of(context).size.height / 1.4;
+          }
+        } else if (resenasAnteriores) {
+          return MediaQuery.of(context).size.height / 1.2;
+        } else {
+          return MediaQuery.of(context).size.height * _height_mr2;
+        }
+      } else {
+        return MediaQuery.of(context).size.height * _height_mr1;
+      }
+    }
+
     @override
     Widget _mostrarMenuOpciones() {
       print(crearResena);
       return (AnimatedContainer(
           width: MediaQuery.of(context).size.width * _width_mr2,
-          height: (misResenas)
-              ? (crearResena)
-                  ? (calificado)
-                      ? MediaQuery.of(context).size.height / 1.15
-                      : MediaQuery.of(context).size.height / 1.4
-                  : MediaQuery.of(context).size.height * _height_mr2
-              : MediaQuery.of(context).size.height * _height_mr1,
+          height: alto_moduloResenas(),
           decoration: BoxDecoration(
             color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
             borderRadius: BorderRadius.only(
@@ -1611,30 +2163,7 @@ class ResenasPageState extends State<ResenasPage> {
     //Crear funcion para actualizar el puntaje
 
     //Crear funcion para detectar cuando el nivel inicial es diferente al nivel actual
-    _subirNivel() {
-      if (nivel != niveluser) {
-        setState(() {
-          final DocumentReference docRef = FirebaseFirestore.instance
-              .collection("users")
-              .doc(currentUser?.uid);
-          // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
-          docRef.update({
-            'nivel': nivel,
-          });
-          print('Nivel nuevo asignado en Firestore.');
-          niveluser = nivel;
-          _visible = !_visible;
-          //Cambiar estado de _visible luego de 3 segundos
-          Future.delayed(Duration(seconds: 3), () {
-            setState(() {
-              _visible = !_visible;
-            });
-          });
-        });
-      }
-    }
 
-    _subirNivel();
     print(nivel.toString() + ' ' + niveluser.toString());
 
     return Scaffold(
