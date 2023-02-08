@@ -282,7 +282,9 @@ class ResenasPageState extends State<ResenasPage> {
       // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
       docRef.set({
         'cafeteria': _nombreCafeteriaController.text,
-        'comentario': _comentarioController.text,
+        'comentario': _comentarioController.text.isEmpty
+                ? 'Sin comentario'
+                : _comentarioController.text,
         'urlFotografia': await subirImagen(),
         'reseña': calificaciones,
         'direccion': _direccionController.text,
