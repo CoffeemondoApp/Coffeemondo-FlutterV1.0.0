@@ -16,32 +16,54 @@ import '../../firebase/autenticacion.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
+List<Color> setColorIcon(String color) {
+  List<Color> colors = [];
+  if (color == 'rojo') {
+    colors = [
+      Color.fromARGB(255, 255, 79, 52),
+      Color.fromARGB(255, 255, 79, 52),
+      Color.fromARGB(255, 255, 79, 52).withOpacity(0),
+    ];
+  } else if (color == 'morado') {
+    colors = [
+      Color.fromARGB(255, 0x52, 0x01, 0x9b),
+      Color.fromARGB(255, 0x52, 0x01, 0x9b),
+      Color.fromARGB(255, 0x52, 0x01, 0x9b).withOpacity(0)
+    ];
+  } else if (color == 'gris') {
+    colors = [
+      Color.fromARGB(255, 255, 255, 255),
+      Color.fromARGB(255, 255, 255, 255),
+      Color.fromARGB(255, 255, 255, 255),
+    ];
+  }
+  return colors;
+}
+
 class HalfFilledIcon extends StatelessWidget {
   final IconData? icon;
   final int size;
   double fill;
+  final String color;
 
-  HalfFilledIcon(this.fill, this.icon, this.size);
+  HalfFilledIcon(this.fill, this.icon, this.size, this.color);
   @override
   Widget build(BuildContext context) {
     return ShaderMask(
       blendMode: BlendMode.srcATop,
       shaderCallback: (Rect rect) {
         return LinearGradient(
-          stops: [0, fill, fill],
-          colors: [
-            Color.fromARGB(255, 0x52, 0x01, 0x9b),
-            Color.fromARGB(255, 0x52, 0x01, 0x9b),
-            Color.fromARGB(255, 0x52, 0x01, 0x9b).withOpacity(0)
-          ],
-        ).createShader(rect);
+                stops: [0, fill, fill], colors: setColorIcon(color))
+            .createShader(rect);
       },
       child: SizedBox(
-        width: size.toDouble(),
-        height: size.toDouble(),
-        child: Icon(icon,
-            size: size.toDouble(), color: Color.fromARGB(255, 255, 79, 52)),
-      ),
+          width: size.toDouble(),
+          height: size.toDouble(),
+          child: Icon(icon,
+              size: size.toDouble(),
+              color: (color == 'morado')
+                  ? Color.fromARGB(255, 255, 79, 52)
+                  : Color.fromARGB(255, 84, 14, 148))),
     );
   }
 }
@@ -70,7 +92,7 @@ var puntaje_actual_string = puntaje_actual.toStringAsFixed(0);
 num puntaje_nivel = 200;
 var puntaje_nivel_string = puntaje_nivel.toStringAsFixed(0);
 var porcentaje = puntaje_actual / puntaje_nivel;
-var nivel = 0;
+var nivel = 1;
 var niveluser;
 var inicio = '';
 var promedio = 0.0;
@@ -98,6 +120,11 @@ String comentarioRA_presionado_key = '';
 bool abrirCalificacion = false;
 double alto_calificacion = 0.0;
 bool resenaSubida = false;
+Map abrirCalificacionIndividual = {
+  'Pregunta': 0,
+  'Estado': false,
+};
+bool abrirComentario = false;
 
 //Crear JSON de resena
 Map<String, dynamic> resena1 = {
@@ -179,16 +206,19 @@ List<Map<String, dynamic>> niveles = [
 
 //Crear funcion que retorne en una lista el nivel del usuario y el porcentaje de progreso
 List<Map<String, dynamic>> getNivel() {
+  var nivel_actual = nivel;
+  var nivel_usuario = 0;
   for (var i = 0; i < niveles.length; i++) {
-    if (puntaje_actual < niveles[i]['puntaje_nivel']) {
-      nivel = niveles[i]['nivel'];
+    if (puntaje_actual <= niveles[i]['puntaje_nivel']) {
+      nivel_usuario = niveles[i]['nivel'];
+      //print('nivel $nivel_usuario');
       porcentaje = (puntaje_actual) / niveles[i]['puntaje_nivel'];
       //Cuando sube de nivel se reinicia el porcentaje
-      if (nivel > 1) {
+      if (i >= 1) {
         porcentaje =
             (puntaje_actual.toDouble() - niveles[i - 1]['puntaje_nivel']) /
                 (niveles[i]['puntaje_nivel'] - niveles[i - 1]['puntaje_nivel']);
-        print((niveles[i]['puntaje_nivel'] - puntaje_actual.toDouble()));
+        //print((niveles[i]['puntaje_nivel'] - puntaje_actual.toDouble()));
       }
 
       puntaje_nivel = niveles[i]['puntaje_nivel'];
@@ -196,7 +226,12 @@ List<Map<String, dynamic>> getNivel() {
     }
   }
   return [
-    {'nivel': nivel, 'porcentaje': porcentaje, 'puntaje_nivel': puntaje_nivel},
+    {
+      'nivel': nivel_usuario,
+      'porcentaje': porcentaje,
+      'puntaje_nivel': puntaje_nivel,
+      'nivel actual': nivel_actual
+    },
   ];
 }
 
@@ -278,13 +313,32 @@ class ResenasPageState extends State<ResenasPage> {
   // Funcion para crear y guardar resena en la BD de Firestore
   Future<void> guardarResena() async {
     DateTime now = DateTime.now();
+    //Calcular promedio de lista calificaciones
+    double promedio = 0;
+    for (var i = 0; i < calificaciones.length; i++) {
+      promedio = promedio + calificaciones[i];
+    }
+    promedio = promedio / calificaciones.length;
+
     try {
       // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
       docRef.set({
         'cafeteria': _nombreCafeteriaController.text,
         'comentario': _comentarioController.text,
         'urlFotografia': await subirImagen(),
-        'reseña': calificaciones,
+        'reseña': {
+          '1': calificaciones[0],
+          '2': calificaciones[1],
+          '3': calificaciones[2],
+          '4': calificaciones[3],
+          '5': calificaciones[4],
+          '6': calificaciones[5],
+          '7': calificaciones[6],
+          '8': calificaciones[7],
+          '9': calificaciones[8],
+          '10': calificaciones[9],
+        },
+        'reseña_prom': promedio,
         'direccion': _direccionController.text,
         'uid_usuario': currentUser?.uid,
         'nickname_usuario': nickname,
@@ -313,8 +367,9 @@ class ResenasPageState extends State<ResenasPage> {
         nickname = userData.data()!['nickname'];
         cumpleanos = userData.data()!['cumpleanos'];
         urlImage = userData.data()!['urlImage'];
-        niveluser = userData.data()!['nivel'];
+        nivel = userData.data()!['nivel'];
         inicio = widget.tiempo_inicio;
+        puntaje_actual = int.parse(userData.data()!['puntaje']);
       });
     });
   }
@@ -369,24 +424,66 @@ class ResenasPageState extends State<ResenasPage> {
     ));
   }
 
+  _subirNivel() async {
+    //Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    //Se crea una instancia de la base de datos de Firebase
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    //Se crea una instancia de la coleccion de usuarios
+    CollectionReference users = db.collection('users');
+    //Se crea una instancia del documento del usuario actual
+    DocumentReference documentReference = users.doc(user?.uid);
+    //Se actualiza el nivel del usuario
+    documentReference.update({'nivel': nivel});
+    _subirPuntaje();
+  }
+
+  _subirPuntaje() {
+    //Se declara en user al usuario actual
+    User? user = Auth().currentUser;
+    //Se crea una instancia de la base de datos de Firebase
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    //Se crea una instancia de la coleccion de usuarios
+    CollectionReference users = db.collection('users');
+    //Se crea una instancia del documento del usuario actual
+    DocumentReference documentReference = users.doc(user?.uid);
+    //Se actualiza el nivel del usuario
+    documentReference.update({'puntaje': puntaje_actual.toString()});
+    print("puntaje subido a la base de datos {puntaje: $puntaje_actual}");
+  }
+
   @override
   Widget _textoProgressBar() {
     //Obtener nivel de getNivel()
     int nivel_usuario = getNivel()[0]['nivel'];
+    //Obtener nivel actual de getNivel()
+    int nivel_actual = getNivel()[0]['nivel actual'];
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
+    print('$nivel_usuario = $nivel_actual');
+    //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
+    if (nivel_usuario > nivel_actual) {
+      nivel = nivel_usuario;
+      print('Nivel actualizado: $nivel');
+      _subirNivel();
+    }
+    //Hacer que una funcion se ejecute cada 30 segundos
+    Timer.periodic(Duration(seconds: 30), (timer) {
+      _subirPuntaje();
+    });
+
     return (Row(
       children: [
         Padding(
           padding:
               EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
           child: Text(
-            'Nivel $niveluser',
+            'Nivel $nivel_usuario',
             style: TextStyle(
                 color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
         Text(
-          '$puntaje_actual_string/$puntaje_nivel',
+          '$puntaje_actual/$puntaje_nivel',
           style: TextStyle(
               color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
         ),
@@ -408,7 +505,9 @@ class ResenasPageState extends State<ResenasPage> {
       ),
       child: Row(
         children: [
-          Container(
+          AnimatedContainer(
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeIn,
             child: (porcentaje > 0.15)
                 ? Container(
                     margin: EdgeInsets.only(top: 3),
@@ -530,6 +629,9 @@ class ResenasPageState extends State<ResenasPage> {
 
     Widget _textoPregunta() {
       var texto_pregunta = '';
+      if (abrirCalificacionIndividual['Estado'] == true) {
+        pregunta = int.parse(abrirCalificacionIndividual['Pregunta']) - 1;
+      }
       switch (pregunta) {
         case 0:
           {
@@ -773,30 +875,15 @@ class ResenasPageState extends State<ResenasPage> {
             children: [
               //Crear iconos de tazas de acuerdo a la calificacion promedio de la tienda
               HalfFilledIcon(
-                (promedio >= 1) ? 1 : promedio,
-                Icons.coffee,
-                30,
-              ),
-              HalfFilledIcon(
-                (promedio >= 2) ? 1 : promedio - 1,
-                Icons.coffee,
-                30,
-              ),
-              HalfFilledIcon(
-                (promedio >= 3) ? 1 : promedio - 2,
-                Icons.coffee,
-                30,
-              ),
-              HalfFilledIcon(
-                (promedio >= 4) ? 1 : promedio - 3,
-                Icons.coffee,
-                30,
-              ),
-              HalfFilledIcon(
-                (promedio >= 5) ? 1 : promedio - 4,
-                Icons.coffee,
-                30,
-              ),
+                  (promedio >= 1) ? 1 : promedio, Icons.coffee, 30, "morado"),
+              HalfFilledIcon((promedio >= 2) ? 1 : promedio - 1, Icons.coffee,
+                  30, "morado"),
+              HalfFilledIcon((promedio >= 3) ? 1 : promedio - 2, Icons.coffee,
+                  30, "morado"),
+              HalfFilledIcon((promedio >= 4) ? 1 : promedio - 3, Icons.coffee,
+                  30, "morado"),
+              HalfFilledIcon((promedio >= 5) ? 1 : promedio - 4, Icons.coffee,
+                  30, "morado"),
             ],
           )));
     }
@@ -1210,7 +1297,7 @@ class ResenasPageState extends State<ResenasPage> {
             children: [
               GestureDetector(
                 onTap: () {
-                  //guardarResena();
+                  guardarResena();
                   mostrarResenaSubida(context);
                 },
                 child: Text(
@@ -1527,7 +1614,7 @@ class ResenasPageState extends State<ResenasPage> {
     }
 
     @override
-    Widget calificacionTazas(double calificacion) {
+    Widget calificacionTazas(double calificacion, String color) {
       return (Row(
         children: [
           //Crear iconos de tazas de acuerdo a la calificacion promedio de la tienda
@@ -1535,26 +1622,31 @@ class ResenasPageState extends State<ResenasPage> {
             (calificacion >= 1) ? 1 : calificacion,
             Icons.coffee,
             20,
+            color,
           ),
           HalfFilledIcon(
             (calificacion >= 2) ? 1 : calificacion - 1,
             Icons.coffee,
             20,
+            color,
           ),
           HalfFilledIcon(
             (calificacion >= 3) ? 1 : calificacion - 2,
             Icons.coffee,
             20,
+            color,
           ),
           HalfFilledIcon(
             (calificacion >= 4) ? 1 : calificacion - 3,
             Icons.coffee,
             20,
+            color,
           ),
           HalfFilledIcon(
             (calificacion >= 5) ? 1 : calificacion - 4,
             Icons.coffee,
             20,
+            color,
           ),
         ],
       ));
@@ -1563,7 +1655,10 @@ class ResenasPageState extends State<ResenasPage> {
     void definirAltoCalificacion() {
       if (abrirCalificacion) {
         setState(() {
-          alto_calificacion = 100;
+          (!abrirCalificacionIndividual['Estado'])
+              ? alto_calificacion = 280
+              : alto_calificacion =
+                  (abrirCalificacionIndividual['Pregunta'] == '9') ? 200 : 180;
         });
       } else {
         setState(() {
@@ -1572,11 +1667,148 @@ class ResenasPageState extends State<ResenasPage> {
       }
     }
 
-    Widget moduloCalificaciones(List<Object> calificaciones) {
-      List<Widget> lista = [];
-      lista.add(Container());
-      print(calificaciones);
-      return (Container());
+    Widget calificacionIndividual(String numPregunta, Map calificaciones) {
+      return ((abrirCalificacionIndividual['Estado'])
+          ? abrirCalificacionIndividual['Pregunta'] == numPregunta
+              ? AnimatedContainer(
+                  duration: Duration(seconds: 1),
+                  curve: Curves.fastOutSlowIn,
+                  height: (abrirCalificacionIndividual['Estado'])
+                      ? abrirCalificacionIndividual['Pregunta'] == numPregunta
+                          ? (numPregunta == '9')
+                              ? 170
+                              : 140
+                          : 0
+                      : 0,
+                  margin: EdgeInsets.only(top: 5, left: 5, right: 5),
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 84, 14, 148),
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: GestureDetector(
+                      onTap: () {
+                        print("calificacion seleccionada $numPregunta");
+                        setState(() {
+                          abrirCalificacionIndividual = {
+                            'Pregunta': numPregunta,
+                            'Estado': !abrirCalificacionIndividual['Estado']
+                          };
+                        });
+                      },
+                      child: (!abrirCalificacionIndividual['Estado'])
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    'P$numPregunta',
+                                    style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 255, 79, 52)),
+                                  ),
+                                  margin: EdgeInsets.only(left: 5),
+                                ),
+                                calificacionTazas(
+                                    double.parse(
+                                        calificaciones[numPregunta].toString()),
+                                    "rojo"),
+                                Container(
+                                  child: Text(
+                                      calificaciones[numPregunta].toString(),
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 255, 79, 52))),
+                                  margin: EdgeInsets.only(right: 5),
+                                )
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Text(
+                                    'Pregunta $numPregunta',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 255, 79, 52),
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(top: 15),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: _textoPregunta(),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(top: 15),
+                                        //color: Colors.white,
+                                        child: calificacionTazas(
+                                            double.parse(
+                                                calificaciones[numPregunta]
+                                                    .toString()),
+                                            "rojo"))
+                                  ],
+                                )
+                              ],
+                            )))
+              : Container()
+          : AnimatedContainer(
+              duration: Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+              height: (abrirCalificacionIndividual['Estado'])
+                  ? abrirCalificacionIndividual['Pregunta'] == numPregunta
+                      ? 50
+                      : 10
+                  : 20,
+              margin: EdgeInsets.only(top: 5, left: 5, right: 5),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 84, 14, 148),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: GestureDetector(
+                  onTap: () {
+                    print("calificacion seleccionada $numPregunta");
+                    setState(() {
+                      abrirCalificacionIndividual = {
+                        'Pregunta': numPregunta,
+                        'Estado': !abrirCalificacionIndividual['Estado']
+                      };
+                    });
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: Text(
+                          'P$numPregunta',
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 255, 79, 52)),
+                        ),
+                        margin: EdgeInsets.only(left: 5),
+                      ),
+                      calificacionTazas(
+                          double.parse(calificaciones[numPregunta].toString()),
+                          "rojo"),
+                      Container(
+                        child: Text(calificaciones[numPregunta].toString(),
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 255, 79, 52))),
+                        margin: EdgeInsets.only(right: 5),
+                      )
+                    ],
+                  ))));
+    }
+
+    Widget moduloCalificaciones(Map calificaciones) {
+      return (Column(
+        children: [
+          for (int i = 1; i <= 10; i++)
+            calificacionIndividual(i.toString(), calificaciones)
+        ],
+      ));
     }
 
     @override
@@ -1609,11 +1841,17 @@ class ResenasPageState extends State<ResenasPage> {
                           final document = documents[index];
                           var promedio_calificaciones = 0.0;
                           var suma_calificaciones = 0.0;
-                          for (int i = 0; i < document['reseña'].length; i++) {
-                            suma_calificaciones += document['reseña'][i];
-                          }
+                          //recorrer el mapa de calificaciones
+                          var cont_calificaciones = 0;
+                          document.data()['reseña'].forEach((key, value) {
+                            print("key: $key, value: $value");
+                            //print(document.data()['reseña'].Type());
+                            suma_calificaciones += value;
+                            cont_calificaciones++;
+                          });
+
                           promedio_calificaciones =
-                              suma_calificaciones / document['reseña'].length;
+                              suma_calificaciones / cont_calificaciones;
                           return (Container(
                               margin:
                                   EdgeInsets.only(top: 10, left: 10, right: 10),
@@ -1683,13 +1921,7 @@ class ResenasPageState extends State<ResenasPage> {
                                                             255, 255, 79, 52)),
                                                   ))
                                                 : Container(),
-                                            GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    abrirCalificacion =
-                                                        !abrirCalificacion;
-                                                  });
-                                                },
+                                            Container(
                                                 child: AnimatedContainer(
                                                     duration:
                                                         Duration(seconds: 5),
@@ -1703,47 +1935,60 @@ class ResenasPageState extends State<ResenasPage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(20)),
-                                                    child: Container(
-                                                        margin: EdgeInsets.only(
-                                                            left: 10),
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                calificacionTazas(
-                                                                    promedio_calificaciones),
-                                                                Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              10),
-                                                                  child: Text(
-                                                                    promedio_calificaciones
-                                                                        .toString(),
-                                                                    style: TextStyle(
-                                                                        color: Color.fromARGB(
-                                                                            255,
-                                                                            84,
-                                                                            14,
-                                                                            148),
-                                                                        fontSize:
-                                                                            16),
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                            (abrirCalificacion)
-                                                                ? moduloCalificaciones(
-                                                                    document.data()[
-                                                                        'reseña'])
-                                                                : Container(),
-                                                          ],
-                                                        )))),
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    left: 15,
+                                                                    right: 15),
+                                                            child:
+                                                                GestureDetector(
+                                                                    onTap: () {
+                                                                      setState(
+                                                                          () {
+                                                                        abrirCalificacion =
+                                                                            !abrirCalificacion;
+                                                                      });
+                                                                    },
+                                                                    child: Row(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .center,
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      children: [
+                                                                        calificacionTazas(
+                                                                            promedio_calificaciones,
+                                                                            'morado'),
+                                                                        Container(
+                                                                          child:
+                                                                              Text(
+                                                                            promedio_calificaciones.toString(),
+                                                                            style: TextStyle(
+                                                                                color: Color.fromARGB(255, 84, 14, 148),
+                                                                                fontSize: 16,
+                                                                                fontWeight: FontWeight.bold),
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                    ))),
+                                                        (abrirCalificacion)
+                                                            ? moduloCalificaciones(
+                                                                document.data()[
+                                                                    'reseña'])
+                                                            : Container(),
+                                                      ],
+                                                    ))),
                                             (!abrirCalificacion)
-                                                ? Container(
+                                                ? AnimatedContainer(
+                                                    duration:
+                                                        Duration(seconds: 5),
+                                                    curve: Curves.fastOutSlowIn,
+                                                    height: (abrirComentario)
+                                                        ? 80
+                                                        : 20,
                                                     margin:
                                                         EdgeInsets.only(top: 5),
                                                     decoration: BoxDecoration(
@@ -1752,28 +1997,48 @@ class ResenasPageState extends State<ResenasPage> {
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(20)),
-                                                    child: Container(
-                                                      margin: EdgeInsets.only(
-                                                          left: 10, right: 10),
-                                                      width: 150,
-                                                      child: Text(
-                                                        (document.data()[
-                                                                    'comentario'] ==
-                                                                '')
-                                                            ? 'Sin comentario'
-                                                            : document.data()[
-                                                                'comentario'],
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    84,
-                                                                    14,
-                                                                    148)),
-                                                      ),
-                                                    ))
+                                                    child: GestureDetector(
+                                                        onTap: () {
+                                                          if (document.data()[
+                                                                  'comentario'] !=
+                                                              '') {
+                                                            setState(() {
+                                                              abrirComentario =
+                                                                  !abrirComentario;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  left: 10,
+                                                                  right: 10),
+                                                          width: 150,
+                                                          child: Text(
+                                                            (document.data()[
+                                                                        'comentario'] ==
+                                                                    '')
+                                                                ? 'Sin comentario'
+                                                                : document
+                                                                        .data()[
+                                                                    'comentario'],
+                                                            overflow: (abrirComentario)
+                                                                ? TextOverflow
+                                                                    .visible
+                                                                : TextOverflow
+                                                                    .ellipsis,
+                                                            style: TextStyle(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        84,
+                                                                        14,
+                                                                        148),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        )))
                                                 : Container(),
                                             (!abrirCalificacion)
                                                 ? Container(

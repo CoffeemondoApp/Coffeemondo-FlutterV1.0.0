@@ -66,7 +66,7 @@ List<Map<String, dynamic>> getNivel() {
       //print('nivel $nivel_usuario');
       porcentaje = (puntaje_actual) / niveles[i]['puntaje_nivel'];
       //Cuando sube de nivel se reinicia el porcentaje
-      if (i > 1) {
+      if (i >= 1) {
         porcentaje =
             (puntaje_actual.toDouble() - niveles[i - 1]['puntaje_nivel']) /
                 (niveles[i]['puntaje_nivel'] - niveles[i - 1]['puntaje_nivel']);
@@ -186,6 +186,7 @@ class IndexPageState extends State<IndexPage> {
     DocumentReference documentReference = users.doc(user?.uid);
     //Se actualiza el nivel del usuario
     documentReference.update({'nivel': nivel});
+    _subirPuntaje();
   }
 
   _subirPuntaje() {
@@ -210,7 +211,7 @@ class IndexPageState extends State<IndexPage> {
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
     print('$nivel_usuario = $nivel_actual');
     //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
-    if (nivel_usuario != nivel_actual) {
+    if (nivel_usuario > nivel_actual) {
       nivel = nivel_usuario;
       print('Nivel actualizado: $nivel');
       _subirNivel();
