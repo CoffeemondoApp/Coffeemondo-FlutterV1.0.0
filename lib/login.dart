@@ -80,8 +80,6 @@ class LoginApp extends State<Login> {
           'urlImage': resultado!.user!.photoURL, 
           'direccion': 'Sin informacion de direccion',
           'nivel': 1,
-          //todos los comandos de user con google
-
         });
       }
       Navigator.push(context,
