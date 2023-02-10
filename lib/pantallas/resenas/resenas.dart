@@ -243,50 +243,6 @@ class ResenaPageState extends State<ResenaPage> {
   @override
   Widget build(BuildContext context) {
 
-    //Hacer que _recompensa se ejecute todo el tiempo
-    //Timer.periodic(Duration(seconds: 2), (timer) {
-    //_recompensa();
-    //});
-
-    //Crear funcion para actualizar el puntaje
-    _subirPuntos() {
-      //aumentar en 10 el puntaje actual
-      setState(() {
-        puntaje_actual += 10;
-        porcentaje = puntaje_actual / puntaje_nivel;
-        puntaje_actual_string = puntaje_actual.toString();
-      });
-    }
-
-    //Crear funcion para detectar cuando el nivel inicial es diferente al nivel actual
-    _subirNivel() {
-      if (nivel != niveluser) {
-        setState(() {
-          final DocumentReference docRef = FirebaseFirestore.instance
-              .collection("users")
-              .doc(currentUser?.uid);
-          // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
-          docRef.update({
-            'nivel': nivel,
-          });
-          print('Nivel nuevo asignado en Firestore.');
-          niveluser = nivel;
-          _visible = !_visible;
-          //Cambiar estado de _visible luego de 3 segundos
-          Future.delayed(Duration(seconds: 3), () {
-            setState(() {
-              _visible = !_visible;
-            });
-          });
-        });
-      }
-    }
-
-String idResena;
-
-    _subirNivel();
-    print(nivel.toString() + ' ' + niveluser.toString());
-
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: PreferredSize(
@@ -361,7 +317,7 @@ String idResena;
                             Image.network(document.data()['urlFotografia'], width: 200, height: 200),
                             Text(document.data()['comentario']),
                             SizedBox(height: 5),
-                            Text(document.data()['reseña']),
+                            Text(document.data()['reseña_prom']),
                             Text("Publicado el " + document.data()['fechaCreacion']),   
                         currentUser?.uid == document.data()['uid_usuario']
                             ?//widget con dos botones para editar y eliminar la reseña
