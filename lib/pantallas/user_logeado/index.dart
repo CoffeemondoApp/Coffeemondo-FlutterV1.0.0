@@ -34,6 +34,7 @@ var porcentaje = puntaje_actual / puntaje_nivel;
 var nivel = 1;
 var niveluser;
 var inicio = '';
+var contPremio = 0;
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -55,6 +56,24 @@ List<Map<String, dynamic>> niveles = [
   {'nivel': 16, 'puntaje_nivel': 6400, 'porcentaje': 0.0},
   {'nivel': 17, 'puntaje_nivel': 6800, 'porcentaje': 0.0},
   {'nivel': 18, 'puntaje_nivel': 7200, 'porcentaje': 0.0},
+  {'nivel': 19, 'puntaje_nivel': 7600, 'porcentaje': 0.0},
+  {'nivel': 20, 'puntaje_nivel': 8000, 'porcentaje': 0.0},
+  {'nivel': 21, 'puntaje_nivel': 8400, 'porcentaje': 0.0},
+  {'nivel': 22, 'puntaje_nivel': 8800, 'porcentaje': 0.0},
+  {'nivel': 23, 'puntaje_nivel': 9200, 'porcentaje': 0.0},
+  {'nivel': 24, 'puntaje_nivel': 9600, 'porcentaje': 0.0},
+  {'nivel': 25, 'puntaje_nivel': 10000, 'porcentaje': 0.0},
+  {'nivel': 26, 'puntaje_nivel': 10400, 'porcentaje': 0.0},
+  {'nivel': 27, 'puntaje_nivel': 10800, 'porcentaje': 0.0},
+  {'nivel': 28, 'puntaje_nivel': 11200, 'porcentaje': 0.0},
+  {'nivel': 29, 'puntaje_nivel': 11600, 'porcentaje': 0.0},
+  {'nivel': 30, 'puntaje_nivel': 12000, 'porcentaje': 0.0},
+  {'nivel': 31, 'puntaje_nivel': 12400, 'porcentaje': 0.0},
+  {'nivel': 32, 'puntaje_nivel': 12800, 'porcentaje': 0.0},
+  {'nivel': 33, 'puntaje_nivel': 13200, 'porcentaje': 0.0},
+  {'nivel': 34, 'puntaje_nivel': 13600, 'porcentaje': 0.0},
+  {'nivel': 35, 'puntaje_nivel': 14000, 'porcentaje': 0.0},
+  {'nivel': 36, 'puntaje_nivel': 14400, 'porcentaje': 0.0},
 ];
 //Crear funcion que retorne en una lista el nivel del usuario y el porcentaje de progreso
 List<Map<String, dynamic>> getNivel() {
@@ -422,27 +441,25 @@ class IndexPageState extends State<IndexPage> {
           )));
     }
 
-    Widget _bodyIndex() {
-      _subirPuntos() {
-        print(_calcularTiempo());
-        //aumentar en 10 el puntaje actual
-        setState(() {
-          puntaje_actual += 10;
-          porcentaje = puntaje_actual / puntaje_nivel;
-          puntaje_actual_string = puntaje_actual.toString();
-        });
-      }
+    _subirPuntos(int puntos) {
+      print(_calcularTiempo());
+      //aumentar en 10 el puntaje actual
+      setState(() {
+        puntaje_actual += puntos;
+        porcentaje = puntaje_actual / puntaje_nivel;
+        puntaje_actual_string = puntaje_actual.toString();
+      });
+    }
 
-      return (Column(
-        children: [
-          _containerMensajeNivel(),
-          Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
+    Widget btnsDev() {
+      return (Container(
+        child: Column(children: [
           Padding(
             padding:
                 EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.01),
             child: ElevatedButton(
               onPressed: () {
-                _subirPuntos();
+                _subirPuntos(10);
               },
               child: Text('Subir puntos'),
             ),
@@ -470,7 +487,101 @@ class IndexPageState extends State<IndexPage> {
               },
               child: Text('Ver resenas'),
             ),
-          ),
+          )
+        ]),
+      ));
+    }
+
+    Widget _bodyIndex() {
+      return (Column(
+        children: [
+          _containerMensajeNivel(),
+          Container(
+            margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.02,
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05),
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.02),
+                  child: Text('Bienvenido a la Beta !!!',
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 255, 79, 52),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold)),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.04),
+                  child: Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        children: [
+                          Text(
+                              'En esta versión de la aplicación, podrás ver las reseñas de los cafes que visitas y subir tus propias reseñas. Además, podrás ver el puntaje de los lugares que visitas y el puntaje de los lugares que has visitado.',
+                              style: TextStyle(
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold)),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                                'Felicitaciones! Fuiste seleccionado como Beta Tester, eres uno de los primeros usuarios y por eso te damos un premio de 500 puntos. ¡Disfruta de la aplicación!',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 79, 52),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (contPremio < 3) {
+                                    _subirPuntos(500);
+
+                                    setState(() {
+                                      contPremio++;
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.5,
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 255, 79, 52),
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Container(
+                                    child: Center(
+                                      child: Text(
+                                        'Obtener premio :D',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 0x52, 0x01, 0x9b),
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ))
+                        ],
+                      )),
+                ),
+              ],
+            ),
+          )
+          //Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
+          //btnsDev(),
         ],
       ));
     }

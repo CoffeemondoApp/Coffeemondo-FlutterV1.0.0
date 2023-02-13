@@ -2086,13 +2086,19 @@ class ResenasPageState extends State<ResenasPage> {
                   datosResena(resena),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  btnEditarResena(resena),
-                  btnEliminarResena(resena),
-                ],
-              )
+              if (!abrirCalificacion)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    btnEditarResena(resena),
+                    btnEliminarResena(resena),
+                  ],
+                )
+              else if (abrirCalificacion)
+                Container(
+                  height: 15,
+                  //color: Colors.white,
+                ),
             ],
           )));
     }
@@ -2125,8 +2131,11 @@ class ResenasPageState extends State<ResenasPage> {
                         itemCount: documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           final document = documents[index];
-
-                          return (moduloResena(document.data()));
+                          if (document.data()['uid_usuario'] ==
+                              currentUser?.uid) {
+                            return (moduloResena(document.data()));
+                          }
+                          return (Container());
                         });
                   } else {
                     return (Column(
@@ -2175,6 +2184,7 @@ class ResenasPageState extends State<ResenasPage> {
                   nombre_cafeteria = false;
                   _direccionController.text = '';
                   imagenSeleccionada = false;
+                  resenasAnteriores = false;
                 });
               },
               child: Container(
@@ -2208,6 +2218,9 @@ class ResenasPageState extends State<ResenasPage> {
                   onTap: () {
                     setState(() {
                       resenasAnteriores = !resenasAnteriores;
+                      if (crearResena) {
+                        crearResena = false;
+                      }
                     });
                   },
                   child: Container(
@@ -2535,9 +2548,9 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              gap: 8,
+              gap: 6,
               selectedIndex: 1,
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
@@ -2552,14 +2565,26 @@ class CustomBottomBar extends StatelessWidget {
                 ),
                 GButton(
                   icon: Icons.reviews,
-                  text: 'Reseñas',
+                  text: 'Mis Reseñas',
+                ),
+                GButton(
+                  icon: Icons.menu_book,
+                  text: 'Mis Recetas',
+                ),
+                GButton(
+                  icon: Icons.stars,
+                  text: 'Mis logros',
+                ),
+                GButton(
+                  icon: Icons.favorite,
+                  text: 'Favoritos',
                 ),
                 GButton(
                   icon: Icons.search,
                   text: 'Busqueda',
                 ),
                 GButton(
-                  icon: Icons.settings,
+                  icon: Icons.account_circle,
                   text: 'Configuracion',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
