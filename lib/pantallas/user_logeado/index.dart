@@ -497,7 +497,7 @@ class IndexPageState extends State<IndexPage> {
         Uri.parse('https://chat.whatsapp.com/KfA99u7QDyz4mebTEkiMoW');
 
     Future<void> enviarAlGrupo() async {
-      if (!await launchUrl(_urlBT)) {
+      if (!await launchUrl(_urlBT, mode: LaunchMode.externalApplication)) {
         throw Exception('Could not launch $_urlBT');
       }
     }

@@ -2292,22 +2292,18 @@ class ResenasPageState extends State<ResenasPage> {
     @override
     Widget _mostrarMenuOpciones() {
       print(crearResena);
-      return (AnimatedContainer(
-          width: MediaQuery.of(context).size.width,
-          height: alto_moduloResenas(),
-          decoration: BoxDecoration(
-            //color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20)),
-          ),
-          duration: Duration(seconds: 1),
-          // Proporciona una curva opcional para hacer que la animación se sienta más suave.
-          curve: Curves.fastOutSlowIn,
-          child:
-              (misResenas2) //Crear columna que contenga el titulo y el cuerpo del container
-                  ? moduloMisResenas()
-                  : Container()));
+      return (Opacity(
+          opacity: misResenas ? 1.0 : 0.0,
+          child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                //color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20)),
+              ),
+              // Proporciona una curva opcional para hacer que la animación se sienta más suave.
+              child: moduloMisResenas())));
     }
 
     abrirMisResenas() {
