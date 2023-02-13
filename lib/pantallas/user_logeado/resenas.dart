@@ -78,7 +78,7 @@ class ResenasPage extends StatefulWidget {
 
 double _width_mr1 = 0.0;
 double _height_mr1 = 0.0;
-double _width_mr2 = 0.9;
+double _width_mr2 = 0.8;
 double _height_mr2 = 0.3;
 
 String tab = '';
@@ -1607,7 +1607,7 @@ class ResenasPageState extends State<ResenasPage> {
       print('el largo del comentario es ' +
           _comentarioController.text.length.toString());
       return (AnimatedContainer(
-          width: MediaQuery.of(context).size.width * 0.8,
+          width: MediaQuery.of(context).size.width * 0.9,
           height: (crearResena)
               ? (pregunta == 10 && !calificado)
                   ? 275
@@ -1964,6 +1964,7 @@ class ResenasPageState extends State<ResenasPage> {
       promedio_calificaciones = suma_calificaciones / cont_calificaciones;
       return (Container(
         alignment: Alignment.topLeft,
+        margin: EdgeInsets.only(left: 25),
         width: MediaQuery.of(context).size.width * 0.39,
         //color: Colors.white,
         child: (!abrirCalificacion)
@@ -2107,7 +2108,7 @@ class ResenasPageState extends State<ResenasPage> {
     Widget moduloResenasAnteriores() {
       definirAltoCalificacion();
       return (AnimatedContainer(
-        width: MediaQuery.of(context).size.width * 0.8,
+        width: MediaQuery.of(context).size.width * 0.9,
         height: (resenasAnteriores) ? 350 : 0,
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 255, 79, 52),
@@ -2190,7 +2191,7 @@ class ResenasPageState extends State<ResenasPage> {
               child: Container(
                 margin: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.015),
-                width: MediaQuery.of(context).size.width * 0.8,
+                width: MediaQuery.of(context).size.width * 0.9,
                 height: 50,
                 decoration: BoxDecoration(
                     color: Color.fromARGB(255, 255, 79, 52),
@@ -2226,7 +2227,7 @@ class ResenasPageState extends State<ResenasPage> {
                   child: Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.01),
-                      width: MediaQuery.of(context).size.width * 0.8,
+                      width: MediaQuery.of(context).size.width * 0.9,
                       height: MediaQuery.of(context).size.height * 0.08,
                       decoration: BoxDecoration(
                           color: Color.fromARGB(255, 255, 79, 52),
@@ -2250,7 +2251,7 @@ class ResenasPageState extends State<ResenasPage> {
               child: Container(
                   margin: EdgeInsets.only(
                       top: MediaQuery.of(context).size.height * 0.01),
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   height: MediaQuery.of(context).size.height * 0.08,
                   decoration: BoxDecoration(
                     color: Color.fromARGB(255, 255, 79, 52),
@@ -2292,10 +2293,10 @@ class ResenasPageState extends State<ResenasPage> {
     Widget _mostrarMenuOpciones() {
       print(crearResena);
       return (AnimatedContainer(
-          width: MediaQuery.of(context).size.width * _width_mr2,
+          width: MediaQuery.of(context).size.width,
           height: alto_moduloResenas(),
           decoration: BoxDecoration(
-            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            //color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20)),
@@ -2343,7 +2344,7 @@ class ResenasPageState extends State<ResenasPage> {
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02),
                       width: MediaQuery.of(context).size.width * 0.9,
-                      height: MediaQuery.of(context).size.height * 0.15,
+                      height: MediaQuery.of(context).size.height * 0.10,
                       decoration: BoxDecoration(
                           color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
                           borderRadius: BorderRadius.only(
@@ -2354,7 +2355,7 @@ class ResenasPageState extends State<ResenasPage> {
                           Padding(
                             padding: EdgeInsets.only(
                                 left: MediaQuery.of(context).size.width * 0.2),
-                            child: Icon(Icons.reviews,
+                            child: Icon(Icons.reviews_outlined,
                                 color: Colors.white, size: 45),
                           ),
                           Padding(

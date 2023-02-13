@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
 import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -492,6 +493,15 @@ class IndexPageState extends State<IndexPage> {
       ));
     }
 
+    final Uri _urlBT =
+        Uri.parse('https://chat.whatsapp.com/KfA99u7QDyz4mebTEkiMoW');
+
+    Future<void> enviarAlGrupo() async {
+      if (!await launchUrl(_urlBT)) {
+        throw Exception('Could not launch $_urlBT');
+      }
+    }
+
     Widget _bodyIndex() {
       return (Column(
         children: [
@@ -542,37 +552,76 @@ class IndexPageState extends State<IndexPage> {
                           ),
                           Padding(
                               padding: EdgeInsets.only(top: 20),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (contPremio < 3) {
-                                    _subirPuntos(500);
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (contPremio < 3) {
+                                        _subirPuntos(500);
 
-                                    setState(() {
-                                      contPremio++;
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.5,
-                                  decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 255, 79, 52),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Container(
-                                    child: Center(
-                                      child: Text(
-                                        'Obtener premio :D',
-                                        style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 0x52, 0x01, 0x9b),
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold),
+                                        setState(() {
+                                          contPremio++;
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.05,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.35,
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 255, 79, 52),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Container(
+                                        child: Center(
+                                          child: Text(
+                                            'Obtener premio :D',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 0x52, 0x01, 0x9b),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      enviarAlGrupo();
+                                    },
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.05,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.35,
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 255, 79, 52),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      child: Container(
+                                        child: Center(
+                                          child: Text(
+                                            'Unirse al grupo de WhatsApp',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 0x52, 0x01, 0x9b),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ))
                         ],
                       )),
