@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
 import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
@@ -43,6 +45,13 @@ var contPremio = 0;
 
 bool acceso_dev = false;
 bool abrirCrearCafeteria = false;
+TextEditingController nombreCafeteriaCC = TextEditingController();
+TextEditingController direccionCafeteriaCC = TextEditingController();
+TextEditingController correoCafeteriaCC = TextEditingController();
+TextEditingController latitudCafeteriaCC = TextEditingController();
+TextEditingController longitudCafeteriaCC = TextEditingController();
+TextEditingController urlCafeteriaCC = TextEditingController();
+TextEditingController imagenCafeteriaCC = TextEditingController();
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -509,6 +518,229 @@ class CafeteriasState extends State<Cafeterias> {
       }
     }
 
+    Future<void> guardarCafeteria() async {
+      User? user = Auth().currentUser;
+      try {
+        // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a la cafeteria
+        FirebaseFirestore.instance.collection("cafeterias").doc().set(({
+              'nombre': nombreCafeteriaCC.text,
+              'creador': user!.uid,
+              'calificacion': 0.0,
+              'correo': correoCafeteriaCC.text,
+              'web': urlCafeteriaCC.text,
+              'ubicacion': direccionCafeteriaCC.text,
+              'imagen': 'google.cloud.storage',
+            }));
+        print('Ingreso de cafeteria exitoso.');
+      } catch (e) {
+        print("Error al intentar ingresar cafeteria");
+      }
+    }
+
+    Widget textFieldNombreCafeteria(TextEditingController controller) {
+      return (TextField(
+          cursorHeight: 0,
+          cursorWidth: 0,
+          onTap: () {
+            setState(() {});
+          },
+          controller: controller,
+          // onChanged: (((value) => validarCorreo())),
+          style: const TextStyle(
+            letterSpacing: 2,
+            decoration: TextDecoration.none,
+            color: Color.fromARGB(255, 255, 79, 52),
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.coffee_maker_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Nombre de la cafeteria',
+              hintStyle: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: Color.fromARGB(255, 255, 79, 52),
+              ))));
+    }
+
+    Widget textFieldCorreoCafeteria(TextEditingController controller) {
+      return (TextField(
+          cursorHeight: 0,
+          cursorWidth: 0,
+          onTap: () {
+            setState(() {});
+          },
+          controller: controller,
+          // onChanged: (((value) => validarCorreo())),
+          style: const TextStyle(
+            letterSpacing: 2,
+            decoration: TextDecoration.none,
+            color: Color.fromARGB(255, 255, 79, 52),
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.email_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Correo de la cafeteria',
+              hintStyle: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: Color.fromARGB(255, 255, 79, 52),
+              ))));
+    }
+
+    Widget textFieldWebCafeteria(TextEditingController controller) {
+      return (TextField(
+          cursorHeight: 0,
+          cursorWidth: 0,
+          onTap: () {
+            setState(() {});
+          },
+          controller: controller,
+          // onChanged: (((value) => validarCorreo())),
+          style: const TextStyle(
+            letterSpacing: 2,
+            decoration: TextDecoration.none,
+            color: Color.fromARGB(255, 255, 79, 52),
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.web_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Web de la cafeteria',
+              hintStyle: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: Color.fromARGB(255, 255, 79, 52),
+              ))));
+    }
+
+    Widget textFieldUbicacionCafeteria(TextEditingController controller) {
+      return (TextField(
+          cursorHeight: 0,
+          cursorWidth: 0,
+          onTap: () {
+            setState(() {});
+          },
+          controller: controller,
+          // onChanged: (((value) => validarCorreo())),
+          style: const TextStyle(
+            letterSpacing: 2,
+            decoration: TextDecoration.none,
+            color: Color.fromARGB(255, 255, 79, 52),
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+              ),
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.location_on_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Ubicacion de la cafeteria',
+              hintStyle: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: Color.fromARGB(255, 255, 79, 52),
+              ))));
+    }
+
+    //funcion para abrir la galeria y seleccionar una imagen
+    XFile? imageFile;
+
+    _openGallery(BuildContext context) async {
+      //imageFile = await ImagePicker().pickMultiImage();
+      imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (imageFile != null) {
+        setState(() {
+          imageFilePath = imageFile!.path;
+          imagenSeleccionada = true;
+        });
+        print('image: $imageFilePath');
+      } else {
+        imagenSeleccionada = false;
+        return;
+      }
+      //obtener nombre de imagen antes de ser guardada
+
+      setState(() {});
+    }
+
+    Widget textFieldImagenCafeteria(TextEditingController controller) {
+      return (Column(
+        children: [
+          Container(
+            margin:
+                EdgeInsets.only(top: (imagenSeleccionada) ? 2 : 15, left: 12),
+            child: Row(children: [
+              Icon(Icons.image_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                child: Text(
+                    (imagenSeleccionada)
+                        ? 'Imagen seleccionada'
+                        : 'Logo/Imagen de la cafeteria',
+                    style: TextStyle(
+                        letterSpacing: 2,
+                        color: Color.fromARGB(255, 255, 79, 52),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14)),
+              ),
+              Container(
+                //Crear widget para mostrar la imagen de imageFile
+                margin: EdgeInsets.only(left: 10),
+                child: (imagenSeleccionada)
+                    ? Image.file(
+                        File(imageFilePath),
+                        width: 50,
+                        height: 50,
+                      )
+                    : Container(),
+              ),
+            ]),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: (imagenSeleccionada) ? 4 : 15),
+            height: 1,
+            color: Color.fromARGB(255, 255, 79, 52),
+          )
+        ],
+      ));
+    }
+
     Widget moduloCrearCafeteria() {
       return (Container(
         //color: Colors.white,
@@ -530,202 +762,40 @@ class CafeteriasState extends State<Cafeterias> {
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: TextField(
-                          cursorHeight: 0,
-                          cursorWidth: 0,
-                          onTap: () {
-                            setState(() {});
-                          },
-                          //controller: controller,
-                          // onChanged: (((value) => validarCorreo())),
-                          style: const TextStyle(
-                            letterSpacing: 2,
-                            decoration: TextDecoration.none,
-                            color: Color.fromARGB(255, 255, 79, 52),
-                            fontSize: 14.0,
-                            height: 2.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                          decoration: InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.coffee_maker_outlined,
-                                  color: Color.fromARGB(255, 255, 79, 52),
-                                  size: 24),
-                              hintText: 'Nombre de la cafeteria',
-                              hintStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 255, 79, 52),
-                              )))),
+                      child: textFieldNombreCafeteria(nombreCafeteriaCC)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: TextField(
-                          cursorHeight: 0,
-                          cursorWidth: 0,
-                          onTap: () {
-                            setState(() {});
-                          },
-                          //controller: controller,
-                          // onChanged: (((value) => validarCorreo())),
-                          style: const TextStyle(
-                            letterSpacing: 2,
-                            decoration: TextDecoration.none,
-                            color: Color.fromARGB(255, 255, 79, 52),
-                            fontSize: 14.0,
-                            height: 2.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                          decoration: InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.email_outlined,
-                                  color: Color.fromARGB(255, 255, 79, 52),
-                                  size: 24),
-                              hintText: 'Correo de la cafeteria',
-                              hintStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 255, 79, 52),
-                              )))),
+                      child: textFieldCorreoCafeteria(correoCafeteriaCC)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: TextField(
-                          cursorHeight: 0,
-                          cursorWidth: 0,
-                          onTap: () {
-                            setState(() {});
-                          },
-                          //controller: controller,
-                          // onChanged: (((value) => validarCorreo())),
-                          style: const TextStyle(
-                            letterSpacing: 2,
-                            decoration: TextDecoration.none,
-                            color: Color.fromARGB(255, 255, 79, 52),
-                            fontSize: 14.0,
-                            height: 2.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                          decoration: InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.web_outlined,
-                                  color: Color.fromARGB(255, 255, 79, 52),
-                                  size: 24),
-                              hintText: 'Web de la cafeteria',
-                              hintStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 255, 79, 52),
-                              )))),
+                      child: textFieldWebCafeteria(urlCafeteriaCC)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: TextField(
-                          cursorHeight: 0,
-                          cursorWidth: 0,
-                          onTap: () {
-                            setState(() {});
-                          },
-                          //controller: controller,
-                          // onChanged: (((value) => validarCorreo())),
-                          style: const TextStyle(
-                            letterSpacing: 2,
-                            decoration: TextDecoration.none,
-                            color: Color.fromARGB(255, 255, 79, 52),
-                            fontSize: 14.0,
-                            height: 2.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                          decoration: InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.location_on_outlined,
-                                  color: Color.fromARGB(255, 255, 79, 52),
-                                  size: 24),
-                              hintText: 'Ubicacion de la cafeteria',
-                              hintStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 255, 79, 52),
-                              )))),
+                      child: textFieldUbicacionCafeteria(direccionCafeteriaCC)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: TextField(
-                          cursorHeight: 0,
-                          cursorWidth: 0,
-                          onTap: () {
-                            setState(() {});
-                          },
-                          //controller: controller,
-                          // onChanged: (((value) => validarCorreo())),
-                          style: const TextStyle(
-                            letterSpacing: 2,
-                            decoration: TextDecoration.none,
-                            color: Color.fromARGB(255, 255, 79, 52),
-                            fontSize: 14.0,
-                            height: 2.0,
-                            fontWeight: FontWeight.w900,
-                          ),
-                          decoration: InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                              border: OutlineInputBorder(),
-                              prefixIcon: Icon(Icons.image_outlined,
-                                  color: Color.fromARGB(255, 255, 79, 52),
-                                  size: 24),
-                              hintText: 'Logo/imagen de la cafeteria',
-                              hintStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w900,
-                                color: Color.fromARGB(255, 255, 79, 52),
-                              )))),
+                      child: GestureDetector(
+                        child: textFieldImagenCafeteria(imagenCafeteriaCC),
+                        onTap: () {
+                          _openGallery(context);
+                        },
+                      )),
                   GestureDetector(
+                    onTap: () {
+                      guardarCafeteria();
+                    },
                     child: Container(
                         decoration: BoxDecoration(
                             color: Color.fromARGB(255, 255, 79, 52),
