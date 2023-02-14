@@ -356,8 +356,24 @@ class ResenasPageState extends State<ResenasPage> {
     }
   }
 
-  void _limpiarResena() async  {
+  Future<void> guardarCafeteria() async {
+    try {
+      // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
+      FirebaseFirestore.instance.collection("cafeterias").doc().set(({
+            //Llamar funcion cuando se tenga la informacion solicitada de mas abajo
+            //Descomentar
+            // 'cafeteria': string,
+            // 'ubicacion': google maps,
+            // 'calificacion': int-double,
+            // 'web': string,
+          }));
+      print('Ingreso de cafeteria exitoso.');
+    } catch (e) {
+      print("Error al intentar ingresar cafeteria");
+    }
+  }
 
+  void _limpiarResena() async {
     _nombreCafeteriaController.clear();
     _comentarioController.clear();
     _direccionController.clear();
@@ -1332,7 +1348,7 @@ class ResenasPageState extends State<ResenasPage> {
                 onTap: () { 
                   guardarResena();
                   mostrarResenaSubida(context);
-                  
+
                 },
                 child: Text(
                   "Crear Reseña",
