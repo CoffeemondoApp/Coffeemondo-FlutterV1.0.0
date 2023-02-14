@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
 import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
@@ -10,16 +11,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../firebase/autenticacion.dart';
 import '../resenas/resenas.dart';
-import 'Cafeterias.dart';
+import 'index.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
-class IndexPage extends StatefulWidget {
+class Cafeterias extends StatefulWidget {
   final String tiempo_inicio;
-  const IndexPage(this.tiempo_inicio, {super.key});
+  const Cafeterias(this.tiempo_inicio, {super.key});
 
   @override
-  IndexPageState createState() => IndexPageState();
+  CafeteriasState createState() => CafeteriasState();
 }
 
 String tab = '';
@@ -37,6 +38,11 @@ var nivel = 1;
 var niveluser;
 var inicio = '';
 var contPremio = 0;
+
+// acceso developers
+
+bool acceso_dev = false;
+bool abrirCrearCafeteria = false;
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -108,7 +114,7 @@ List<Map<String, dynamic>> getNivel() {
   ];
 }
 
-class IndexPageState extends State<IndexPage> {
+class CafeteriasState extends State<Cafeterias> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late GoogleMapController googleMapController;
@@ -189,7 +195,7 @@ class IndexPageState extends State<IndexPage> {
   Widget _textoAppBar() {
     return (Text(
       (nickname != 'Sin informacion de nombre de usuario')
-          ? "Bienvenido $nickname !"
+          ? (acceso_dev ? "Bienvenido DEV $nickname" : "Bienvenido $nickname")
           : ("Bienvenido anonimo !"),
       style: TextStyle(
           color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
@@ -230,7 +236,7 @@ class IndexPageState extends State<IndexPage> {
     //Obtener nivel actual de getNivel()
     int nivel_actual = getNivel()[0]['nivel actual'];
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
-    print('$nivel_usuario = $nivel_actual');
+    //print('$nivel_usuario = $nivel_actual');
     //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
     if (nivel_usuario > nivel_actual) {
       nivel = nivel_usuario;
@@ -503,132 +509,290 @@ class IndexPageState extends State<IndexPage> {
       }
     }
 
-    Widget _bodyIndex() {
+    Widget moduloCrearCafeteria() {
+      return (Container(
+        //color: Colors.white,
+        margin: EdgeInsets.only(top: (!abrirCrearCafeteria) ? 0 : 15),
+        alignment:
+            (abrirCrearCafeteria) ? Alignment.topCenter : Alignment.center,
+        child: (abrirCrearCafeteria)
+            ? Column(
+                children: [
+                  Text(
+                    'Crear Cafeteria',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 255, 79, 52),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: TextField(
+                          cursorHeight: 0,
+                          cursorWidth: 0,
+                          onTap: () {
+                            setState(() {});
+                          },
+                          //controller: controller,
+                          // onChanged: (((value) => validarCorreo())),
+                          style: const TextStyle(
+                            letterSpacing: 2,
+                            decoration: TextDecoration.none,
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontSize: 14.0,
+                            height: 2.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.coffee_maker_outlined,
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  size: 24),
+                              hintText: 'Nombre de la cafeteria',
+                              hintStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w900,
+                                color: Color.fromARGB(255, 255, 79, 52),
+                              )))),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: TextField(
+                          cursorHeight: 0,
+                          cursorWidth: 0,
+                          onTap: () {
+                            setState(() {});
+                          },
+                          //controller: controller,
+                          // onChanged: (((value) => validarCorreo())),
+                          style: const TextStyle(
+                            letterSpacing: 2,
+                            decoration: TextDecoration.none,
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontSize: 14.0,
+                            height: 2.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.email_outlined,
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  size: 24),
+                              hintText: 'Correo de la cafeteria',
+                              hintStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w900,
+                                color: Color.fromARGB(255, 255, 79, 52),
+                              )))),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: TextField(
+                          cursorHeight: 0,
+                          cursorWidth: 0,
+                          onTap: () {
+                            setState(() {});
+                          },
+                          //controller: controller,
+                          // onChanged: (((value) => validarCorreo())),
+                          style: const TextStyle(
+                            letterSpacing: 2,
+                            decoration: TextDecoration.none,
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontSize: 14.0,
+                            height: 2.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.web_outlined,
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  size: 24),
+                              hintText: 'Web de la cafeteria',
+                              hintStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w900,
+                                color: Color.fromARGB(255, 255, 79, 52),
+                              )))),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: TextField(
+                          cursorHeight: 0,
+                          cursorWidth: 0,
+                          onTap: () {
+                            setState(() {});
+                          },
+                          //controller: controller,
+                          // onChanged: (((value) => validarCorreo())),
+                          style: const TextStyle(
+                            letterSpacing: 2,
+                            decoration: TextDecoration.none,
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontSize: 14.0,
+                            height: 2.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.location_on_outlined,
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  size: 24),
+                              hintText: 'Ubicacion de la cafeteria',
+                              hintStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w900,
+                                color: Color.fromARGB(255, 255, 79, 52),
+                              )))),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: TextField(
+                          cursorHeight: 0,
+                          cursorWidth: 0,
+                          onTap: () {
+                            setState(() {});
+                          },
+                          //controller: controller,
+                          // onChanged: (((value) => validarCorreo())),
+                          style: const TextStyle(
+                            letterSpacing: 2,
+                            decoration: TextDecoration.none,
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontSize: 14.0,
+                            height: 2.0,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          decoration: InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                              border: OutlineInputBorder(),
+                              prefixIcon: Icon(Icons.image_outlined,
+                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  size: 24),
+                              hintText: 'Logo/imagen de la cafeteria',
+                              hintStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w900,
+                                color: Color.fromARGB(255, 255, 79, 52),
+                              )))),
+                  GestureDetector(
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            borderRadius: BorderRadius.circular(10)),
+                        margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.04,
+                        ),
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.02,
+                              bottom: MediaQuery.of(context).size.height * 0.02,
+                              left: MediaQuery.of(context).size.width * 0.2,
+                              right: MediaQuery.of(context).size.width * 0.2),
+                          child: Text(
+                            'Generar cafeteria',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )),
+                  )
+                ],
+              )
+            : Text(
+                'Crear Cafeteria',
+                style: TextStyle(
+                    color: Color.fromARGB(255, 255, 79, 52),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+      ));
+    }
+
+    Widget _bodyCafeterias() {
+      User? user = Auth().currentUser;
+      print(user!.uid);
+      if (user!.uid == '0UqMGUiuqjeMcNVXfcX2Hmp7na72' ||
+          user!.uid == 'n1OVOWft36cWJrZIn2haHwzXWOJ3' ||
+          user!.uid == 'zfkeofc6gTgfcUJiUZcnoBYdeNU2') {
+        print("Acceso a botones de desarrollo permitido");
+        setState(() {
+          acceso_dev = true;
+        });
+      }
       return (Column(
         children: [
           _containerMensajeNivel(),
-          Container(
-            margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.02,
-                left: MediaQuery.of(context).size.width * 0.05,
-                right: MediaQuery.of(context).size.width * 0.05),
-            width: MediaQuery.of(context).size.width * 0.9,
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.02),
-                  child: Text('Bienvenido a la Beta !!!',
-                      style: TextStyle(
-                          color: Color.fromARGB(255, 255, 79, 52),
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                if (!abrirCrearCafeteria) {
+                  abrirCrearCafeteria = !abrirCrearCafeteria;
+                }
+              });
+            },
+            child: AnimatedContainer(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: (abrirCrearCafeteria)
+                    ? MediaQuery.of(context).size.height * 0.67
+                    : MediaQuery.of(context).size.height * 0.07,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.04),
-                  child: Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      margin: EdgeInsets.only(bottom: 20),
-                      child: Column(
-                        children: [
-                          Text(
-                              'En esta versión de la aplicación, podrás ver las reseñas de los cafes que visitas y subir tus propias reseñas. Además, podrás ver el puntaje de los lugares que visitas y el puntaje de los lugares que has visitado.',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 79, 52),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold)),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                            child: Text(
-                                'Felicitaciones! Fuiste seleccionado como Beta Tester, eres uno de los primeros usuarios y por eso te damos un premio de 500 puntos. ¡Disfruta de la aplicación!',
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 79, 52),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (contPremio < 3) {
-                                        _subirPuntos(500);
-
-                                        setState(() {
-                                          contPremio++;
-                                        });
-                                      }
-                                    },
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.05,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.35,
-                                      decoration: BoxDecoration(
-                                          color:
-                                              Color.fromARGB(255, 255, 79, 52),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Container(
-                                        child: Center(
-                                          child: Text(
-                                            'Obtener premio :D',
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0x52, 0x01, 0x9b),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      enviarAlGrupo();
-                                    },
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.05,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.35,
-                                      decoration: BoxDecoration(
-                                          color:
-                                              Color.fromARGB(255, 255, 79, 52),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      child: Container(
-                                        child: Center(
-                                          child: Text(
-                                            'Unirse al grupo de WhatsApp',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0x52, 0x01, 0x9b),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ))
-                        ],
-                      )),
-                ),
-              ],
-            ),
+                duration: Duration(seconds: 1),
+                child: moduloCrearCafeteria()),
           )
           //Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
           //btnsDev(),
@@ -645,10 +809,11 @@ class IndexPageState extends State<IndexPage> {
 
     //Crear funcion para detectar cuando el nivel inicial es diferente al nivel actual
 
-    print(nivel.toString() + ' ' + niveluser.toString());
+    //print(nivel.toString() + ' ' + niveluser.toString());
 
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
+      resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(170),
         child: Stack(
@@ -680,7 +845,9 @@ class IndexPageState extends State<IndexPage> {
           ],
         ),
       ),
-      body: _bodyIndex(),
+      body: SingleChildScrollView(
+        child: _bodyCafeterias(),
+      ),
       bottomNavigationBar: CustomBottomBar(),
     );
   }
@@ -750,7 +917,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             child: Center(
               child: Text(
                 (nickname != 'Sin informacion de nombre de usuario')
-                    ? "Bienvenido $nickname !"
+                    ? "Bienvenido al modo Dev $nickname !"
                     : ("Bienvenido anonimo !"),
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 79, 52),
@@ -812,6 +979,7 @@ class CustomBottomBar extends StatelessWidget {
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               gap: 6,
+              selectedIndex: 4,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(

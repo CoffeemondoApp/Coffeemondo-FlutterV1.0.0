@@ -1955,7 +1955,7 @@ class ResenasPageState extends State<ResenasPage> {
       //recorrer el mapa de calificaciones
       var cont_calificaciones = 0;
       resena['reseña'].forEach((key, value) {
-        print("key: $key, value: $value");
+        //print("key: $key, value: $value");
         //print(document.data()['reseña'].Type());
         suma_calificaciones += value;
         cont_calificaciones++;

@@ -58,6 +58,7 @@ dependencies:
   smooth_star_rating: ^1.1.1
   image_picker: ^0.8.6+1
   url_launcher: ^6.1.9
+  easy_autocomplete: ^1.6.0
   
 flutter_native_splash:
   color: "#E64921"
