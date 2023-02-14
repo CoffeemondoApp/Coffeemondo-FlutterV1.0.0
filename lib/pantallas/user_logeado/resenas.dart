@@ -358,7 +358,7 @@ class ResenasPageState extends State<ResenasPage> {
 
   Future<void> guardarCafeteria() async {
     try {
-      // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a las resenas
+      // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a la cafeteria
       FirebaseFirestore.instance.collection("cafeterias").doc().set(({
             //Llamar funcion cuando se tenga la informacion solicitada de mas abajo
             //Descomentar
