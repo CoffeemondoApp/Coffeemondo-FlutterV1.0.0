@@ -808,13 +808,19 @@ class CafeteriasState extends State<Cafeterias> {
         child: (abrirCrearCafeteria)
             ? Column(
                 children: [
-                  Text(
-                    'Crear Cafeteria',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 255, 79, 52),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
+                  GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          abrirCrearCafeteria = false;
+                        });
+                      },
+                      child: Text(
+                        'Crear Cafeteria',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 255, 79, 52),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      )),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
@@ -889,6 +895,15 @@ class CafeteriasState extends State<Cafeterias> {
       ));
     }
 
+    Widget moduloCafeterias(dynamic cafeteria) {
+      return (Container(
+        child: Text(cafeteria['nombre']),
+      ));
+    }
+
+    CollectionReference cafeterias =
+        FirebaseFirestore.instance.collection('cafeterias');
+
     Widget _bodyCafeterias() {
       User? user = Auth().currentUser;
       print(user!.uid);
@@ -922,7 +937,58 @@ class CafeteriasState extends State<Cafeterias> {
                 ),
                 duration: Duration(seconds: 1),
                 child: moduloCrearCafeteria()),
-          )
+          ),
+
+          //Crear container para mostrar las cafeterias obtenidas de firebase con la variable cafeterias
+          //Container para mostrar las cafeterias
+          Container(
+            margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.02,
+                left: MediaQuery.of(context).size.width * 0.05,
+                right: MediaQuery.of(context).size.width * 0.05),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: cafeterias.snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Algo salio mal');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Cargando");
+                }
+
+                return new ListView(
+                  shrinkWrap: true,
+                  children:
+                      snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                    return new Container(
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.02,
+                              ),
+                              child: Text(
+                                data['nombre'],
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 79, 52)),
+                              ),
+                            ),
+                          ],
+                        ));
+                  }).toList(),
+                );
+              },
+            ),
+          ),
+
           //Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
           //btnsDev(),
         ],
