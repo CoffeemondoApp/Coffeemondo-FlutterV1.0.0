@@ -1,7 +1,10 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -160,6 +163,79 @@ class CafeteriasState extends State<Cafeterias> {
       });
     });
   }
+
+  final DocumentReference docRef =
+      FirebaseFirestore.instance.collection("cafeterias").doc();
+
+  XFile? imageFile;
+  UploadTask? uploadTask;
+
+  void _limpiarCafeteria() async {
+    // Se limpian los campos de texto
+    nombreCafeteriaCC.text = '';
+    direccionCafeteriaCC.text = '';
+    correoCafeteriaCC.text = '';
+    direccionCafeteriaCC.text = '';
+    urlCafeteriaCC.text = '';
+    setState(() {
+      imagenSeleccionada = false;
+    });
+    //recargar pagina
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => IndexPage(inicio)));
+  }
+
+  Future subirImagen() async {
+    // Se crea la ruta de la imagen en el Storage con el nombre del documento creado en la coleccion
+    final path = 'cafeteria_cafeteria_image/${docRef.id}.jpg';
+    final file = File(imageFile!.path);
+
+    final ref = FirebaseStorage.instance.ref().child(path);
+    uploadTask = ref.putFile(file);
+
+    final snapshot = await uploadTask!.whenComplete(() {});
+    final urlUserImage = await snapshot.ref.getDownloadURL();
+
+    // Se retorna la url de la imagen para llamarla desde la funcion de guardarInformacion
+    return urlUserImage;
+  }
+
+  _openGallery(BuildContext context) async {
+    //imageFile = await ImagePicker().pickMultiImage();
+    imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (imageFile != null) {
+      setState(() {
+        imageFilePath = imageFile!.path;
+        imagenSeleccionada = true;
+      });
+      print('image: $imageFilePath');
+    } else {
+      imagenSeleccionada = false;
+      return;
+    }
+    //obtener nombre de imagen antes de ser guardada
+
+    setState(() {});
+  }
+
+  _openCamera(BuildContext context) async {
+    imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (imageFile != null) {
+      setState(() {
+        imageFilePath = imageFile!.path;
+        imagenSeleccionada = true;
+      });
+      print('image: $imageFilePath');
+    } else {
+      imagenSeleccionada = false;
+      return;
+    }
+    //obtener nombre de imagen antes de ser guardada
+
+    setState(() {});
+  }
+
+  final ImagePicker _picker = ImagePicker();
 
   Widget FotoPerfil() {
     return ElevatedButton(
@@ -518,22 +594,25 @@ class CafeteriasState extends State<Cafeterias> {
       }
     }
 
+    final DocumentReference docReCafeteriaf =
+        FirebaseFirestore.instance.collection("cafeterias").doc();
+
     Future<void> guardarCafeteria() async {
       User? user = Auth().currentUser;
       try {
         // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a la cafeteria
-        FirebaseFirestore.instance.collection("cafeterias").doc().set(({
-              'nombre': nombreCafeteriaCC.text,
-              'creador': user!.uid,
-              'calificacion': 0.0,
-              'correo': correoCafeteriaCC.text,
-              'web': urlCafeteriaCC.text,
-              'ubicacion': direccionCafeteriaCC.text,
-              'imagen': 'google.cloud.storage',
-            }));
+        docRef.set(({
+          'nombre': nombreCafeteriaCC.text,
+          'creador': user?.uid,
+          'calificacion': 0.0,
+          'correo': correoCafeteriaCC.text,
+          'web': urlCafeteriaCC.text,
+          'ubicacion': direccionCafeteriaCC.text,
+          'imagen': await subirImagen(),
+        }));
         print('Ingreso de cafeteria exitoso.');
       } catch (e) {
-        print("Error al intentar ingresar cafeteria");
+        print(e.toString());
       }
     }
 
@@ -677,27 +756,6 @@ class CafeteriasState extends State<Cafeterias> {
               ))));
     }
 
-    //funcion para abrir la galeria y seleccionar una imagen
-    XFile? imageFile;
-
-    _openGallery(BuildContext context) async {
-      //imageFile = await ImagePicker().pickMultiImage();
-      imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (imageFile != null) {
-        setState(() {
-          imageFilePath = imageFile!.path;
-          imagenSeleccionada = true;
-        });
-        print('image: $imageFilePath');
-      } else {
-        imagenSeleccionada = false;
-        return;
-      }
-      //obtener nombre de imagen antes de ser guardada
-
-      setState(() {});
-    }
-
     Widget textFieldImagenCafeteria(TextEditingController controller) {
       return (Column(
         children: [
@@ -795,6 +853,7 @@ class CafeteriasState extends State<Cafeterias> {
                   GestureDetector(
                     onTap: () {
                       guardarCafeteria();
+                      _limpiarCafeteria();
                     },
                     child: Container(
                         decoration: BoxDecoration(
@@ -833,9 +892,9 @@ class CafeteriasState extends State<Cafeterias> {
     Widget _bodyCafeterias() {
       User? user = Auth().currentUser;
       print(user!.uid);
-      if (user!.uid == '0UqMGUiuqjeMcNVXfcX2Hmp7na72' ||
-          user!.uid == 'n1OVOWft36cWJrZIn2haHwzXWOJ3' ||
-          user!.uid == 'zfkeofc6gTgfcUJiUZcnoBYdeNU2') {
+      if (user.uid == '0UqMGUiuqjeMcNVXfcX2Hmp7na72' ||
+          user.uid == 'n1OVOWft36cWJrZIn2haHwzXWOJ3' ||
+          user.uid == 'zfkeofc6gTgfcUJiUZcnoBYdeNU2') {
         print("Acceso a botones de desarrollo permitido");
         setState(() {
           acceso_dev = true;
