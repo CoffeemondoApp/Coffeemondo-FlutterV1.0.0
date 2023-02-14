@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:async';
 import 'dart:io';
 import 'package:coffeemondo/pantallas/resenas/resenas.dart';
@@ -352,6 +354,37 @@ class ResenasPageState extends State<ResenasPage> {
     } catch (e) {
       print("Error al intentar ingresar resena");
     }
+  }
+
+  Future<void> guardarCafeteria() async {
+    try {
+      // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a la cafeteria
+      FirebaseFirestore.instance.collection("cafeterias").doc().set(({
+            //Llamar funcion cuando se tenga la informacion solicitada de mas abajo
+            //Descomentar
+            // 'cafeteria': string,
+            // 'ubicacion': google maps,
+            // 'calificacion': int-double,
+            // 'web': string,
+          }));
+      print('Ingreso de cafeteria exitoso.');
+    } catch (e) {
+      print("Error al intentar ingresar cafeteria");
+    }
+  }
+
+  void _limpiarResena() async {
+    _nombreCafeteriaController.clear();
+    _comentarioController.clear();
+    _direccionController.clear();
+    promedio = 0;
+    setState(() {
+      crearResena = false;
+      imagenSeleccionada = false;
+    });
+    //recargar pagina
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => ResenasPage(inicio)));
   }
 
   // Mostrar informacion del usuario en pantalla
@@ -1269,7 +1302,8 @@ class ResenasPageState extends State<ResenasPage> {
         child: Text('Aceptar',
             style: TextStyle(color: Color.fromARGB(255, 255, 79, 52))),
         onPressed: () {
-          Navigator.of(context).pop();
+          _limpiarResena();
+
           //Ejecutar la funcion subir puntos luego de dos segundos
           Future.delayed(Duration(seconds: 2), () {
             _subirPuntos(100);
@@ -1311,9 +1345,10 @@ class ResenasPageState extends State<ResenasPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () {
+                onTap: () { 
                   guardarResena();
                   mostrarResenaSubida(context);
+
                 },
                 child: Text(
                   "Crear Reseña",
