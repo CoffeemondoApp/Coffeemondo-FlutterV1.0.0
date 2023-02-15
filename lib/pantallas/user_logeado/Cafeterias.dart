@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:image_picker/image_picker.dart';
@@ -721,12 +722,26 @@ class CafeteriasState extends State<Cafeterias> {
               ))));
     }
 
+    navegarDireccion() async {
+      final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => DireccionPage(
+                  widget.tiempo_inicio, '', '', '', '', '', 'cr')));
+      setState(() {
+        direccionCafeteriaCC.text = result;
+      });
+      print('este es el resultado: $result');
+    }
+
     Widget textFieldUbicacionCafeteria(TextEditingController controller) {
       return (TextField(
+          readOnly: true,
           cursorHeight: 0,
           cursorWidth: 0,
           onTap: () {
-            setState(() {});
+            //navegar hacia direccion.dart para obtener la ubicacion de la cafeteria y mostrarla en el campo de texto
+            navegarDireccion();
           },
           controller: controller,
           // onChanged: (((value) => validarCorreo())),
@@ -915,84 +930,224 @@ class CafeteriasState extends State<Cafeterias> {
           acceso_dev = true;
         });
       }
-      return (Column(
-        children: [
-          _containerMensajeNivel(),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                if (!abrirCrearCafeteria) {
-                  abrirCrearCafeteria = !abrirCrearCafeteria;
-                }
-              });
-            },
-            child: AnimatedContainer(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: (abrirCrearCafeteria)
-                    ? MediaQuery.of(context).size.height * 0.67
-                    : MediaQuery.of(context).size.height * 0.07,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                  borderRadius: BorderRadius.circular(20),
+      List<String> hoursList = ['00:00', '00:30', '01:00'];
+      return (Column(children: [
+        _containerMensajeNivel(),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              if (!abrirCrearCafeteria) {
+                abrirCrearCafeteria = !abrirCrearCafeteria;
+              }
+            });
+          },
+          child: AnimatedContainer(
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: (abrirCrearCafeteria)
+                  ? MediaQuery.of(context).size.height * 0.67
+                  : MediaQuery.of(context).size.height * 0.07,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              duration: Duration(seconds: 1),
+              child: moduloCrearCafeteria()),
+        ),
+
+        //Crear container para mostrar las cafeterias obtenidas de firebase con la variable cafeterias
+        //Container para mostrar las cafeterias
+        Container(
+          decoration: BoxDecoration(
+              //color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25), topRight: Radius.circular(25))),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(children: [
+              Container(
+                margin: EdgeInsets.only(bottom: 10),
+                child: Text(
+                  'Cafeterias',
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
                 ),
-                duration: Duration(seconds: 1),
-                child: moduloCrearCafeteria()),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: cafeterias.snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text('Algo salio mal');
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("Cargando");
+                    }
+
+                    return
+                        //Crear un ListView.builder para mostrar las cafeterias obtenidas de firebase de forma horizontal
+                        ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height: MediaQuery.of(context).size.height,
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(
+                                          top: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02,
+                                          bottom: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  right: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.02),
+                                              child: Icon(Icons.coffee_sharp,
+                                                  color: Color.fromARGB(
+                                                      255, 255, 79, 52)),
+                                            ),
+                                            Container(
+                                                margin: EdgeInsets.only(
+                                                    left: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.02),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        snapshot.data!.docs[
+                                                            index]['nombre'],
+                                                        style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    255,
+                                                                    79,
+                                                                    52),
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 18)),
+                                                    Text(
+                                                        snapshot.data!
+                                                                .docs[index]
+                                                            ['ubicacion'],
+                                                        style: TextStyle(
+                                                          color: Color.fromARGB(
+                                                              255, 255, 79, 52),
+                                                        )),
+                                                  ],
+                                                ))
+                                          ],
+                                        )),
+                                    Container(
+                                      child: Image.network(
+                                        snapshot.data!.docs[index]['imagen'],
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.05,
+                                        margin: EdgeInsets.only(
+                                            top: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.05,
+                                            bottom: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.02),
+                                        decoration: BoxDecoration(
+                                            color: Color.fromARGB(
+                                                255, 255, 79, 52),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20))),
+                                        child: Container(
+                                            alignment: Alignment(0, 0),
+                                            child: Text(
+                                              'Visitar Web',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 0x52, 0x01, 0x9b),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            )),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.05,
+                                        margin: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.02),
+                                        decoration: BoxDecoration(
+                                            color: Color.fromARGB(
+                                                255, 255, 79, 52),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20))),
+                                        child: Container(
+                                            alignment: Alignment(0, 0),
+                                            child: Text(
+                                              'Ver reseñas',
+                                              style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 0x52, 0x01, 0x9b),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            )),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            });
+                  },
+                ),
+              )
+            ]),
           ),
-
-          //Crear container para mostrar las cafeterias obtenidas de firebase con la variable cafeterias
-          //Container para mostrar las cafeterias
-          Container(
-            margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.height * 0.02,
-                left: MediaQuery.of(context).size.width * 0.05,
-                right: MediaQuery.of(context).size.width * 0.05),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: cafeterias.snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Algo salio mal');
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Cargando");
-                }
-
-                return new ListView(
-                  shrinkWrap: true,
-                  children:
-                      snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
-                    return new Container(
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.02,
-                              ),
-                              child: Text(
-                                data['nombre'],
-                                style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 79, 52)),
-                              ),
-                            ),
-                          ],
-                        ));
-                  }).toList(),
-                );
-              },
-            ),
-          ),
-
-          //Padding(padding: EdgeInsets.only(top: 10), child: _containerMapa()),
-          //btnsDev(),
-        ],
-      ));
+        )
+      ]));
     }
 
     //Hacer que _recompensa se ejecute todo el tiempo

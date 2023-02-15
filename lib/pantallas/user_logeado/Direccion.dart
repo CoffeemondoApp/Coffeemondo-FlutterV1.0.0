@@ -215,10 +215,7 @@ class DireccionApp extends State<DireccionPage> {
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide(color: Colors.white))),
-        components: [
-          Component(Component.country, "usa"),
-          Component(Component.country, "cl")
-        ]);
+        components: [Component(Component.country, "cl")]);
 
     displayPrediction(p!, homeScaffoldKey.currentState);
   }
@@ -245,7 +242,6 @@ class DireccionApp extends State<DireccionPage> {
         apiHeaders: await const GoogleApiHeaders().getHeaders());
 
     PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-    print(detail.result.name);
 
     final lat = detail.result.geometry!.location.lat;
     final lng = detail.result.geometry!.location.lng;
@@ -253,17 +249,34 @@ class DireccionApp extends State<DireccionPage> {
     markersList.clear();
     //Si direccionEncontrada[0] es false, dejar de mostrar el marcador de la ubicacion actual del usuario
 
-    markersList.add(Marker(
-        markerId: const MarkerId("0"),
-        position: LatLng(lat, lng),
-        infoWindow: InfoWindow(title: detail.result.name)));
-    setState(() {});
-
     googleMapController
         .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 18.0));
     Timer timer = new Timer(new Duration(seconds: 2), () {
       direccionEncontrada[0] = true;
-      direccionEncontrada[1] = detail.result.name;
+      //Separar formattedAddress en calle, comuna y region con un split y mostrarlo en el mapa
+      var direccion_string = detail.result.formattedAddress.toString();
+      var direccion_separada = direccion_string.split(",");
+      var region = direccion_separada[1].split(' ');
+      print(region.toString() + " " + region.length.toString());
+      if (region.length == 3) {
+        direccion_string = direccion_separada[0] + ", " + region[2];
+      } else if (region.length > 3) {
+        direccion_string = direccion_separada[0] + ',';
+        for (int i = 2; i < region.length; i++) {
+          direccion_string += ' ' + region[i];
+        }
+      } else if (region.length < 3) {
+        direccion_string = direccion_separada[0] + ", " + region[1];
+      }
+
+      print(direccion_string);
+      direccionEncontrada[1] = direccion_string;
+      setState(() {});
+      print('esto pasa: ' + direccion_string);
+      markersList.add(Marker(
+          markerId: const MarkerId("0"),
+          position: LatLng(lat, lng),
+          infoWindow: InfoWindow(title: direccion_string)));
       setState(() {});
     });
   }
