@@ -600,20 +600,37 @@ class CafeteriasState extends State<Cafeterias> {
 
     Future<void> guardarCafeteria() async {
       User? user = Auth().currentUser;
-      try {
-        // Se establece los valores que recibiran los campos de la base de datos Firestore con la info relacionada a la cafeteria
-        docRef.set(({
-          'nombre': nombreCafeteriaCC.text,
-          'creador': user?.uid,
-          'calificacion': 0.0,
-          'correo': correoCafeteriaCC.text,
-          'web': urlCafeteriaCC.text,
-          'ubicacion': direccionCafeteriaCC.text,
-          'imagen': await subirImagen(),
-        }));
-        print('Ingreso de cafeteria exitoso.');
-      } catch (e) {
-        print(e.toString());
+      if (nombreCafeteriaCC.text != '') {
+        await FirebaseFirestore.instance
+            .collection('cafeterias')
+            .where('nombre', isEqualTo: nombreCafeteriaCC.text)
+            .get()
+            .then((QuerySnapshot querySnapshot) async {
+          if (querySnapshot.docs.isEmpty) {
+            print('No existe la cafeteria');
+            docReCafeteriaf.set(({
+              'nombre': nombreCafeteriaCC.text,
+              'creador': user?.uid,
+              'calificacion': 0.0,
+              'correo': correoCafeteriaCC.text,
+              'web': urlCafeteriaCC.text,
+              'ubicacion': direccionCafeteriaCC.text,
+              'imagen': await subirImagen(),
+            }));
+            print('Ingreso de cafeteria exitoso.');
+            _limpiarCafeteria();
+          } else {
+            print('Ya existe la cafeteria');
+            setState(() {
+              _visible = true;
+            });
+          }
+        });
+      } else {
+        print('No se ha ingresado un nombre');
+        setState(() {
+          _visible = true;
+        });
       }
     }
 
@@ -874,7 +891,6 @@ class CafeteriasState extends State<Cafeterias> {
                   GestureDetector(
                     onTap: () {
                       guardarCafeteria();
-                      _limpiarCafeteria();
                     },
                     child: Container(
                         decoration: BoxDecoration(
