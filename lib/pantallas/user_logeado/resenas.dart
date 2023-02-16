@@ -2149,11 +2149,7 @@ class ResenasPageState extends State<ResenasPage> {
                         itemCount: documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           final document = documents[index];
-                          if (document.data()['uid_usuario'] ==
-                              currentUser?.uid) {
                             return (moduloResena(document.data()));
-                          }
-                          return (Container());
                         });
                   } else {
                     return (Column(
