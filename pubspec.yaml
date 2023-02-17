@@ -59,6 +59,7 @@ dependencies:
   image_picker: ^0.8.6+1
   url_launcher: ^6.1.9
   easy_autocomplete: ^1.6.0
+  firebase_messaging: 
   
 flutter_native_splash:
   color: "#E64921"
