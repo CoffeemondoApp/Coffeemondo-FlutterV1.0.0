@@ -746,7 +746,7 @@ class CafeteriasState extends State<Cafeterias> {
               builder: (context) => DireccionPage(
                   widget.tiempo_inicio, '', '', '', '', '', 'cr')));
       setState(() {
-        direccionCafeteriaCC.text = result;
+        direccionCafeteriaCC.text = result['direccion'];
       });
       print('este es el resultado: $result');
     }
@@ -908,9 +908,9 @@ class CafeteriasState extends State<Cafeterias> {
                           child: Text(
                             'Generar cafeteria',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                              fontWeight: FontWeight.bold,
-                            ),
+                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
                           ),
                         )),
                   )
@@ -924,6 +924,44 @@ class CafeteriasState extends State<Cafeterias> {
                     fontSize: 20),
               ),
       ));
+    }
+
+    Widget containerTazasCalificadas(double promedio) {
+      print(promedio);
+      return (Container(
+          margin: EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+              //color: Colors.white,
+              ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              //Crear iconos de tazas de acuerdo a la calificacion promedio de la tienda
+              Row(
+                children: [
+                  HalfFilledIcon((promedio >= 1) ? 1 : promedio, Icons.coffee,
+                      30, "morado"),
+                  HalfFilledIcon((promedio >= 2) ? 1 : promedio - 1,
+                      Icons.coffee, 30, "morado"),
+                  HalfFilledIcon((promedio >= 3) ? 1 : promedio - 2,
+                      Icons.coffee, 30, "morado"),
+                  HalfFilledIcon((promedio >= 4) ? 1 : promedio - 3,
+                      Icons.coffee, 30, "morado"),
+                  HalfFilledIcon((promedio >= 5) ? 1 : promedio - 4,
+                      Icons.coffee, 30, "morado"),
+                ],
+              ),
+              Container(
+                child: Text(
+                  promedio.toString(),
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+              )
+            ],
+          )));
     }
 
     Widget moduloCafeterias(dynamic cafeteria) {
@@ -991,7 +1029,7 @@ class CafeteriasState extends State<Cafeterias> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.6,
+                height: MediaQuery.of(context).size.height * 0.7,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: cafeterias.snapshots(),
                   builder: (BuildContext context,
@@ -1087,6 +1125,8 @@ class CafeteriasState extends State<Cafeterias> {
                                         fit: BoxFit.cover,
                                       ),
                                     ),
+                                    containerTazasCalificadas(snapshot
+                                        .data!.docs[index]['calificacion']),
                                     GestureDetector(
                                       child: Container(
                                         width:
@@ -1096,10 +1136,7 @@ class CafeteriasState extends State<Cafeterias> {
                                             MediaQuery.of(context).size.height *
                                                 0.05,
                                         margin: EdgeInsets.only(
-                                            top: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.05,
+                                            top: 5,
                                             bottom: MediaQuery.of(context)
                                                     .size
                                                     .height *

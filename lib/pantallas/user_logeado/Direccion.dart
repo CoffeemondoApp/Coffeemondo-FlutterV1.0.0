@@ -35,6 +35,7 @@ class DireccionApp extends State<DireccionPage> {
 
   Set<Marker> markersList = {};
   var direccionEncontrada = [false, ""];
+  late Marker markerDireccion;
 
   late GoogleMapController googleMapController;
   final TextEditingController _controladorDireccion = TextEditingController();
@@ -175,12 +176,14 @@ class DireccionApp extends State<DireccionPage> {
     googleMapController
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
-    final marker = Marker(
-        markerId: MarkerId("ubicacionActual"),
-        position: coordenadas,
-        infoWindow: InfoWindow(title: "Ubicacion actual"));
-
-    _mostrarMarcador(marker);
+    final marker = setState(() {
+      markerDireccion = Marker(
+          markerId: const MarkerId("0"),
+          position: coordenadas,
+          infoWindow: InfoWindow(title: direccionEncontrada[1].toString()));
+    });
+    print(markerDireccion.position);
+    _mostrarMarcador(markerDireccion);
   }
 
   _guardarDireccion() {
@@ -197,7 +200,11 @@ class DireccionApp extends State<DireccionPage> {
                   widget.telefono,
                   direccionEncontrada[1].toString())));
     } else if (widget.origen == 'cr') {
-      Navigator.pop(context, direccionEncontrada[1].toString());
+      Navigator.pop(context, {
+        'direccion': direccionEncontrada[1].toString(),
+        'latitud': markerDireccion.position.latitude,
+        'longitud': markerDireccion.position.longitude
+      });
     }
   }
 
@@ -273,11 +280,14 @@ class DireccionApp extends State<DireccionPage> {
       direccionEncontrada[1] = direccion_string;
       setState(() {});
       print('esto pasa: ' + direccion_string);
-      markersList.add(Marker(
-          markerId: const MarkerId("0"),
-          position: LatLng(lat, lng),
-          infoWindow: InfoWindow(title: direccion_string)));
-      setState(() {});
+      setState(() {
+        markerDireccion = Marker(
+            markerId: const MarkerId("0"),
+            position: LatLng(lat, lng),
+            infoWindow: InfoWindow(title: direccion_string));
+      });
+      print(markerDireccion.position);
+      _mostrarMarcador(markerDireccion);
     });
   }
 }

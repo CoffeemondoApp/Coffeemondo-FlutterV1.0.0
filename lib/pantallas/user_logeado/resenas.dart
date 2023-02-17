@@ -17,6 +17,9 @@ import 'package:image_picker/image_picker.dart';
 import '../../firebase/autenticacion.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
+import 'package:easy_autocomplete/easy_autocomplete.dart';
+
+import 'homescreen.dart';
 
 List<Color> setColorIcon(String color) {
   List<Color> colors = [];
@@ -113,6 +116,17 @@ bool imagenSeleccionada = false;
 String imageFilePath = '';
 bool nombre_cafeteria = false;
 String promedio_string = '';
+List<String> cafeterias_nombre = [];
+Map cafeteria_resena = {
+  'Nombre': '',
+  'Direccion': '',
+  'Latitud': 0.0,
+  'Longitud': 0.0,
+  'key': '',
+};
+
+String direccion_cafeteria = '';
+String cafeteria_CR = '';
 
 //Reseñas anteriores
 
@@ -202,6 +216,38 @@ List<Map<String, dynamic>> niveles = [
   {'nivel': 16, 'puntaje_nivel': 6400, 'porcentaje': 0.0},
   {'nivel': 17, 'puntaje_nivel': 6800, 'porcentaje': 0.0},
   {'nivel': 18, 'puntaje_nivel': 7200, 'porcentaje': 0.0},
+  {'nivel': 19, 'puntaje_nivel': 7600, 'porcentaje': 0.0},
+  {'nivel': 20, 'puntaje_nivel': 8000, 'porcentaje': 0.0},
+  {'nivel': 21, 'puntaje_nivel': 8400, 'porcentaje': 0.0},
+  {'nivel': 22, 'puntaje_nivel': 8800, 'porcentaje': 0.0},
+  {'nivel': 23, 'puntaje_nivel': 9200, 'porcentaje': 0.0},
+  {'nivel': 24, 'puntaje_nivel': 9600, 'porcentaje': 0.0},
+  {'nivel': 25, 'puntaje_nivel': 10000, 'porcentaje': 0.0},
+  {'nivel': 26, 'puntaje_nivel': 10400, 'porcentaje': 0.0},
+  {'nivel': 27, 'puntaje_nivel': 10800, 'porcentaje': 0.0},
+  {'nivel': 28, 'puntaje_nivel': 11200, 'porcentaje': 0.0},
+  {'nivel': 29, 'puntaje_nivel': 11600, 'porcentaje': 0.0},
+  {'nivel': 30, 'puntaje_nivel': 12000, 'porcentaje': 0.0},
+  {'nivel': 31, 'puntaje_nivel': 12400, 'porcentaje': 0.0},
+  {'nivel': 32, 'puntaje_nivel': 12800, 'porcentaje': 0.0},
+  {'nivel': 33, 'puntaje_nivel': 13200, 'porcentaje': 0.0},
+  {'nivel': 34, 'puntaje_nivel': 13600, 'porcentaje': 0.0},
+  {'nivel': 35, 'puntaje_nivel': 14000, 'porcentaje': 0.0},
+  {'nivel': 36, 'puntaje_nivel': 14400, 'porcentaje': 0.0},
+  {'nivel': 37, 'puntaje_nivel': 14800, 'porcentaje': 0.0},
+  {'nivel': 38, 'puntaje_nivel': 15200, 'porcentaje': 0.0},
+  {'nivel': 39, 'puntaje_nivel': 15600, 'porcentaje': 0.0},
+  {'nivel': 40, 'puntaje_nivel': 16000, 'porcentaje': 0.0},
+  {'nivel': 41, 'puntaje_nivel': 16400, 'porcentaje': 0.0},
+  {'nivel': 42, 'puntaje_nivel': 16800, 'porcentaje': 0.0},
+  {'nivel': 43, 'puntaje_nivel': 17200, 'porcentaje': 0.0},
+  {'nivel': 44, 'puntaje_nivel': 17600, 'porcentaje': 0.0},
+  {'nivel': 45, 'puntaje_nivel': 18000, 'porcentaje': 0.0},
+  {'nivel': 46, 'puntaje_nivel': 18400, 'porcentaje': 0.0},
+  {'nivel': 47, 'puntaje_nivel': 18800, 'porcentaje': 0.0},
+  {'nivel': 48, 'puntaje_nivel': 19200, 'porcentaje': 0.0},
+  {'nivel': 49, 'puntaje_nivel': 19600, 'porcentaje': 0.0},
+  {'nivel': 50, 'puntaje_nivel': 20000, 'porcentaje': 0.0},
 ];
 
 //Crear lista con nombre de cafeterias
@@ -489,24 +535,33 @@ class ResenasPageState extends State<ResenasPage> {
       _subirPuntaje();
     });
 
-    return (Row(
-      children: [
-        Padding(
-          padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
-          child: Text(
-            'Nivel $nivel_usuario',
-            style: TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Text(
-          '$puntaje_actual/$puntaje_nivel',
-          style: TextStyle(
-              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ));
+    return (Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        //color: Colors.red,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Nivel $nivel',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              child: Text(
+                '$puntaje_actual/$puntaje_nivel',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        )));
   }
 
   @override
@@ -833,7 +888,7 @@ class ResenasPageState extends State<ResenasPage> {
     @override
     Widget containerSeparador() {
       return (Container(
-        height: 2,
+        height: 1,
         color: Color.fromARGB(255, 84, 14, 148),
       ));
     }
@@ -858,7 +913,10 @@ class ResenasPageState extends State<ResenasPage> {
               //_dropdownProductos(),
             ],
           ),
-          containerSeparador()
+          Container(
+            margin: EdgeInsets.only(bottom: 15),
+            child: containerSeparador(),
+          )
         ],
       ));
     }
@@ -1055,7 +1113,6 @@ class ResenasPageState extends State<ResenasPage> {
               ),
               Container(
                 margin: EdgeInsets.only(top: 10),
-                width: MediaQuery.of(context).size.width * 0.8,
                 height: 1,
                 color: Color.fromARGB(255, 84, 14, 148),
               )
@@ -1079,13 +1136,13 @@ class ResenasPageState extends State<ResenasPage> {
 
     @override
     Widget textFieldDireccion(TextEditingController controller) {
+      setState(() {
+        controller.text = direccion_cafeteria;
+      });
       return (TextFormField(
         readOnly: true,
         controller: controller,
-        onTap: () {
-          //Navegar hacia direccion.dart
-          navegarDireccion();
-        },
+
         //controller: _comentarioController,
         decoration: InputDecoration(
           prefixIcon: Icon(
@@ -1093,7 +1150,6 @@ class ResenasPageState extends State<ResenasPage> {
             color: Color.fromARGB(255, 84, 14, 148),
             size: 34,
           ),
-          hintText: 'Ubicacion de la cafeteria/hogar',
           hintStyle: TextStyle(
               color: Color.fromARGB(255, 84, 14, 148),
               fontSize: 16,
@@ -1360,21 +1416,61 @@ class ResenasPageState extends State<ResenasPage> {
       ));
     }
 
+    void sugerencias() {
+      //obtener coleccion de cafeterias
+      List<String> cafeterias_list = [];
+      FirebaseFirestore.instance
+          .collection('cafeterias')
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((result) {
+          //print(result.data());
+          cafeterias_list.add(result.data()['nombre']);
+        });
+      });
+      setState(() {
+        cafeterias_nombre = cafeterias_list;
+      });
+    }
+
+    Future<void> obtenerDireccion(String nombre_cafeteria) async {
+      //obtener coleccion de cafeterias
+      String direccion = '';
+      FirebaseFirestore.instance
+          .collection('cafeterias')
+          .where('nombre', isEqualTo: nombre_cafeteria)
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((result) {
+          direccion = result.data()['ubicacion'];
+          print("direccion obtenida: $direccion");
+        });
+        setState(() {
+          direccion_cafeteria = direccion;
+        });
+      });
+    }
+
     @override
     Widget _textFieldNombreCafeteria(TextEditingController controller) {
-      return (TextFormField(
-        controller: _nombreCafeteriaController,
-        onChanged: (value) {
-          setState(() {
-            pregunta = 0;
-            _tazas = 0;
-            calificaciones = [];
-          });
-        },
-        readOnly: nombre_cafeteria,
-        style: TextStyle(
+      return (EasyAutocomplete(
+        inputTextStyle: TextStyle(
             color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-            fontWeight: FontWeight.bold),
+            fontWeight: FontWeight.bold,
+            fontSize: 16),
+        suggestionBackgroundColor: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+        suggestionTextStyle:
+            TextStyle(color: Color.fromARGB(255, 255, 79, 52), fontSize: 16),
+        suggestions: cafeterias_nombre,
+        onChanged: (value) => {print('onChanged value: $value'), sugerencias()},
+        onSubmitted: (value) => {
+          print('valor subido: $value'),
+          obtenerDireccion(value),
+          setState(() {
+            cafeteria_CR = value;
+          }),
+        },
+        controller: _nombreCafeteriaController,
         decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.coffee_maker_outlined,
@@ -1517,7 +1613,6 @@ class ResenasPageState extends State<ResenasPage> {
               });
             },
             child: Container(
-                width: MediaQuery.of(context).size.width * 0.7,
                 height: 40,
                 margin: EdgeInsets.only(top: 10),
                 decoration: BoxDecoration(
@@ -1580,18 +1675,45 @@ class ResenasPageState extends State<ResenasPage> {
       return (Column(
         children: [
           //Crear dropdown textfield para seleccionar la cafeteria a la que se le va a hacer la reseña
-          Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              decoration: BoxDecoration(
-                  //color: Color.fromARGB(255, 255, 255, 255))
-                  ),
-              child:
-                  //dropdownCafeteria(),
-                  //textFieldLista()
-                  Padding(
-                      padding: EdgeInsets.only(top: 0),
-                      child: _textFieldNombreCafeteria(
-                          _nombreCafeteriaController))),
+          (calificado)
+              ? Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          child: Icon(
+                            Icons.coffee_maker_outlined,
+                            color: Color.fromARGB(255, 84, 14, 148),
+                            size: 34,
+                          ),
+                          margin: EdgeInsets.only(left: 8),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 8),
+                          child: Text(
+                            cafeteria_CR,
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 84, 14, 148),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        )
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 8, top: 8),
+                      child: containerSeparador(),
+                    )
+                  ],
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                      //color: Color.fromARGB(255, 255, 255, 255))
+                      ),
+                  child:
+                      //dropdownCafeteria(),
+                      //textFieldLista()
+                      _textFieldNombreCafeteria(_nombreCafeteriaController)),
           (pregunta != 10)
               ? calificadorTazas(size_taza)
               : (!calificado)
@@ -1631,7 +1753,7 @@ class ResenasPageState extends State<ResenasPage> {
                   : (calificado)
                       ? comentario_presionado
                           ? 365
-                          : 310
+                          : 312
                       : 200
               : 0,
           decoration: BoxDecoration(
@@ -2265,25 +2387,29 @@ class ResenasPageState extends State<ResenasPage> {
           AnimatedOpacity(
               opacity: misResenas2 ? 1.0 : 0.0,
               duration: Duration(milliseconds: 3000),
-              child: Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.01),
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 79, 52),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Reseñas guardadas',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ))),
+              child: GestureDetector(
+                  onTap: () {
+                    print(direccion_cafeteria);
+                  },
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.01),
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: MediaQuery.of(context).size.height * 0.08,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 255, 79, 52),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Reseñas guardadas',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      )))),
         ],
       ));
     }
