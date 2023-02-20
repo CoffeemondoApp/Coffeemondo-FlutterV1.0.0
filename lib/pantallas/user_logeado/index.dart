@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffeemondo/pantallas/user_logeado/eventos.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:coffeemondo/pantallas/resenas/crearRese%C3%B1a.dart';
 import 'package:coffeemondo/pantallas/user_logeado/resenas.dart';
@@ -828,6 +829,17 @@ class CustomBottomBar extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ResenasPage(inicio)));
+                  },
+                ),
+                GButton(
+                  icon: Icons.event_note_rounded,
+                  text: 'Eventos',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Eventos(inicio)));
                   },
                 ),
                 GButton(

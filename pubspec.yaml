@@ -61,6 +61,7 @@ dependencies:
   easy_autocomplete: ^1.6.0
   syncfusion_flutter_datepicker: ^20.4.50
   date_range_form_field: ^1.0.2
+  firebase_messaging: 
   
 flutter_native_splash:
   color: "#E64921"
