@@ -1,13 +1,11 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:async';
-
-import 'package:intl/intl.dart';
-
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coffeemondo/pantallas/user_logeado/Cafeterias.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
-import 'package:coffeemondo/pantallas/user_logeado/homescreen.dart';
-import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,17 +18,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../firebase/autenticacion.dart';
 import '../resenas/resenas.dart';
-import 'Cafeterias.dart';
 import 'index.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
-class EventosPage extends StatefulWidget {
+class EventosDev extends StatefulWidget {
   final String tiempo_inicio;
-  const EventosPage(this.tiempo_inicio, {super.key});
+  const EventosDev(this.tiempo_inicio, {super.key});
 
   @override
-  EventosState createState() => EventosState();
+  EventosDevState createState() => EventosDevState();
 }
 
 String tab = '';
@@ -53,19 +50,15 @@ var contPremio = 0;
 
 bool acceso_dev = false;
 bool abrirCrearCafeteria = false;
-TextEditingController nombreCafeteriaCC = TextEditingController();
-TextEditingController direccionCafeteriaCC = TextEditingController();
-TextEditingController correoCafeteriaCC = TextEditingController();
-TextEditingController latitudCafeteriaCC = TextEditingController();
-TextEditingController longitudCafeteriaCC = TextEditingController();
-TextEditingController urlCafeteriaCC = TextEditingController();
-TextEditingController imagenCafeteriaCC = TextEditingController();
-
-bool esLugar = true;
-
-//Declarar una variable de color from argb
-const Color morado = Color.fromARGB(255, 100, 0, 255);
-const Color naranja = Color.fromARGB(255, 255, 100, 0);
+TextEditingController nombreEvento = TextEditingController();
+TextEditingController tipoEvento = TextEditingController();
+TextEditingController fechaEvento = TextEditingController();
+TextEditingController direccionEvento = TextEditingController();
+TextEditingController correoEvento = TextEditingController();
+TextEditingController latitudEvento = TextEditingController();
+TextEditingController longitudEvento = TextEditingController();
+TextEditingController urlEvento = TextEditingController();
+TextEditingController imagenEvento = TextEditingController();
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -137,7 +130,7 @@ List<Map<String, dynamic>> getNivel() {
   ];
 }
 
-class EventosState extends State<EventosPage> {
+class EventosDevState extends State<EventosDev> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late GoogleMapController googleMapController;
@@ -180,21 +173,6 @@ class EventosState extends State<EventosPage> {
 
   XFile? imageFile;
   UploadTask? uploadTask;
-
-  void _limpiarCafeteria() async {
-    // Se limpian los campos de texto
-    nombreCafeteriaCC.text = '';
-    direccionCafeteriaCC.text = '';
-    correoCafeteriaCC.text = '';
-    direccionCafeteriaCC.text = '';
-    urlCafeteriaCC.text = '';
-    setState(() {
-      imagenSeleccionada = false;
-    });
-    //recargar pagina
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => IndexPage(inicio)));
-  }
 
   Future subirImagen() async {
     // Se crea la ruta de la imagen en el Storage con el nombre del documento creado en la coleccion
@@ -606,31 +584,30 @@ class EventosState extends State<EventosPage> {
     }
 
     final DocumentReference docReCafeteriaf =
-        FirebaseFirestore.instance.collection("cafeterias").doc();
+        FirebaseFirestore.instance.collection("eventos").doc();
 
-    Future<void> guardarCafeteria() async {
+    Future<void> guardarEvento() async {
       User? user = Auth().currentUser;
-      if (nombreCafeteriaCC.text != '') {
+      if (nombreEvento.text != '') {
         await FirebaseFirestore.instance
-            .collection('cafeterias')
-            .where('nombre', isEqualTo: nombreCafeteriaCC.text)
+            .collection('eventos')
+            .where('nombre', isEqualTo: nombreEvento.text)
             .get()
             .then((QuerySnapshot querySnapshot) async {
           if (querySnapshot.docs.isEmpty) {
-            print('No existe la cafeteria');
+            print('No existe el evemto');
             docReCafeteriaf.set(({
-              'nombre': nombreCafeteriaCC.text,
+              'nombre': nombreEvento.text,
+              'fecha': fechaEvento.text,
               'creador': user?.uid,
-              'calificacion': 0.0,
-              'correo': correoCafeteriaCC.text,
-              'web': urlCafeteriaCC.text,
-              'ubicacion': direccionCafeteriaCC.text,
+              'correo': correoEvento.text,
+              'web': urlEvento.text,
+              'ubicacion': direccionEvento.text,
               'imagen': await subirImagen(),
             }));
-            print('Ingreso de cafeteria exitoso.');
-            _limpiarCafeteria();
+            print('Ingreso de evento exitoso.');
           } else {
-            print('Ya existe la cafeteria');
+            print('Ya existe el evento');
             setState(() {
               _visible = true;
             });
@@ -656,30 +633,30 @@ class EventosState extends State<EventosPage> {
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: morado,
+            color: Color.fromARGB(255, 255, 79, 52),
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               border: OutlineInputBorder(),
-              prefixIcon:
-                  Icon(Icons.event_note_outlined, color: morado, size: 24),
+              prefixIcon: Icon(Icons.coffee_maker_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
               hintText: 'Nombre del evento',
               hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w900,
-                color: morado,
+                color: Color.fromARGB(255, 255, 79, 52),
               ))));
     }
 
-    Widget textFieldNombreCafeteria(TextEditingController controller) {
+    Widget textFieldFechaEvento(TextEditingController controller) {
       return (TextField(
           cursorHeight: 0,
           cursorWidth: 0,
@@ -691,148 +668,61 @@ class EventosState extends State<EventosPage> {
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: morado,
+            color: Color.fromARGB(255, 255, 79, 52),
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               border: OutlineInputBorder(),
-              prefixIcon:
-                  Icon(Icons.coffee_maker_outlined, color: morado, size: 24),
-              hintText: 'Nombre de lugar',
+              prefixIcon: Icon(Icons.email_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Fecha del evento',
               hintStyle: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: morado,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: Color.fromARGB(255, 255, 79, 52),
               ))));
     }
 
-    //Crear widget date range picker dialog para seleccionar fecha y hora de inicio y fin de evento
-    Widget dateRangePickerDialog(BuildContext context) {
-      return AlertDialog(
-        title: Text('Seleccionar fecha y hora'),
-        content: Container(
-          height: MediaQuery.of(context).size.height * 0.5,
-          width: MediaQuery.of(context).size.width * 0.8,
-          child: DateRangePickerDialog(
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(Duration(days: 365))),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Cancelar'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('Aceptar'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    }
-
-    String cambiarFormatoFecha(DateTimeRange fecha) {
-      String fechaInicio = DateFormat('dd/MM/yyyy').format(fecha.start);
-      String fechaFin = DateFormat('dd/MM/yyyy').format(fecha.end);
-      return fechaInicio + ' - ' + fechaFin;
-    }
-
-    Widget textFieldWebCafeteria(TextEditingController controller) {
+    Widget textFieldWebEvento(TextEditingController controller) {
       return (TextField(
           cursorHeight: 0,
           cursorWidth: 0,
-          readOnly: true,
-          onTap: () async {
-            DateTimeRange? pickeddate = await showDateRangePicker(
-                locale: const Locale("es", "CL"),
-                context: context,
-                //initialDate: DateTime.now(),
-
-                firstDate: DateTime(2023),
-                lastDate: DateTime(2025),
-                builder: (context, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: ColorScheme.light(
-                        // or dark
-                        primary: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                        onPrimary: Colors.red,
-                        surface: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                        onSurface: Colors.black,
-
-                        background: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                        onBackground: Colors.black,
-
-                        error: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                        onError: Colors.red,
-                        secondary: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                        onSecondary: Colors.black,
-
-                        primaryVariant: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                        secondaryVariant: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-                      ),
-                      textButtonTheme: TextButtonThemeData(
-                        style: TextButton.styleFrom(
-                          primary: Color.fromARGB(
-                              255, 255, 79, 52), // button text color
-                        ),
-                      ),
-                    ),
-                    child: child!,
-                  );
-                });
-
-            if (pickeddate != null) {
-              //Cambiar formato de daterangepicker a dd/mm/yyyy
-              var fecha_cambiada = cambiarFormatoFecha(pickeddate);
-              var fecha_evento = fecha_cambiada.split(' - ');
-              var fecha_evento_inicio = fecha_evento[0].split(' ');
-              var fecha_evento_fin = fecha_evento[1].split(' ');
-              print(fecha_evento_inicio[0] + ' / ' + fecha_evento_fin[0]);
-              setState(() {
-                controller.text = 'Del ' +
-                    fecha_evento_inicio[0] +
-                    ' hasta ' +
-                    fecha_evento_fin[0];
-              });
-            }
+          onTap: () {
+            setState(() {});
           },
           controller: controller,
           // onChanged: (((value) => validarCorreo())),
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: morado,
+            color: Color.fromARGB(255, 255, 79, 52),
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               border: OutlineInputBorder(),
-              prefixIcon:
-                  Icon(Icons.date_range_outlined, color: morado, size: 24),
-              hintText: 'Fecha del evento',
+              prefixIcon: Icon(Icons.web_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Web del evento',
               hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w900,
-                color: morado,
+                color: Color.fromARGB(255, 255, 79, 52),
               ))));
     }
 
@@ -843,12 +733,12 @@ class EventosState extends State<EventosPage> {
               builder: (context) => DireccionPage(
                   widget.tiempo_inicio, '', '', '', '', '', 'cr')));
       setState(() {
-        direccionCafeteriaCC.text = result['direccion'];
+        direccionEvento.text = result['direccion'];
       });
       print('este es el resultado: $result');
     }
 
-    Widget textFieldUbicacionCafeteria(TextEditingController controller) {
+    Widget textFieldUbicacionEvento(TextEditingController controller) {
       return (TextField(
           readOnly: true,
           cursorHeight: 0,
@@ -862,46 +752,47 @@ class EventosState extends State<EventosPage> {
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: morado,
+            color: Color.fromARGB(255, 255, 79, 52),
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: morado),
+                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
               ),
               border: OutlineInputBorder(),
-              prefixIcon:
-                  Icon(Icons.location_on_outlined, color: morado, size: 24),
-              hintText: 'Ubicacion de la cafeteria',
+              prefixIcon: Icon(Icons.location_on_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              hintText: 'Ubicacion del evento',
               hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w900,
-                color: morado,
+                color: Color.fromARGB(255, 255, 79, 52),
               ))));
     }
 
-    Widget textFieldImagenCafeteria(TextEditingController controller) {
+    Widget textFieldImagenEvento(TextEditingController controller) {
       return (Column(
         children: [
           Container(
             margin:
                 EdgeInsets.only(top: (imagenSeleccionada) ? 2 : 15, left: 12),
             child: Row(children: [
-              Icon(Icons.image_outlined, color: morado, size: 24),
+              Icon(Icons.image_outlined,
+                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
               Container(
                 margin: EdgeInsets.only(left: 10),
                 child: Text(
                     (imagenSeleccionada)
                         ? 'Imagen seleccionada'
-                        : 'Logo/Imagen de la cafeteria',
+                        : 'Logo/Imagen del evento',
                     style: TextStyle(
                         letterSpacing: 2,
-                        color: morado,
+                        color: Color.fromARGB(255, 255, 79, 52),
                         fontWeight: FontWeight.bold,
                         fontSize: 14)),
               ),
@@ -921,91 +812,13 @@ class EventosState extends State<EventosPage> {
           Container(
             margin: EdgeInsets.only(top: (imagenSeleccionada) ? 4 : 15),
             height: 1,
-            color: morado,
+            color: Color.fromARGB(255, 255, 79, 52),
           )
         ],
       ));
     }
 
-    void sugerencias() {
-      //obtener coleccion de cafeterias
-      List<String> cafeterias_list = [];
-      FirebaseFirestore.instance
-          .collection('cafeterias')
-          .get()
-          .then((querySnapshot) {
-        querySnapshot.docs.forEach((result) {
-          //print(result.data());
-          cafeterias_list.add(result.data()['nombre']);
-        });
-      });
-      setState(() {
-        cafeterias_nombre = cafeterias_list;
-      });
-    }
-
-    Future<void> obtenerDireccion(String nombre_cafeteria) async {
-      //obtener coleccion de cafeterias
-      String direccion = '';
-      FirebaseFirestore.instance
-          .collection('cafeterias')
-          .where('nombre', isEqualTo: nombre_cafeteria)
-          .get()
-          .then((querySnapshot) {
-        querySnapshot.docs.forEach((result) {
-          direccion = result.data()['ubicacion'];
-          print("direccion obtenida: $direccion");
-        });
-        setState(() {
-          direccion_cafeteria = direccion;
-        });
-      });
-    }
-
-    Widget autoCompleteNombreCafeteria(controller) {
-      return (EasyAutocomplete(
-        inputTextStyle: TextStyle(
-            color: morado,
-            letterSpacing: 2,
-            fontWeight: FontWeight.bold,
-            fontSize: 14),
-        suggestionBackgroundColor: Color.fromARGB(255, 255, 79, 52),
-        suggestionTextStyle: TextStyle(
-            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
-            fontSize: 14,
-            letterSpacing: 2,
-            fontWeight: FontWeight.bold),
-        suggestions: cafeterias_nombre,
-        onChanged: (value) => {print('onChanged value: $value'), sugerencias()},
-        onSubmitted: (value) => {
-          print('valor subido: $value'),
-          obtenerDireccion(value),
-          setState(() {
-            cafeteria_CR = value;
-            cafeteriaConfirmada = true;
-          }),
-        },
-        controller: controller,
-        decoration: InputDecoration(
-          prefixIcon: Icon(
-            Icons.coffee_maker_outlined,
-            color: morado,
-            size: 24,
-          ),
-          hintText: 'Nombre de cafetería',
-          hintStyle: TextStyle(
-              color: morado, fontWeight: FontWeight.bold, letterSpacing: 2),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: morado),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: morado),
-          ),
-        ),
-      ));
-    }
-
-    Widget moduloCrearCafeteria() {
+    Widget moduloCrearEvento() {
       return (Container(
         //color: Colors.white,
         margin: EdgeInsets.only(top: (!abrirCrearCafeteria) ? 0 : 15),
@@ -1032,80 +845,43 @@ class EventosState extends State<EventosPage> {
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldNombreEvento(nombreCafeteriaCC)),
-                  Container(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        child: Text(
-                          'Cafeteria',
-                          style: TextStyle(
-                              color: morado,
-                              letterSpacing: 2,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Switch(
-                        value: esLugar,
-                        onChanged: (value) {
-                          setState(() {
-                            esLugar = value;
-                          });
-                        },
-                        //activeTrackColor: Color.fromARGB(255, 255, 79, 52),
-                        inactiveThumbColor: morado,
-                        activeColor: morado,
-                        inactiveTrackColor: Color.fromARGB(113, 102, 0, 255),
-                      ),
-                      Container(
-                        child: Text(
-                          'Lugar',
-                          style: TextStyle(
-                              color: morado,
-                              letterSpacing: 2,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  )),
-                  Container(
-                      margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.05,
-                          right: MediaQuery.of(context).size.width * 0.05),
-                      child: (!esLugar)
-                          ? autoCompleteNombreCafeteria(correoCafeteriaCC)
-                          : textFieldNombreCafeteria(correoCafeteriaCC)),
+                      child: textFieldNombreEvento(nombreEvento)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldWebCafeteria(urlCafeteriaCC)),
+                      child: textFieldFechaEvento(correoEvento)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldUbicacionCafeteria(direccionCafeteriaCC)),
+                      child: textFieldWebEvento(urlEvento)),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: textFieldUbicacionEvento(direccionEvento)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
                       child: GestureDetector(
-                        child: textFieldImagenCafeteria(imagenCafeteriaCC),
+                        child: textFieldImagenEvento(imagenEvento),
                         onTap: () {
                           _openGallery(context);
                         },
                       )),
                   GestureDetector(
                     onTap: () {
-                      guardarCafeteria();
+                      guardarEvento;
                     },
                     child: Container(
                         decoration: BoxDecoration(
-                            color: morado,
+                            color: Color.fromARGB(255, 255, 79, 52),
                             borderRadius: BorderRadius.circular(10)),
                         margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.04,
@@ -1119,7 +895,7 @@ class EventosState extends State<EventosPage> {
                           child: Text(
                             'Generar evento',
                             style: TextStyle(
-                                color: naranja,
+                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
@@ -1181,10 +957,10 @@ class EventosState extends State<EventosPage> {
       ));
     }
 
-    CollectionReference cafeterias =
-        FirebaseFirestore.instance.collection('cafeterias');
+    CollectionReference eventos =
+        FirebaseFirestore.instance.collection('eventos');
 
-    Widget _bodyCafeterias() {
+    Widget _bodyEventos() {
       User? user = Auth().currentUser;
       print(user!.uid);
       if (user.uid == '0UqMGUiuqjeMcNVXfcX2Hmp7na72' ||
@@ -1209,16 +985,14 @@ class EventosState extends State<EventosPage> {
           child: AnimatedContainer(
               width: MediaQuery.of(context).size.width * 0.9,
               height: (abrirCrearCafeteria)
-                  ? MediaQuery.of(context).size.height * 0.74
+                  ? MediaQuery.of(context).size.height * 0.67
                   : MediaQuery.of(context).size.height * 0.07,
               decoration: BoxDecoration(
-                color: (abrirCrearCafeteria)
-                    ? Colors.transparent
-                    : Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
                 borderRadius: BorderRadius.circular(20),
               ),
               duration: Duration(seconds: 1),
-              child: moduloCrearCafeteria()),
+              child: moduloCrearEvento()),
         ),
 
         //Crear container para mostrar las cafeterias obtenidas de firebase con la variable cafeterias
@@ -1244,7 +1018,7 @@ class EventosState extends State<EventosPage> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.7,
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: cafeterias.snapshots(),
+                  stream: eventos.snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -1338,8 +1112,6 @@ class EventosState extends State<EventosPage> {
                                         fit: BoxFit.cover,
                                       ),
                                     ),
-                                    containerTazasCalificadas(snapshot
-                                        .data!.docs[index]['calificacion']),
                                     GestureDetector(
                                       child: Container(
                                         width:
@@ -1362,7 +1134,7 @@ class EventosState extends State<EventosPage> {
                                         child: Container(
                                             alignment: Alignment(0, 0),
                                             child: Text(
-                                              'Visitar Web',
+                                              '¡Asistir! ',
                                               style: TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 0x52, 0x01, 0x9b),
@@ -1393,7 +1165,7 @@ class EventosState extends State<EventosPage> {
                                         child: Container(
                                             alignment: Alignment(0, 0),
                                             child: Text(
-                                              'Ver reseñas',
+                                              'Visitar Web',
                                               style: TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 0x52, 0x01, 0x9b),
@@ -1462,7 +1234,7 @@ class EventosState extends State<EventosPage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: _bodyCafeterias(),
+        child: _bodyEventos(),
       ),
       bottomNavigationBar: CustomBottomBar(),
     );
@@ -1595,19 +1367,12 @@ class CustomBottomBar extends StatelessWidget {
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               gap: 6,
-              selectedIndex: 5,
+              selectedIndex: 4,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
                   text: ' inicio',
-                  onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => IndexPage(inicio)));
-                  },
                 ),
                 GButton(
                   icon: Icons.reviews,
@@ -1619,6 +1384,10 @@ class CustomBottomBar extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) => ResenasPage(inicio)));
                   },
+                ),
+                GButton(
+                  icon: Icons.event_note_rounded,
+                  text: 'Eventos',
                 ),
                 GButton(
                   icon: Icons.menu_book,
@@ -1639,8 +1408,8 @@ class CustomBottomBar extends StatelessWidget {
                               builder: (context) => Cafeterias(inicio)));
                     }),
                 GButton(
-                  icon: Icons.event_note_outlined,
-                  text: 'Eventos',
+                  icon: Icons.search,
+                  text: 'Busqueda',
                 ),
                 GButton(
                   icon: Icons.account_circle,
