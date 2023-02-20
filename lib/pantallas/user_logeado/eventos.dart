@@ -55,13 +55,15 @@ bool acceso_dev = false;
 bool abrirCrearCafeteria = false;
 TextEditingController nombreCafeteriaCC = TextEditingController();
 TextEditingController direccionCafeteriaCC = TextEditingController();
-TextEditingController correoCafeteriaCC = TextEditingController();
+TextEditingController nombreCafeteriaCE = TextEditingController();
 TextEditingController latitudCafeteriaCC = TextEditingController();
 TextEditingController longitudCafeteriaCC = TextEditingController();
-TextEditingController urlCafeteriaCC = TextEditingController();
+TextEditingController fechaCafeteriaCE = TextEditingController();
 TextEditingController imagenCafeteriaCC = TextEditingController();
+TextEditingController descripcionCafeteriaCC = TextEditingController();
 
 bool esLugar = true;
+int cant_imagenesEvento = 0;
 
 //Declarar una variable de color from argb
 const Color morado = Color.fromARGB(255, 100, 0, 255);
@@ -185,7 +187,7 @@ class EventosState extends State<EventosPage> {
     // Se limpian los campos de texto
     nombreCafeteriaCC.text = '';
     direccionCafeteriaCC.text = '';
-    correoCafeteriaCC.text = '';
+    nombreCafeteriaCE.text = '';
     direccionCafeteriaCC.text = '';
     urlCafeteriaCC.text = '';
     setState(() {
@@ -211,12 +213,15 @@ class EventosState extends State<EventosPage> {
     return urlUserImage;
   }
 
+  List<XFile>? imageFiles;
+
   _openGallery(BuildContext context) async {
-    //imageFile = await ImagePicker().pickMultiImage();
-    imageFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (imageFile != null) {
+    //Funcion para abrir la galeria y obtener multiples imagenes
+    imageFiles = await ImagePicker().pickMultiImage();
+    if (imageFiles != null) {
       setState(() {
-        imageFilePath = imageFile!.path;
+        cant_imagenesEvento = imageFiles!.length;
+        imageFilePath = imageFiles![0].path;
         imagenSeleccionada = true;
       });
       print('image: $imageFilePath');
@@ -224,9 +229,6 @@ class EventosState extends State<EventosPage> {
       imagenSeleccionada = false;
       return;
     }
-    //obtener nombre de imagen antes de ser guardada
-
-    setState(() {});
   }
 
   _openCamera(BuildContext context) async {
@@ -622,7 +624,7 @@ class EventosState extends State<EventosPage> {
               'nombre': nombreCafeteriaCC.text,
               'creador': user?.uid,
               'calificacion': 0.0,
-              'correo': correoCafeteriaCC.text,
+              'correo': nombreCafeteriaCE.text,
               'web': urlCafeteriaCC.text,
               'ubicacion': direccionCafeteriaCC.text,
               'imagen': await subirImagen(),
@@ -748,7 +750,33 @@ class EventosState extends State<EventosPage> {
       return fechaInicio + ' - ' + fechaFin;
     }
 
-    Widget textFieldWebCafeteria(TextEditingController controller) {
+    String transformarFechas(DateTime fecha_in, DateTime fecha_fin) {
+      var fechaModificada = '';
+      if (fecha_in.month == fecha_fin.month) {
+        fechaModificada = 'Desde el ' +
+            fecha_in.day.toString() +
+            ' al ' +
+            fecha_fin.day.toString() +
+            ' de ' +
+            //Obtener nombre del mes
+            DateFormat.MMMM('es').format(fecha_in);
+      } else {
+        fechaModificada = 'Desde el ' +
+            fecha_in.day.toString() +
+            ' de ' +
+            //Obtener nombre del mes
+            DateFormat.MMMM('es').format(fecha_in) +
+            ' al ' +
+            fecha_fin.day.toString() +
+            ' de ' +
+            //Obtener nombre del mes
+            DateFormat.MMMM('es').format(fecha_fin);
+      }
+
+      return fechaModificada;
+    }
+
+    Widget textFieldFechaCafeteria(TextEditingController controller) {
       return (TextField(
           cursorHeight: 0,
           cursorWidth: 0,
@@ -801,10 +829,8 @@ class EventosState extends State<EventosPage> {
               var fecha_evento_fin = fecha_evento[1].split(' ');
               print(fecha_evento_inicio[0] + ' / ' + fecha_evento_fin[0]);
               setState(() {
-                controller.text = 'Del ' +
-                    fecha_evento_inicio[0] +
-                    ' hasta ' +
-                    fecha_evento_fin[0];
+                controller.text =
+                    transformarFechas(pickeddate.start, pickeddate.end);
               });
             }
           },
@@ -855,7 +881,10 @@ class EventosState extends State<EventosPage> {
           cursorWidth: 0,
           onTap: () {
             //navegar hacia direccion.dart para obtener la ubicacion de la cafeteria y mostrarla en el campo de texto
-            navegarDireccion();
+            if (esLugar) {
+              navegarDireccion();
+            }
+            ;
           },
           controller: controller,
           // onChanged: (((value) => validarCorreo())),
@@ -877,7 +906,9 @@ class EventosState extends State<EventosPage> {
               border: OutlineInputBorder(),
               prefixIcon:
                   Icon(Icons.location_on_outlined, color: morado, size: 24),
-              hintText: 'Ubicacion de la cafeteria',
+              hintText: (esLugar)
+                  ? 'Ubicacion del lugar'
+                  : 'Ubicacion de la cafeteria',
               hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w900,
@@ -885,7 +916,7 @@ class EventosState extends State<EventosPage> {
               ))));
     }
 
-    Widget textFieldImagenCafeteria(TextEditingController controller) {
+    Widget textFieldImagenCafeteria() {
       return (Column(
         children: [
           Container(
@@ -897,8 +928,11 @@ class EventosState extends State<EventosPage> {
                 margin: EdgeInsets.only(left: 10),
                 child: Text(
                     (imagenSeleccionada)
-                        ? 'Imagen seleccionada'
-                        : 'Logo/Imagen de la cafeteria',
+                        ? //Comprobar si se selecciono una o mas imagenes
+                        (cant_imagenesEvento > 1)
+                            ? '$cant_imagenesEvento Imagenes seleccionadas'
+                            : 'Imagen seleccionada'
+                        : 'Logo/Imagen del evento',
                     style: TextStyle(
                         letterSpacing: 2,
                         color: morado,
@@ -980,9 +1014,11 @@ class EventosState extends State<EventosPage> {
         onSubmitted: (value) => {
           print('valor subido: $value'),
           obtenerDireccion(value),
+          print(direccionCafeteriaCC.text),
           setState(() {
             cafeteria_CR = value;
             cafeteriaConfirmada = true;
+            direccionCafeteriaCC.text = direccion_cafeteria;
           }),
         },
         controller: controller,
@@ -1000,6 +1036,45 @@ class EventosState extends State<EventosPage> {
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: morado),
+          ),
+        ),
+      ));
+    }
+
+    Widget containerSeparador() {
+      return (Container(
+        margin: EdgeInsets.only(top: 15),
+        height: 1,
+        color: morado,
+      ));
+    }
+
+    Widget textFieldDescripcionCafeteria(TextEditingController controller) {
+      return (Expanded(
+        child: TextField(
+          style: TextStyle(
+              color: morado,
+              letterSpacing: 2,
+              fontSize: 14,
+              fontWeight: FontWeight.bold),
+          controller: controller,
+          maxLines: null,
+          maxLength: 200,
+          decoration: InputDecoration(
+            prefixIcon:
+                Icon(Icons.description_outlined, color: morado, size: 24),
+            hintText: 'Descripcion del evento',
+            hintStyle: TextStyle(
+                color: morado,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                fontSize: 14),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: morado),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: morado),
+            ),
           ),
         ),
       ));
@@ -1051,6 +1126,11 @@ class EventosState extends State<EventosPage> {
                         onChanged: (value) {
                           setState(() {
                             esLugar = value;
+                            if (value) {
+                              direccionCafeteriaCC.text = '';
+                            }
+                            nombreCafeteriaCE.text = '';
+                            //direccionCafeteriaCC.text = '';
                           });
                         },
                         //activeTrackColor: Color.fromARGB(255, 255, 79, 52),
@@ -1074,14 +1154,14 @@ class EventosState extends State<EventosPage> {
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
                       child: (!esLugar)
-                          ? autoCompleteNombreCafeteria(correoCafeteriaCC)
-                          : textFieldNombreCafeteria(correoCafeteriaCC)),
+                          ? autoCompleteNombreCafeteria(nombreCafeteriaCE)
+                          : textFieldNombreCafeteria(nombreCafeteriaCE)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldWebCafeteria(urlCafeteriaCC)),
+                      child: textFieldFechaCafeteria(fechaCafeteriaCE)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
@@ -1094,11 +1174,19 @@ class EventosState extends State<EventosPage> {
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
                       child: GestureDetector(
-                        child: textFieldImagenCafeteria(imagenCafeteriaCC),
+                        child: textFieldImagenCafeteria(),
                         onTap: () {
                           _openGallery(context);
                         },
                       )),
+                  Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.05,
+                          right: MediaQuery.of(context).size.width * 0.05),
+                      child: //crear textfield que se expanda con el texto
+                          textFieldDescripcionCafeteria(
+                              descripcionCafeteriaCC)),
                   GestureDetector(
                     onTap: () {
                       guardarCafeteria();
@@ -1209,7 +1297,7 @@ class EventosState extends State<EventosPage> {
           child: AnimatedContainer(
               width: MediaQuery.of(context).size.width * 0.9,
               height: (abrirCrearCafeteria)
-                  ? MediaQuery.of(context).size.height * 0.74
+                  ? MediaQuery.of(context).size.height * 0.99
                   : MediaQuery.of(context).size.height * 0.07,
               decoration: BoxDecoration(
                 color: (abrirCrearCafeteria)
