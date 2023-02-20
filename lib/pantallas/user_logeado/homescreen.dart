@@ -1,48 +1,79 @@
-import 'package:easy_autocomplete/easy_autocomplete.dart';
+import 'package:date_range_form_field/date_range_form_field.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(appComplete());
+  runApp(new HomeScreen());
 }
 
-class appComplete extends StatelessWidget {
-  Future<List<String>> _fetchSuggestions(String searchValue) async {
-    await Future.delayed(Duration(milliseconds: 750));
-    List<String> _suggestions = [
-      'Afeganistan',
-      'Albania',
-      'Algeria',
-      'Australia',
-      'Brazil',
-      'German',
-      'Madagascar',
-      'Mozambique',
-      'Portugal',
-      'Zambia'
-    ];
-    List<String>? _filteredSuggestions = _suggestions.where((element) {
-      return element.toLowerCase().contains(searchValue.toLowerCase());
-    }).toList();
-    return _filteredSuggestions;
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      home: MyFormField(),
+    );
+  }
+}
+
+class MyFormField extends StatefulWidget {
+  @override
+  _MyFormFieldState createState() => _MyFormFieldState();
+}
+
+GlobalKey<FormState> myFormKey = new GlobalKey();
+
+class _MyFormFieldState extends State<MyFormField> {
+  DateTimeRange? myDateRange;
+
+  void _submitForm() {
+    final FormState? form = myFormKey.currentState;
+    form!.save();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Example',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Date Range Form Example"),
+      ),
+      body: SafeArea(
+        child: Form(
+          key: myFormKey,
+          child: Column(
+            children: [
+              SafeArea(
+                child: DateRangeField(
+                    enabled: true,
+                    initialValue: DateTimeRange(
+                        start: DateTime.now(),
+                        end: DateTime.now().add(Duration(days: 5))),
+                    decoration: InputDecoration(
+                      labelText: 'Date Range',
+                      prefixIcon: Icon(Icons.date_range),
+                      hintText: 'Please select a start and end date',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value!.start.isBefore(DateTime.now())) {
+                        return 'Please enter a later start date';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      setState(() {
+                        myDateRange = value!;
+                      });
+                    }),
+              ),
+              ElevatedButton(
+                child: Text('Submit'),
+                onPressed: _submitForm,
+              ),
+              if (myDateRange != null)
+                Text("Saved value is: ${myDateRange.toString()}")
+            ],
+          ),
         ),
-        home: SafeArea(
-            child: Scaffold(
-                appBar: AppBar(title: Text('Example')),
-                body: Container(
-                    padding: EdgeInsets.all(10),
-                    alignment: Alignment.center,
-                    child: EasyAutocomplete(
-                        debounceDuration: Duration(milliseconds: 1),
-                        asyncSuggestions: (searchValue) async =>
-                            _fetchSuggestions(searchValue),
-                        onChanged: (value) => print(value))))));
+      ),
+    );
   }
 }

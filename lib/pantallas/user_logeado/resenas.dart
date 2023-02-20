@@ -128,6 +128,8 @@ Map cafeteria_resena = {
 String direccion_cafeteria = '';
 String cafeteria_CR = '';
 
+bool cafeteriaConfirmada = false;
+
 //Reseñas anteriores
 
 bool resenasAnteriores = false;
@@ -1468,6 +1470,7 @@ class ResenasPageState extends State<ResenasPage> {
           obtenerDireccion(value),
           setState(() {
             cafeteria_CR = value;
+            cafeteriaConfirmada = true;
           }),
         },
         controller: _nombreCafeteriaController,
@@ -1675,7 +1678,7 @@ class ResenasPageState extends State<ResenasPage> {
       return (Column(
         children: [
           //Crear dropdown textfield para seleccionar la cafeteria a la que se le va a hacer la reseña
-          (calificado)
+          (calificado || cafeteriaConfirmada)
               ? Column(
                   children: [
                     Row(
@@ -2271,7 +2274,7 @@ class ResenasPageState extends State<ResenasPage> {
                         itemCount: documents.length,
                         itemBuilder: (BuildContext context, int index) {
                           final document = documents[index];
-                            return (moduloResena(document.data()));
+                          return (moduloResena(document.data()));
                         });
                   } else {
                     return (Column(

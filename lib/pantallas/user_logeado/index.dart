@@ -11,6 +11,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../firebase/autenticacion.dart';
 import '../resenas/resenas.dart';
 import 'Cafeterias.dart';
+import 'Eventos.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
@@ -514,7 +515,7 @@ class IndexPageState extends State<IndexPage> {
                 right: MediaQuery.of(context).size.width * 0.05),
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+              //color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -848,8 +849,15 @@ class CustomBottomBar extends StatelessWidget {
                               builder: (context) => Cafeterias(inicio)));
                     }),
                 GButton(
-                  icon: Icons.search,
-                  text: 'Busqueda',
+                  icon: Icons.event_note,
+                  text: 'Eventos',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventosPage(inicio)));
+                  },
                 ),
                 GButton(
                   icon: Icons.account_circle,

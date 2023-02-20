@@ -1,10 +1,14 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
 import 'dart:async';
+import 'package:intl/intl.dart';
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
+import 'package:coffeemondo/pantallas/user_logeado/homescreen.dart';
+import 'package:easy_autocomplete/easy_autocomplete.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,16 +21,17 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import '../../firebase/autenticacion.dart';
 import '../resenas/resenas.dart';
+import 'Cafeterias.dart';
 import 'index.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 
-class Cafeterias extends StatefulWidget {
+class EventosPage extends StatefulWidget {
   final String tiempo_inicio;
-  const Cafeterias(this.tiempo_inicio, {super.key});
+  const EventosPage(this.tiempo_inicio, {super.key});
 
   @override
-  CafeteriasState createState() => CafeteriasState();
+  EventosState createState() => EventosState();
 }
 
 String tab = '';
@@ -56,6 +61,12 @@ TextEditingController latitudCafeteriaCC = TextEditingController();
 TextEditingController longitudCafeteriaCC = TextEditingController();
 TextEditingController urlCafeteriaCC = TextEditingController();
 TextEditingController imagenCafeteriaCC = TextEditingController();
+
+bool esLugar = true;
+
+//Declarar una variable de color from argb
+const Color morado = Color.fromARGB(255, 100, 0, 255);
+const Color naranja = Color.fromARGB(255, 255, 100, 0);
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -127,7 +138,7 @@ List<Map<String, dynamic>> getNivel() {
   ];
 }
 
-class CafeteriasState extends State<Cafeterias> {
+class EventosState extends State<EventosPage> {
   // Se declara la instancia de firebase en la variable _firebaseAuth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   late GoogleMapController googleMapController;
@@ -634,6 +645,41 @@ class CafeteriasState extends State<Cafeterias> {
       }
     }
 
+    Widget textFieldNombreEvento(TextEditingController controller) {
+      return (TextField(
+          cursorHeight: 0,
+          cursorWidth: 0,
+          onTap: () {
+            setState(() {});
+          },
+          controller: controller,
+          // onChanged: (((value) => validarCorreo())),
+          style: const TextStyle(
+            letterSpacing: 2,
+            decoration: TextDecoration.none,
+            color: morado,
+            fontSize: 14.0,
+            height: 2.0,
+            fontWeight: FontWeight.w900,
+          ),
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: morado),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: morado),
+              ),
+              border: OutlineInputBorder(),
+              prefixIcon:
+                  Icon(Icons.event_note_outlined, color: morado, size: 24),
+              hintText: 'Nombre del evento',
+              hintStyle: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.w900,
+                color: morado,
+              ))));
+    }
+
     Widget textFieldNombreCafeteria(TextEditingController controller) {
       return (TextField(
           cursorHeight: 0,
@@ -646,96 +692,148 @@ class CafeteriasState extends State<Cafeterias> {
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: Color.fromARGB(255, 255, 79, 52),
+            color: morado,
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                borderSide: BorderSide(color: morado),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                borderSide: BorderSide(color: morado),
               ),
               border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.coffee_maker_outlined,
-                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
-              hintText: 'Nombre de la cafeteria',
+              prefixIcon:
+                  Icon(Icons.coffee_maker_outlined, color: morado, size: 24),
+              hintText: 'Nombre de lugar',
               hintStyle: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 79, 52),
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: morado,
               ))));
     }
 
-    Widget textFieldCorreoCafeteria(TextEditingController controller) {
-      return (TextField(
-          cursorHeight: 0,
-          cursorWidth: 0,
-          onTap: () {
-            setState(() {});
-          },
-          controller: controller,
-          // onChanged: (((value) => validarCorreo())),
-          style: const TextStyle(
-            letterSpacing: 2,
-            decoration: TextDecoration.none,
-            color: Color.fromARGB(255, 255, 79, 52),
-            fontSize: 14.0,
-            height: 2.0,
-            fontWeight: FontWeight.w900,
+    //Crear widget date range picker dialog para seleccionar fecha y hora de inicio y fin de evento
+    Widget dateRangePickerDialog(BuildContext context) {
+      return AlertDialog(
+        title: Text('Seleccionar fecha y hora'),
+        content: Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: DateRangePickerDialog(
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(Duration(days: 365))),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancelar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
-              ),
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.email_outlined,
-                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
-              hintText: 'Correo de la cafeteria',
-              hintStyle: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 79, 52),
-              ))));
+          TextButton(
+            child: Text('Aceptar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    }
+
+    String cambiarFormatoFecha(DateTimeRange fecha) {
+      String fechaInicio = DateFormat('dd/MM/yyyy').format(fecha.start);
+      String fechaFin = DateFormat('dd/MM/yyyy').format(fecha.end);
+      return fechaInicio + ' - ' + fechaFin;
     }
 
     Widget textFieldWebCafeteria(TextEditingController controller) {
       return (TextField(
           cursorHeight: 0,
           cursorWidth: 0,
-          onTap: () {
-            setState(() {});
+          readOnly: true,
+          onTap: () async {
+            DateTimeRange? pickeddate = await showDateRangePicker(
+                locale: const Locale("es", "CL"),
+                context: context,
+                //initialDate: DateTime.now(),
+
+                firstDate: DateTime(2023),
+                lastDate: DateTime(2025),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: ColorScheme.light(
+                        // or dark
+                        primary: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                        onPrimary: Colors.red,
+                        surface: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                        onSurface: Colors.black,
+
+                        background: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                        onBackground: Colors.black,
+
+                        error: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                        onError: Colors.red,
+                        secondary: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                        onSecondary: Colors.black,
+
+                        primaryVariant: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                        secondaryVariant: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                      ),
+                      textButtonTheme: TextButtonThemeData(
+                        style: TextButton.styleFrom(
+                          primary: Color.fromARGB(
+                              255, 255, 79, 52), // button text color
+                        ),
+                      ),
+                    ),
+                    child: child!,
+                  );
+                });
+
+            if (pickeddate != null) {
+              //Cambiar formato de daterangepicker a dd/mm/yyyy
+              var fecha_cambiada = cambiarFormatoFecha(pickeddate);
+              var fecha_evento = fecha_cambiada.split(' - ');
+              var fecha_evento_inicio = fecha_evento[0].split(' ');
+              var fecha_evento_fin = fecha_evento[1].split(' ');
+              print(fecha_evento_inicio[0] + ' / ' + fecha_evento_fin[0]);
+              setState(() {
+                controller.text = 'Del ' +
+                    fecha_evento_inicio[0] +
+                    ' hasta ' +
+                    fecha_evento_fin[0];
+              });
+            }
           },
           controller: controller,
           // onChanged: (((value) => validarCorreo())),
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: Color.fromARGB(255, 255, 79, 52),
+            color: morado,
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                borderSide: BorderSide(color: morado),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                borderSide: BorderSide(color: morado),
               ),
               border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.web_outlined,
-                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
-              hintText: 'Web de la cafeteria',
+              prefixIcon:
+                  Icon(Icons.date_range_outlined, color: morado, size: 24),
+              hintText: 'Fecha del evento',
               hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 79, 52),
+                color: morado,
               ))));
     }
 
@@ -765,26 +863,26 @@ class CafeteriasState extends State<Cafeterias> {
           style: const TextStyle(
             letterSpacing: 2,
             decoration: TextDecoration.none,
-            color: Color.fromARGB(255, 255, 79, 52),
+            color: morado,
             fontSize: 14.0,
             height: 2.0,
             fontWeight: FontWeight.w900,
           ),
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                borderSide: BorderSide(color: morado),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 255, 79, 52)),
+                borderSide: BorderSide(color: morado),
               ),
               border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.location_on_outlined,
-                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              prefixIcon:
+                  Icon(Icons.location_on_outlined, color: morado, size: 24),
               hintText: 'Ubicacion de la cafeteria',
               hintStyle: TextStyle(
                 fontSize: 14.0,
                 fontWeight: FontWeight.w900,
-                color: Color.fromARGB(255, 255, 79, 52),
+                color: morado,
               ))));
     }
 
@@ -795,8 +893,7 @@ class CafeteriasState extends State<Cafeterias> {
             margin:
                 EdgeInsets.only(top: (imagenSeleccionada) ? 2 : 15, left: 12),
             child: Row(children: [
-              Icon(Icons.image_outlined,
-                  color: Color.fromARGB(255, 255, 79, 52), size: 24),
+              Icon(Icons.image_outlined, color: morado, size: 24),
               Container(
                 margin: EdgeInsets.only(left: 10),
                 child: Text(
@@ -805,7 +902,7 @@ class CafeteriasState extends State<Cafeterias> {
                         : 'Logo/Imagen de la cafeteria',
                     style: TextStyle(
                         letterSpacing: 2,
-                        color: Color.fromARGB(255, 255, 79, 52),
+                        color: morado,
                         fontWeight: FontWeight.bold,
                         fontSize: 14)),
               ),
@@ -825,9 +922,87 @@ class CafeteriasState extends State<Cafeterias> {
           Container(
             margin: EdgeInsets.only(top: (imagenSeleccionada) ? 4 : 15),
             height: 1,
-            color: Color.fromARGB(255, 255, 79, 52),
+            color: morado,
           )
         ],
+      ));
+    }
+
+    void sugerencias() {
+      //obtener coleccion de cafeterias
+      List<String> cafeterias_list = [];
+      FirebaseFirestore.instance
+          .collection('cafeterias')
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((result) {
+          //print(result.data());
+          cafeterias_list.add(result.data()['nombre']);
+        });
+      });
+      setState(() {
+        cafeterias_nombre = cafeterias_list;
+      });
+    }
+
+    Future<void> obtenerDireccion(String nombre_cafeteria) async {
+      //obtener coleccion de cafeterias
+      String direccion = '';
+      FirebaseFirestore.instance
+          .collection('cafeterias')
+          .where('nombre', isEqualTo: nombre_cafeteria)
+          .get()
+          .then((querySnapshot) {
+        querySnapshot.docs.forEach((result) {
+          direccion = result.data()['ubicacion'];
+          print("direccion obtenida: $direccion");
+        });
+        setState(() {
+          direccion_cafeteria = direccion;
+        });
+      });
+    }
+
+    Widget autoCompleteNombreCafeteria(controller) {
+      return (EasyAutocomplete(
+        inputTextStyle: TextStyle(
+            color: morado,
+            letterSpacing: 2,
+            fontWeight: FontWeight.bold,
+            fontSize: 14),
+        suggestionBackgroundColor: Color.fromARGB(255, 255, 79, 52),
+        suggestionTextStyle: TextStyle(
+            color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+            fontSize: 14,
+            letterSpacing: 2,
+            fontWeight: FontWeight.bold),
+        suggestions: cafeterias_nombre,
+        onChanged: (value) => {print('onChanged value: $value'), sugerencias()},
+        onSubmitted: (value) => {
+          print('valor subido: $value'),
+          obtenerDireccion(value),
+          setState(() {
+            cafeteria_CR = value;
+            cafeteriaConfirmada = true;
+          }),
+        },
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.coffee_maker_outlined,
+            color: morado,
+            size: 24,
+          ),
+          hintText: 'Nombre de cafetería',
+          hintStyle: TextStyle(
+              color: morado, fontWeight: FontWeight.bold, letterSpacing: 2),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: morado),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: morado),
+          ),
+        ),
       ));
     }
 
@@ -847,7 +1022,7 @@ class CafeteriasState extends State<Cafeterias> {
                         });
                       },
                       child: Text(
-                        'Crear Cafeteria',
+                        'Crear Evento',
                         style: TextStyle(
                             color: Color.fromARGB(255, 255, 79, 52),
                             fontWeight: FontWeight.bold,
@@ -858,13 +1033,50 @@ class CafeteriasState extends State<Cafeterias> {
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldNombreCafeteria(nombreCafeteriaCC)),
+                      child: textFieldNombreEvento(nombreCafeteriaCC)),
+                  Container(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        child: Text(
+                          'Cafeteria',
+                          style: TextStyle(
+                              color: morado,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Switch(
+                        value: esLugar,
+                        onChanged: (value) {
+                          setState(() {
+                            esLugar = value;
+                          });
+                        },
+                        //activeTrackColor: Color.fromARGB(255, 255, 79, 52),
+                        inactiveThumbColor: morado,
+                        activeColor: morado,
+                        inactiveTrackColor: Color.fromARGB(113, 102, 0, 255),
+                      ),
+                      Container(
+                        child: Text(
+                          'Lugar',
+                          style: TextStyle(
+                              color: morado,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  )),
                   Container(
                       margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldCorreoCafeteria(correoCafeteriaCC)),
+                      child: (!esLugar)
+                          ? autoCompleteNombreCafeteria(correoCafeteriaCC)
+                          : textFieldNombreCafeteria(correoCafeteriaCC)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
@@ -894,7 +1106,7 @@ class CafeteriasState extends State<Cafeterias> {
                     },
                     child: Container(
                         decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 79, 52),
+                            color: morado,
                             borderRadius: BorderRadius.circular(10)),
                         margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.04,
@@ -906,9 +1118,9 @@ class CafeteriasState extends State<Cafeterias> {
                               left: MediaQuery.of(context).size.width * 0.2,
                               right: MediaQuery.of(context).size.width * 0.2),
                           child: Text(
-                            'Generar cafeteria',
+                            'Generar evento',
                             style: TextStyle(
-                                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                                color: naranja,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           ),
@@ -917,7 +1129,7 @@ class CafeteriasState extends State<Cafeterias> {
                 ],
               )
             : Text(
-                'Crear Cafeteria',
+                'Crear Evento',
                 style: TextStyle(
                     color: Color.fromARGB(255, 255, 79, 52),
                     fontWeight: FontWeight.bold,
@@ -998,10 +1210,12 @@ class CafeteriasState extends State<Cafeterias> {
           child: AnimatedContainer(
               width: MediaQuery.of(context).size.width * 0.9,
               height: (abrirCrearCafeteria)
-                  ? MediaQuery.of(context).size.height * 0.67
+                  ? MediaQuery.of(context).size.height * 0.74
                   : MediaQuery.of(context).size.height * 0.07,
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
+                color: (abrirCrearCafeteria)
+                    ? Colors.transparent
+                    : Color.fromARGB(255, 0x52, 0x01, 0x9b),
                 borderRadius: BorderRadius.circular(20),
               ),
               duration: Duration(seconds: 1),
@@ -1021,7 +1235,7 @@ class CafeteriasState extends State<Cafeterias> {
               Container(
                 margin: EdgeInsets.only(bottom: 10),
                 child: Text(
-                  'Cafeterias',
+                  'Eventos',
                   style: TextStyle(
                       color: Color.fromARGB(255, 0x52, 0x01, 0x9b),
                       fontWeight: FontWeight.bold,
@@ -1382,7 +1596,7 @@ class CustomBottomBar extends StatelessWidget {
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
               gap: 6,
-              selectedIndex: 4,
+              selectedIndex: 5,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
@@ -1426,8 +1640,8 @@ class CustomBottomBar extends StatelessWidget {
                               builder: (context) => Cafeterias(inicio)));
                     }),
                 GButton(
-                  icon: Icons.search,
-                  text: 'Busqueda',
+                  icon: Icons.event_note_outlined,
+                  text: 'Eventos',
                 ),
                 GButton(
                   icon: Icons.account_circle,
