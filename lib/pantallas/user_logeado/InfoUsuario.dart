@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors
 
+import 'dart:async';
+
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
@@ -11,33 +13,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:coffeemondo/pantallas/user_logeado/InfoUsuario.dart';
 
 //Obtener variable desde direccion.dart
 
-class InfoPage extends StatefulWidget {
+class InfoUsuarioPage extends StatefulWidget {
   final String inicio;
-  final String nombreapellido_escrito;
-  final String nombreusuario_escrito;
-  final String telefono_escrito;
-  final String edad_escrito;
-  final String direccion_encontrada;
-  const InfoPage(
-      this.inicio,
-      this.nombreapellido_escrito,
-      this.nombreusuario_escrito,
-      this.edad_escrito,
-      this.telefono_escrito,
-      this.direccion_encontrada,
-      {super.key});
+
+  const InfoUsuarioPage(this.inicio, {super.key});
 
   @override
-  InfoApp createState() => InfoApp();
+  InfoUsuarioApp createState() => InfoUsuarioApp();
 }
 
 var largo_nombre_usuario = 15;
 
-class InfoApp extends State<InfoPage> {
+class InfoUsuarioApp extends State<InfoUsuarioPage> {
   @override
   void initState() {
     super.initState();
@@ -53,6 +43,9 @@ class InfoApp extends State<InfoPage> {
 
   String? errorMessage = '';
   bool isLogin = true;
+  bool mostrarSetCafeteras = false;
+  bool mostrarSetCafeteras2 = false;
+
   // Este estado define si el usuario aun no ha editado ningun textField,
   //si edita alguno, se dejan de recibir en tiempo real los datos de la bbdd
   //para asi poder modificar los campos sin ser reseteados
@@ -431,84 +424,207 @@ class InfoApp extends State<InfoPage> {
     );
   }
 
+  Widget _bodyInfoUsuario() {
+    return (Container(
+        width: MediaQuery.of(context).size.width,
+        margin: EdgeInsets.only(top: 20),
+        decoration: BoxDecoration(color: Colors.white),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              width: MediaQuery.of(context).size.width * 0.95,
+              height: mostrarSetCafeteras ? 300 : 30,
+              decoration: BoxDecoration(
+                  color: colorMorado, borderRadius: BorderRadius.circular(20)),
+              child: Center(
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          mostrarSetCafeteras = !mostrarSetCafeteras;
+
+                          // cambiar estado de infoPerfilPressed2 luego de 2 segundos
+                          if (!mostrarSetCafeteras2) {
+                            Timer(Duration(milliseconds: 500), () {
+                              setState(() {
+                                mostrarSetCafeteras2 = !mostrarSetCafeteras2;
+                              });
+                            });
+                          } else {
+                            mostrarSetCafeteras2 = !mostrarSetCafeteras2;
+                          }
+                        });
+                      },
+                      child: Container(
+                        alignment: mostrarSetCafeteras2
+                            ? Alignment.topCenter
+                            : Alignment.center,
+                        margin:
+                            EdgeInsets.only(top: mostrarSetCafeteras2 ? 20 : 0),
+                        child: mostrarSetCafeteras2
+                            ? Column(
+                                children: [
+                                  Text(
+                                    '¿Que cafetera usas en tu casa?',
+                                    style: TextStyle(
+                                        color: Color(0xffffebdcac),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  //Crear slide de cards con las cafeteras disponibles
+                                  Container(
+                                    margin: EdgeInsets.only(top: 10),
+                                    height: 190,
+                                    child: ListView(
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.85,
+                                          child: Card(
+                                            color: Colors.white,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Image.asset(
+                                                  'assets/cafetera1.jpg',
+                                                  width: 200,
+                                                  height: 200,
+                                                ),
+                                                Text('Cafetera 1')
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.91,
+                                          child: Card(
+                                            margin: EdgeInsets.all(0),
+                                            color: colorNaranja,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Image.asset(
+                                                  'assets/cafetera1.jpg',
+                                                  width: 190,
+                                                  height: 200,
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Prensa francesa',
+                                                      style: TextStyle(
+                                                        color: colorMorado,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 10),
+                                                        //color: Colors.white,
+                                                        child: Text(
+                                                          'La Prensa Francesa es un método\n por inmersión*, permite controlar\n todo el proceso de extracción,\n desde el tiempo de contacto,\n la temperatura y la turbulencia,\n entre otras variables.\n\n También al actuar directamente\n sobre todo el café molido nos da\n la posibilidad de extraer muy\n bien los sabores.',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  colorMorado,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800),
+                                                          maxLines: null,
+                                                        ))
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 100,
+                                          child: Card(
+                                            color: Colors.white,
+                                            child: Column(
+                                              children: [
+                                                Image.asset(
+                                                  'assets/images/cafetera1.png',
+                                                  width: 100,
+                                                  height: 100,
+                                                ),
+                                                Text('Cafetera 3')
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 100,
+                                          child: Card(
+                                            color: Colors.white,
+                                            child: Column(
+                                              children: [
+                                                Image.asset(
+                                                  'assets/cafetera1.png',
+                                                  width: 100,
+                                                  height: 100,
+                                                ),
+                                                Text('Cafetera 4')
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 100,
+                                          child: Card(
+                                            color: Colors.white,
+                                            child: Column(
+                                              children: [
+                                                Image.asset(
+                                                  'assets/images/cafetera1.png',
+                                                  width: 100,
+                                                  height: 100,
+                                                ),
+                                                Text('Cafetera 5')
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Text(
+                                '¿Que cafetera usas en tu casa?',
+                                style: TextStyle(
+                                    color: Color(0xffffebdcac),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                      ))),
+            ),
+          ],
+        )));
+  }
+
   Widget build(BuildContext context) {
     //          VALORES INICIALES TEXTFIELD EDITAR INFORMACION
-    print(widget.direccion_encontrada);
     print(estadoInicial);
-    //si widget.direccion_encontrada es null, entonces se muestra la direccion del usuario
-    if (widget.direccion_encontrada == '') {
-      print("esta vacia");
-      if (nombre.isNotEmpty &&
-          nickname.isNotEmpty &&
-          cumpleanos.isNotEmpty &&
-          telefono.isNotEmpty &&
-          estadoInicial == true) {
-        _controladornombreApellido.text = nombre;
-        if (nickname == 'Sin informacion de nombre de usuario') {
-          _controladornombreUsuario.text = 'Sin usuario';
-        } else {
-          _controladornombreUsuario.text = nickname;
-        }
-        _controladortelefono.text = telefono;
-        _controladoredad.text = cumpleanos;
-        _controladordireccion.text = direccion;
-      } else {
-        print("los atributos del usuario estan vacios");
-      }
-    } else {
-      print("esta es la direccion encontrada: ${widget.direccion_encontrada}");
-      _controladornombreApellido.text = widget.nombreapellido_escrito;
-      _controladornombreUsuario.text = widget.nombreusuario_escrito;
-      _controladortelefono.text = widget.telefono_escrito;
-      _controladoredad.text = widget.edad_escrito;
-      _controladordireccion.text = widget.direccion_encontrada;
-    }
 
     return Scaffold(
       backgroundColor: Color(0xffffebdcac),
       appBar: AppBarcustom(),
-      body: SingleChildScrollView(
-          child: Column(children: <Widget>[
-        // Padding(
-        //     padding: const EdgeInsets.only(left: 50, top: 130, right: 40),
-        //     child: _Correo(_controladoremail)),
-        Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.10,
-                right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.05),
-            child: _NombreApellido(_controladornombreApellido)),
-        Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.10,
-                right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.03),
-            child: _NombreUsuario(_controladornombreUsuario)),
-        Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.10,
-                right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.004),
-            child: _Edad(_controladoredad)),
-        Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.10,
-                right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.03),
-            child: _Telefono(_controladortelefono)),
-        Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.10,
-                right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.03),
-            child: _Direccion(_controladordireccion)),
-        Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.10,
-                right: MediaQuery.of(context).size.width * 0.10,
-                top: MediaQuery.of(context).size.height * 0.08),
-            child: BotonEditarInfo()),
-      ])),
+      body: SingleChildScrollView(child: _bodyInfoUsuario()),
       bottomNavigationBar: CustomBottomBar(),
     );
   }
@@ -537,7 +653,7 @@ class AppBarcustom extends StatelessWidget implements PreferredSizeWidget {
             bottom: 20,
             child: Center(
               child: Text(
-                "Editar perfil",
+                "Editar usuario",
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 79, 52),
                   fontSize: 20,
@@ -594,7 +710,7 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: 2,
+              selectedIndex: 3,
               gap: 8,
               padding: EdgeInsets.all(16),
               tabs: [
@@ -625,13 +741,6 @@ class CustomBottomBar extends StatelessWidget {
                 GButton(
                   icon: Icons.info,
                   text: 'Editar usuario',
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InfoUsuarioPage(inicio)),
-                    );
-                  },
                 ),
                 GButton(
                   icon: Icons.arrow_back,

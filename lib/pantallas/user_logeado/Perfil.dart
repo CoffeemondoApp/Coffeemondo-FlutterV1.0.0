@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously, avoid_print, unused_field, prefer_final_fields, override_on_non_overriding_member, non_constant_identifier_names, prefer_const_constructors, avoid_unnecessary_containers, sized_box_for_whitespace, annotate_overrides, use_full_hex_values_for_flutter_colors, use_key_in_widget_constructors, sort_child_properties_last
 
+import 'dart:async';
+
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
@@ -12,6 +14,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/login.dart';
+
+//importar morado y naranja de Eventos.dart
+const Color colorMorado = Color.fromARGB(255, 84, 14, 148);
+const Color colorNaranja = Color.fromARGB(255, 255, 100, 0);
 
 class PerfilPage extends StatefulWidget {
   final String tiempo_inicio;
@@ -41,6 +47,10 @@ class PerfilApp extends State<PerfilPage> {
 
   String? errorMessage = '';
   bool isLogin = true;
+
+  //Informacion del perfil
+  bool infoPerfilPressed = false;
+  bool infoPerfilPressed2 = false;
 
   // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
@@ -104,10 +114,10 @@ class PerfilApp extends State<PerfilPage> {
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
             hintText: nombre,
             hintStyle: TextStyle(
-              fontSize: 14.0,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
-            )));
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+                color: colorNaranja,
+                letterSpacing: 2)));
   }
 
   var mes_nacimiento = '';
@@ -162,10 +172,10 @@ class PerfilApp extends State<PerfilPage> {
             Icon(Icons.cake, color: Color.fromARGB(255, 255, 79, 52), size: 24),
         hintText: cumpleanos,
         hintStyle: TextStyle(
-          fontSize: 14.0,
-          fontWeight: FontWeight.w900,
-          color: Color.fromARGB(255, 84, 14, 148),
-        ),
+            fontSize: 14.0,
+            fontWeight: FontWeight.bold,
+            color: colorNaranja,
+            letterSpacing: 2),
       ),
     );
   }
@@ -198,8 +208,9 @@ class PerfilApp extends State<PerfilPage> {
             hintText: telefono,
             hintStyle: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+              color: colorNaranja,
             )));
   }
 
@@ -254,10 +265,10 @@ class PerfilApp extends State<PerfilPage> {
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
             hintText: nickname,
             hintStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
-            )));
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: colorNaranja,
+                letterSpacing: 2)));
   }
 
   Widget _Correo(
@@ -268,7 +279,7 @@ class PerfilApp extends State<PerfilPage> {
         readOnly: true,
         // onChanged: (((value) => validarCorreo())),
         style: const TextStyle(
-          color: Color.fromARGB(255, 84, 14, 148),
+          color: colorNaranja,
           fontSize: 14.0,
           height: 2.0,
           fontWeight: FontWeight.w900,
@@ -285,10 +296,10 @@ class PerfilApp extends State<PerfilPage> {
                 color: Color.fromARGB(255, 255, 79, 52), size: 24),
             hintText: email,
             hintStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
-            )));
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: colorNaranja,
+                letterSpacing: 2)));
   }
 
   Widget BotonLogin() {
@@ -341,8 +352,8 @@ class PerfilApp extends State<PerfilPage> {
             hintText: direccion,
             hintStyle: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: Color.fromARGB(255, 84, 14, 148),
+              fontWeight: FontWeight.bold,
+              color: colorNaranja,
             )));
   }
 
@@ -435,6 +446,34 @@ class PerfilApp extends State<PerfilPage> {
     );
   }
 
+  Widget moduloInfoPerfil() {
+    //hacer que el return se cree luego de 2 segundos
+    return (Column(
+      children: [
+        (infoPerfilPressed2)
+            ? Container(
+                alignment: (infoPerfilPressed)
+                    ? Alignment.topCenter
+                    : Alignment.center,
+                margin: EdgeInsets.only(top: 10, bottom: 10),
+                child: Text(
+                  'Informacion de perfil',
+                  style: TextStyle(
+                      color: colorNaranja,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ))
+            : Container(),
+        _Correo(_controladoremail),
+        _NombreApellido(_controladoremail),
+        _NombreUsuario(_controladornombreUsuario),
+        _Edad(_controladoredad),
+        _Telefono(_controladortelefono),
+        _Direccion(_controladordireccion),
+      ],
+    ));
+  }
+
   Widget build(BuildContext context) {
     print('esto pasa ' + widget.tiempo_inicio);
     print('fecha actual' + DateTime.now().toString());
@@ -448,23 +487,64 @@ class PerfilApp extends State<PerfilPage> {
           child: FotoPerfil(),
         ),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 10, right: 40),
-            child: _Correo(_controladoremail)),
+          padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+          child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  infoPerfilPressed = !infoPerfilPressed;
+                  // cambiar estado de infoPerfilPressed2 luego de 2 segundos
+                  if (!infoPerfilPressed2) {
+                    Timer(Duration(milliseconds: 500), () {
+                      setState(() {
+                        infoPerfilPressed2 = !infoPerfilPressed2;
+                      });
+                    });
+                  } else {
+                    infoPerfilPressed2 = !infoPerfilPressed2;
+                  }
+                });
+              },
+              child: AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: (infoPerfilPressed) ? 370 : 40,
+                  decoration: BoxDecoration(
+                    color: colorMorado,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: (infoPerfilPressed2)
+                      ? moduloInfoPerfil()
+                      : Container(
+                          alignment: (infoPerfilPressed2)
+                              ? Alignment.topCenter
+                              : Alignment.center,
+                          child: Text(
+                            'Informacion de perfil',
+                            style: TextStyle(
+                                color: colorNaranja,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          )))),
+        ),
         Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _NombreApellido(_controladoremail)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _NombreUsuario(_controladornombreUsuario)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _Edad(_controladoredad)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _Telefono(_controladortelefono)),
-        Padding(
-            padding: const EdgeInsets.only(left: 50, top: 0, right: 40),
-            child: _Direccion(_controladordireccion)),
+          padding: const EdgeInsets.only(top: 10),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              color: colorMorado,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Container(
+                alignment: Alignment.center,
+                child: Text(
+                  'Informacion de usuario',
+                  style: TextStyle(
+                      color: colorNaranja,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                )),
+          ),
+        ),
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 15, right: 40),
             child: botonCerrarSesion()),
@@ -573,8 +653,8 @@ class CustomBottomBar extends StatelessWidget {
                   },
                 ),
                 GButton(
-                  icon: Icons.info,
-                  text: 'Informacion',
+                  icon: Icons.info_outline,
+                  text: 'Editar perfil',
                   onPressed: () {
                     Navigator.push(
                       context,

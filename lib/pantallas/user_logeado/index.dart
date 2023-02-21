@@ -526,7 +526,7 @@ class IndexPageState extends State<IndexPage> {
                       top: MediaQuery.of(context).size.height * 0.02),
                   child: Text('Bienvenido a la Beta !!!',
                       style: TextStyle(
-                          color: Color.fromARGB(255, 255, 79, 52),
+                          color: morado,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                 ),
@@ -541,7 +541,7 @@ class IndexPageState extends State<IndexPage> {
                           Text(
                               'En esta versión de la aplicación, podrás ver las reseñas de los cafes que visitas y subir tus propias reseñas. Además, podrás ver el puntaje de los lugares que visitas y el puntaje de los lugares que has visitado.',
                               style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 79, 52),
+                                  color: morado,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold)),
                           Padding(
@@ -549,7 +549,7 @@ class IndexPageState extends State<IndexPage> {
                             child: Text(
                                 'Felicitaciones! Fuiste seleccionado como Beta Tester, eres uno de los primeros usuarios y por eso te damos un premio de 500 puntos. ¡Disfruta de la aplicación!',
                                 style: TextStyle(
-                                    color: Color.fromARGB(255, 255, 79, 52),
+                                    color: morado,
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold)),
                           ),
@@ -576,8 +576,7 @@ class IndexPageState extends State<IndexPage> {
                                       width: MediaQuery.of(context).size.width *
                                           0.35,
                                       decoration: BoxDecoration(
-                                          color:
-                                              Color.fromARGB(255, 255, 79, 52),
+                                          color: morado,
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       child: Container(
@@ -585,8 +584,7 @@ class IndexPageState extends State<IndexPage> {
                                           child: Text(
                                             'Obtener premio :D',
                                             style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0x52, 0x01, 0x9b),
+                                                color: naranja,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -605,8 +603,7 @@ class IndexPageState extends State<IndexPage> {
                                       width: MediaQuery.of(context).size.width *
                                           0.35,
                                       decoration: BoxDecoration(
-                                          color:
-                                              Color.fromARGB(255, 255, 79, 52),
+                                          color: morado,
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       child: Container(
@@ -615,8 +612,7 @@ class IndexPageState extends State<IndexPage> {
                                             'Unirse al grupo de WhatsApp',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0x52, 0x01, 0x9b),
+                                                color: naranja,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold),
                                           ),

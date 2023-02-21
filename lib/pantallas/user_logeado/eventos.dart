@@ -911,7 +911,7 @@ class EventosState extends State<EventosPage> {
                   : 'Ubicacion de la cafeteria',
               hintStyle: TextStyle(
                 fontSize: 14.0,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 color: morado,
               ))));
     }
@@ -1126,9 +1126,8 @@ class EventosState extends State<EventosPage> {
                         onChanged: (value) {
                           setState(() {
                             esLugar = value;
-                            if (value) {
-                              direccionCafeteriaCC.text = '';
-                            }
+                            direccionCafeteriaCC.text = '';
+
                             nombreCafeteriaCE.text = '';
                             //direccionCafeteriaCC.text = '';
                           });
