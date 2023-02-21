@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 
 import 'dart:io';
@@ -24,6 +26,7 @@ import 'Cafeterias.dart';
 import 'index.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
+import 'package:http/http.dart' as http;
 
 class EventosPage extends StatefulWidget {
   final String tiempo_inicio;
@@ -53,14 +56,14 @@ var contPremio = 0;
 
 bool acceso_dev = false;
 bool abrirCrearCafeteria = false;
-TextEditingController nombreCafeteriaCC = TextEditingController();
-TextEditingController direccionCafeteriaCC = TextEditingController();
-TextEditingController nombreCafeteriaCE = TextEditingController();
-TextEditingController latitudCafeteriaCC = TextEditingController();
-TextEditingController longitudCafeteriaCC = TextEditingController();
-TextEditingController fechaCafeteriaCE = TextEditingController();
-TextEditingController imagenCafeteriaCC = TextEditingController();
-TextEditingController descripcionCafeteriaCC = TextEditingController();
+TextEditingController nombreEventoCC = TextEditingController();
+TextEditingController direccionEventoCC = TextEditingController();
+TextEditingController nombreEventoCE = TextEditingController();
+TextEditingController latitudEventoCC = TextEditingController();
+TextEditingController longitudEventoCC = TextEditingController();
+TextEditingController fechaEventoCE = TextEditingController();
+TextEditingController imagenEventoCC = TextEditingController();
+TextEditingController descripcionEventoCC = TextEditingController();
 
 bool esLugar = true;
 int cant_imagenesEvento = 0;
@@ -178,18 +181,20 @@ class EventosState extends State<EventosPage> {
   }
 
   final DocumentReference docRef =
-      FirebaseFirestore.instance.collection("cafeterias").doc();
+      FirebaseFirestore.instance.collection("eventos").doc();
 
-  XFile? imageFile;
   UploadTask? uploadTask;
 
   void _limpiarCafeteria() async {
     // Se limpian los campos de texto
-    nombreCafeteriaCC.text = '';
-    direccionCafeteriaCC.text = '';
-    nombreCafeteriaCE.text = '';
-    direccionCafeteriaCC.text = '';
-    urlCafeteriaCC.text = '';
+    nombreEventoCC.text = '';
+    nombreEventoCE.text = '';
+    direccionEventoCC.text = '';
+    latitudEventoCC.text = '';
+    longitudEventoCC.text = '';
+    fechaEventoCE.text = '';
+    imagenEventoCC.text = '';
+    descripcionEventoCC.text = '';
     setState(() {
       imagenSeleccionada = false;
     });
@@ -198,22 +203,34 @@ class EventosState extends State<EventosPage> {
         context, MaterialPageRoute(builder: (context) => IndexPage(inicio)));
   }
 
-  Future subirImagen() async {
-    // Se crea la ruta de la imagen en el Storage con el nombre del documento creado en la coleccion
-    final path = 'cafeteria_cafeteria_image/${docRef.id}.jpg';
-    final file = File(imageFile!.path);
-
-    final ref = FirebaseStorage.instance.ref().child(path);
-    uploadTask = ref.putFile(file);
-
-    final snapshot = await uploadTask!.whenComplete(() {});
-    final urlUserImage = await snapshot.ref.getDownloadURL();
-
-    // Se retorna la url de la imagen para llamarla desde la funcion de guardarInformacion
-    return urlUserImage;
-  }
+  TextEditingController nombreEventoCC = TextEditingController();
+  TextEditingController direccionEventoCC = TextEditingController();
+  TextEditingController nombreEventoCE = TextEditingController();
+  TextEditingController latitudEventoCC = TextEditingController();
+  TextEditingController longitudEventoCC = TextEditingController();
+  TextEditingController fechaEventoCE = TextEditingController();
+  TextEditingController imagenEventoCC = TextEditingController();
+  TextEditingController descripcionEventoCC = TextEditingController();
 
   List<XFile>? imageFiles;
+  List<String> imageUrls =
+      []; // Lista para almacenar las URL de las imágenes subidas
+
+  Future<List<String>> subirImagenes(List<XFile> files) async {
+    List<String> urls = [];
+
+    for (final file in files) {
+      final path =
+          'evento_evento_image/${docRef.id}/${docRef.id}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = FirebaseStorage.instance.ref().child(path);
+      final uploadTask = ref.putFile(File(file.path));
+      final snapshot = await uploadTask.whenComplete(() {});
+      final url = await snapshot.ref.getDownloadURL();
+      urls.add(url);
+    }
+
+    return urls;
+  }
 
   _openGallery(BuildContext context) async {
     //Funcion para abrir la galeria y obtener multiples imagenes
@@ -221,15 +238,16 @@ class EventosState extends State<EventosPage> {
     if (imageFiles != null) {
       setState(() {
         cant_imagenesEvento = imageFiles!.length;
-        imageFilePath = imageFiles![0].path;
         imagenSeleccionada = true;
       });
-      print('image: $imageFilePath');
+      print('images: ${imageFiles?.map((file) => file.path).toList()}');
     } else {
       imagenSeleccionada = false;
       return;
     }
   }
+
+  XFile? imageFile;
 
   _openCamera(BuildContext context) async {
     imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -608,28 +626,52 @@ class EventosState extends State<EventosPage> {
     }
 
     final DocumentReference docReCafeteriaf =
-        FirebaseFirestore.instance.collection("cafeterias").doc();
+        FirebaseFirestore.instance.collection("eventos").doc();
 
-    Future<void> guardarCafeteria() async {
+    Future<void> guardarEvento() async {
       User? user = Auth().currentUser;
-      if (nombreCafeteriaCC.text != '') {
+      if (nombreEventoCC.text != '') {
         await FirebaseFirestore.instance
-            .collection('cafeterias')
-            .where('nombre', isEqualTo: nombreCafeteriaCC.text)
+            .collection('eventos')
+            .where('nombre', isEqualTo: nombreEventoCC.text)
             .get()
             .then((QuerySnapshot querySnapshot) async {
           if (querySnapshot.docs.isEmpty) {
             print('No existe la cafeteria');
-            docReCafeteriaf.set(({
-              'nombre': nombreCafeteriaCC.text,
+            docRef.set(({
+              'nombre': nombreEventoCC.text,
+              'lugar': nombreEventoCE.text,
               'creador': user?.uid,
-              'calificacion': 0.0,
-              'correo': nombreCafeteriaCE.text,
-              'web': urlCafeteriaCC.text,
-              'ubicacion': direccionCafeteriaCC.text,
-              'imagen': await subirImagen(),
+              'fecha': fechaEventoCE.text,
+              'creador_correo': user?.email,
+              'ubicacion': direccionEventoCC.text,
+              'descripcion': descripcionEventoCC.text,
+              'imagen': await subirImagenes(imageFiles!),
             }));
             print('Ingreso de cafeteria exitoso.');
+            FirebaseMessaging messaging = FirebaseMessaging.instance;
+            String? token = await messaging.getToken();
+            if (token != null) {
+              String serverKey =
+                  "AAAAmfQdnTU:APA91bHhOKsvWPMp7TyVJ3g5wpWbZT3GF-4-D-mIvXAquDPpt8yqxNox2q19YBrQmz3CBZnNHjoTYuk9hBDRiep-jn9U0Lg2bFvWhPFg9uPOd1p4GXQ4MY54bI6UQgDyqXDulgm46agl"; // Obtenido desde la consola de Firebase
+              String url = "https://fcm.googleapis.com/fcm/send";
+              await http.post(
+                Uri.parse(url),
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "key=$serverKey",
+                },
+                body: json.encode({
+                  "notification": {
+                    "title": "Nuevo evento creado",
+                    "body":
+                        "Se ha creado el evento ${nombreEventoCC.text}, ve a revisarlo!",
+                  },
+                  "to": token,
+                }),
+              );
+            }
+            print("Notificacion enviada");
             _limpiarCafeteria();
           } else {
             print('Ya existe la cafeteria');
@@ -869,7 +911,7 @@ class EventosState extends State<EventosPage> {
               builder: (context) => DireccionPage(
                   widget.tiempo_inicio, '', '', '', '', '', 'cr')));
       setState(() {
-        direccionCafeteriaCC.text = result['direccion'];
+        direccionEventoCC.text = result['direccion'];
       });
       print('este es el resultado: $result');
     }
@@ -1014,11 +1056,11 @@ class EventosState extends State<EventosPage> {
         onSubmitted: (value) => {
           print('valor subido: $value'),
           obtenerDireccion(value),
-          print(direccionCafeteriaCC.text),
+          print(direccionEventoCC.text),
           setState(() {
             cafeteria_CR = value;
             cafeteriaConfirmada = true;
-            direccionCafeteriaCC.text = direccion_cafeteria;
+            direccionEventoCC.text = direccion_cafeteria;
           }),
         },
         controller: controller,
@@ -1107,7 +1149,7 @@ class EventosState extends State<EventosPage> {
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldNombreEvento(nombreCafeteriaCC)),
+                      child: textFieldNombreEvento(nombreEventoCC)),
                   Container(
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1126,9 +1168,10 @@ class EventosState extends State<EventosPage> {
                         onChanged: (value) {
                           setState(() {
                             esLugar = value;
-                            direccionCafeteriaCC.text = '';
-
-                            nombreCafeteriaCE.text = '';
+                            if (value) {
+                              direccionCafeteriaCC.text = '';
+                            }
+                            nombreEventoCE.text = '';
                             //direccionCafeteriaCC.text = '';
                           });
                         },
@@ -1153,20 +1196,20 @@ class EventosState extends State<EventosPage> {
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
                       child: (!esLugar)
-                          ? autoCompleteNombreCafeteria(nombreCafeteriaCE)
-                          : textFieldNombreCafeteria(nombreCafeteriaCE)),
+                          ? autoCompleteNombreCafeteria(nombreEventoCE)
+                          : textFieldNombreCafeteria(nombreEventoCE)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldFechaCafeteria(fechaCafeteriaCE)),
+                      child: textFieldFechaCafeteria(fechaEventoCE)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
-                      child: textFieldUbicacionCafeteria(direccionCafeteriaCC)),
+                      child: textFieldUbicacionCafeteria(direccionEventoCC)),
                   Container(
                       margin: EdgeInsets.only(
                           top: MediaQuery.of(context).size.height * 0.02,
@@ -1184,11 +1227,10 @@ class EventosState extends State<EventosPage> {
                           left: MediaQuery.of(context).size.width * 0.05,
                           right: MediaQuery.of(context).size.width * 0.05),
                       child: //crear textfield que se expanda con el texto
-                          textFieldDescripcionCafeteria(
-                              descripcionCafeteriaCC)),
+                          textFieldDescripcionCafeteria(descripcionEventoCC)),
                   GestureDetector(
                     onTap: () {
-                      guardarCafeteria();
+                      guardarEvento();
                     },
                     child: Container(
                         decoration: BoxDecoration(
@@ -1268,8 +1310,8 @@ class EventosState extends State<EventosPage> {
       ));
     }
 
-    CollectionReference cafeterias =
-        FirebaseFirestore.instance.collection('cafeterias');
+    CollectionReference eventos =
+        FirebaseFirestore.instance.collection('eventos');
 
     Widget _bodyCafeterias() {
       User? user = Auth().currentUser;
@@ -1331,7 +1373,7 @@ class EventosState extends State<EventosPage> {
               Container(
                 height: MediaQuery.of(context).size.height * 0.7,
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: cafeterias.snapshots(),
+                  stream: eventos.snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (snapshot.hasError) {
@@ -1343,7 +1385,7 @@ class EventosState extends State<EventosPage> {
                     }
 
                     return
-                        //Crear un ListView.builder para mostrar las cafeterias obtenidas de firebase de forma horizontal
+                        //Crear un ListView.builder para mostrar los eventos obtenidas de firebase de forma horizontal
                         ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: snapshot.data!.docs.length,
@@ -1414,19 +1456,31 @@ class EventosState extends State<EventosPage> {
                                           ],
                                         )),
                                     Container(
-                                      child: Image.network(
-                                        snapshot.data!.docs[index]['imagen'],
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3,
-                                        fit: BoxFit.cover,
-                                      ),
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.2,
+                                      child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: snapshot.data!
+                                              .docs[index]['imagen'].length,
+                                          itemBuilder: (context, index2) {
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.6,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.2,
+                                              child: Image.network(
+                                                snapshot.data!.docs[index]
+                                                    ['imagen'][index2],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            );
+                                          }),
                                     ),
-                                    containerTazasCalificadas(snapshot
-                                        .data!.docs[index]['calificacion']),
                                     GestureDetector(
                                       child: Container(
                                         width:
@@ -1449,7 +1503,7 @@ class EventosState extends State<EventosPage> {
                                         child: Container(
                                             alignment: Alignment(0, 0),
                                             child: Text(
-                                              'Visitar Web',
+                                              '¡Asistir!',
                                               style: TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 0x52, 0x01, 0x9b),
@@ -1480,7 +1534,7 @@ class EventosState extends State<EventosPage> {
                                         child: Container(
                                             alignment: Alignment(0, 0),
                                             child: Text(
-                                              'Ver reseñas',
+                                              'Mas información',
                                               style: TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 0x52, 0x01, 0x9b),
