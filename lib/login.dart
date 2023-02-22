@@ -8,6 +8,7 @@ import 'package:coffeemondo/pantallas/user_logeado/Perfil.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -17,6 +18,25 @@ class Login extends StatefulWidget {
 }
 
 class LoginApp extends State<Login> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  @override
+  void initState() {
+    super.initState();
+    // Solicitar permiso para enviar notificaciones
+    _firebaseMessaging
+        .requestPermission(
+            alert: true,
+            announcement: false,
+            badge: true,
+            carPlay: false,
+            criticalAlert: false,
+            provisional: false,
+            sound: true)
+        .then((NotificationSettings settings) {
+      print('Permiso de notificación concedido: $settings');
+    });
+  }
+
   String? errorMessage = '';
   bool isLogin = true;
 
@@ -48,7 +68,16 @@ class LoginApp extends State<Login> {
           'telefono': 'Sin informacion de telefono',
           'direccion': 'Sin informacion de direccion',
           'nivel': 1,
+          
         });
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+        String? token = await messaging.getToken();
+        await FirebaseFirestore.instance
+            .collection('tokens')
+            .doc(token)
+            .set({
+            'userId': currentUser!.uid, 
+            'createdAt': FieldValue.serverTimestamp()});
       }
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => const PerfilPage('0')));
@@ -76,11 +105,21 @@ class LoginApp extends State<Login> {
           'nickname': "Sin informacion de nombre de usuario",
           'email': resultado!.user!.email,
           'nombre': resultado!.user!.displayName,
-          'telefono': 'Sin informacion de telefono',      
-          'urlImage': resultado!.user!.photoURL, 
+          'telefono': 'Sin informacion de telefono',
+          'urlImage': resultado!.user!.photoURL,
           'direccion': 'Sin informacion de direccion',
           'nivel': 1,
         });
+        FirebaseMessaging messaging = FirebaseMessaging.instance;
+        String? token = await messaging.getToken();
+        await FirebaseFirestore.instance
+            .collection('tokens')
+            .doc(token)
+            .set({
+            'userId': currentUser!.uid,
+            'token': token,
+            'createdAt': FieldValue.serverTimestamp()});
+
       }
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const PerfilPage('0')));
