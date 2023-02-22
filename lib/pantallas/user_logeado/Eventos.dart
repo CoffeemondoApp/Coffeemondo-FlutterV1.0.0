@@ -67,6 +67,7 @@ TextEditingController descripcionEventoCC = TextEditingController();
 
 bool esLugar = true;
 int cant_imagenesEvento = 0;
+String fechas_guardarEvento = '';
 
 //Declarar una variable de color from argb
 const Color morado = Color.fromARGB(255, 100, 0, 255);
@@ -649,12 +650,13 @@ class EventosState extends State<EventosPage> {
               'nombre': nombreEventoCC.text,
               'lugar': nombreEventoCE.text,
               'creador': user?.uid,
-              'fecha': fechaEventoCE.text,
+              'fecha': fechas_guardarEvento,
               'creador_correo': user?.email,
               'ubicacion': direccionEventoCC.text,
               'descripcion': descripcionEventoCC.text,
               'imagen': await subirImagenes(imageFiles!),
             }));
+
             print('Ingreso de cafeteria exitoso.');
             FirebaseMessaging messaging = FirebaseMessaging.instance;
             String? token = await messaging.getToken();
@@ -679,7 +681,7 @@ class EventosState extends State<EventosPage> {
               );
             }
             print("Notificacion enviada");
-            _limpiarCafeteria();
+            //_limpiarCafeteria();
           } else {
             print('Ya existe la cafeteria');
             setState(() {
@@ -878,6 +880,17 @@ class EventosState extends State<EventosPage> {
               var fecha_evento_fin = fecha_evento[1].split(' ');
               print(fecha_evento_inicio[0] + ' / ' + fecha_evento_fin[0]);
               setState(() {
+                fechas_guardarEvento = pickeddate.start.day.toString() +
+                    '/' +
+                    pickeddate.start.month.toString() +
+                    '/' +
+                    pickeddate.start.year.toString() +
+                    ' - ' +
+                    pickeddate.end.day.toString() +
+                    '/' +
+                    pickeddate.end.month.toString() +
+                    '/' +
+                    pickeddate.end.year.toString();
                 controller.text =
                     transformarFechas(pickeddate.start, pickeddate.end);
               });
@@ -1140,8 +1153,7 @@ class EventosState extends State<EventosPage> {
     }
 
     Widget textFieldDescripcionCafeteria(TextEditingController controller) {
-      return (Expanded(
-        child: TextField(
+      return TextField(
           style: TextStyle(
               color: morado,
               letterSpacing: 2,
@@ -1165,12 +1177,10 @@ class EventosState extends State<EventosPage> {
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: morado),
             ),
-          ),
-        ),
-      ));
+          ));
     }
 
-    Widget moduloCrearCafeteria() {
+    Widget moduloCrearEvento() {
       return (Container(
         //color: Colors.white,
         margin: EdgeInsets.only(top: (!abrirCrearCafeteria) ? 0 : 15),
@@ -1361,6 +1371,66 @@ class EventosState extends State<EventosPage> {
     CollectionReference eventos =
         FirebaseFirestore.instance.collection('eventos');
 
+    String transformarMes(int mes) {
+      var mes_string = '';
+      switch (mes) {
+        case 1:
+          mes_string = 'Enero';
+          break;
+        case 2:
+          mes_string = 'Febrero';
+          break;
+        case 3:
+          mes_string = 'Marzo';
+          break;
+        case 4:
+          mes_string = 'Abril';
+          break;
+        case 5:
+          mes_string = 'Mayo';
+          break;
+        case 6:
+          mes_string = 'Junio';
+          break;
+        case 7:
+          mes_string = 'Julio';
+          break;
+        case 8:
+          mes_string = 'Agosto';
+          break;
+        case 9:
+          mes_string = 'Septiembre';
+          break;
+        case 10:
+          mes_string = 'Octubre';
+          break;
+        case 11:
+          mes_string = 'Noviembre';
+          break;
+        case 12:
+          mes_string = 'Diciembre';
+          break;
+      }
+      return mes_string;
+    }
+
+    String transformarFechas_string(String fechas) {
+      var fechas_string = '';
+      var fechas_list = fechas.split(' - ');
+      var fecha_inicio_string = fechas_list[0];
+      var fecha_fin_string = fechas_list[1];
+      var fecha_inicio = fecha_inicio_string.split('/');
+      var fecha_fin = fecha_fin_string.split('/');
+      if (fecha_inicio[1] == fecha_fin[1]) {
+        fechas_string =
+            'Desde el ${fecha_inicio[0]} al ${fecha_fin[0]} de ${transformarMes(int.parse(fecha_inicio[1]))}';
+      } else {
+        fechas_string =
+            'Desde el ${fecha_inicio[0]} de ${transformarMes(int.parse(fecha_inicio[1]))} al ${fecha_fin[0]} de ${transformarMes(int.parse(fecha_fin[1]))}';
+      }
+      return fechas_string;
+    }
+
     Widget _bodyCafeterias() {
       User? user = Auth().currentUser;
       print(user!.uid);
@@ -1395,7 +1465,7 @@ class EventosState extends State<EventosPage> {
                 borderRadius: BorderRadius.circular(20),
               ),
               duration: Duration(seconds: 1),
-              child: moduloCrearCafeteria()),
+              child: moduloCrearEvento()),
         ),
 
         //Crear container para mostrar las cafeterias obtenidas de firebase con la variable cafeterias
@@ -1439,7 +1509,7 @@ class EventosState extends State<EventosPage> {
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
                               return Container(
-                                color: Colors.white,
+                                //color: Colors.white,
                                 margin: EdgeInsets.only(
                                     right: MediaQuery.of(context).size.width *
                                         0.02),
@@ -1496,7 +1566,7 @@ class EventosState extends State<EventosPage> {
                                     Container(
                                       height: 100,
                                       margin:
-                                          EdgeInsets.only(top: 25, left: 10),
+                                          EdgeInsets.only(top: 55, left: 10),
                                       child: Text(
                                           snapshot.data!.docs[index]
                                               ['descripcion'],
@@ -1506,18 +1576,21 @@ class EventosState extends State<EventosPage> {
                                     ),
                                     Container(
                                       margin:
-                                          EdgeInsets.only(top: 5, bottom: 25),
+                                          EdgeInsets.only(top: 45, bottom: 25),
                                       child: Text(
-                                          snapshot.data!.docs[index]['fecha'],
+                                          transformarFechas_string(snapshot
+                                              .data!.docs[index]['fecha']),
                                           style: TextStyle(
                                             color: colorMorado,
                                           )),
                                     ),
                                     Container(
-                                      color: Colors.red,
+                                      //color: Colors.red,
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           GestureDetector(
                                             child: Container(
@@ -1530,12 +1603,8 @@ class EventosState extends State<EventosPage> {
                                                       .height *
                                                   0.05,
                                               margin: EdgeInsets.only(
-                                                  top: 5,
-                                                  right: 5,
-                                                  bottom: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.02),
+                                                right: 5,
+                                              ),
                                               decoration: BoxDecoration(
                                                   color: colorMorado,
                                                   borderRadius:
@@ -1565,11 +1634,6 @@ class EventosState extends State<EventosPage> {
                                                       .size
                                                       .height *
                                                   0.05,
-                                              margin: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.015),
                                               decoration: BoxDecoration(
                                                   color: colorMorado,
                                                   borderRadius:
