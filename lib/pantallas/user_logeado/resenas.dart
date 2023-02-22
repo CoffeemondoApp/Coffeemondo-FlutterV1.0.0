@@ -18,7 +18,8 @@ import '../../firebase/autenticacion.dart';
 import 'Perfil.dart';
 import 'dart:math' as math;
 import 'package:easy_autocomplete/easy_autocomplete.dart';
-
+import 'package:coffeemondo/pantallas/user_logeado/cafeterias.dart';
+import 'package:coffeemondo/pantallas/user_logeado/eventos.dart';
 import 'homescreen.dart';
 
 List<Color> setColorIcon(String color) {
@@ -2680,23 +2681,23 @@ class CustomBottomBar extends StatelessWidget {
                 color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
               )),
         ),
-        Container(
+        Container(         
           height: 70,
           child: GNav(
               backgroundColor: Colors.transparent,
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              gap: 6,
               selectedIndex: 1,
+              gap: 6,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' inicio',
+                  text: ' Inicio',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
@@ -2705,30 +2706,42 @@ class CustomBottomBar extends StatelessWidget {
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ResenasPage(inicio)));
+                  },
                 ),
                 GButton(
-                  icon: Icons.menu_book,
-                  text: 'Mis Recetas',
-                ),
+                    icon: Icons.coffee_maker_outlined,
+                    text: 'Cafeterias',
+                    onPressed: () {
+                      //Exportar la variable tiempo_inicio
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Cafeterias(inicio)));
+                    }),
                 GButton(
-                  icon: Icons.stars,
-                  text: 'Mis logros',
-                ),
-                GButton(
-                  icon: Icons.favorite,
-                  text: 'Favoritos',
-                ),
-                GButton(
-                  icon: Icons.search,
-                  text: 'Busqueda',
+                  icon: Icons.event_note,
+                  text: 'Eventos',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventosPage(inicio)));
+                  },
                 ),
                 GButton(
                   icon: Icons.account_circle,
-                  text: 'Configuracion',
+                  text: 'Configuración',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PerfilPage(inicio)));

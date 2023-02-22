@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
+import 'package:coffeemondo/pantallas/user_logeado/eventos.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:image_picker/image_picker.dart';
@@ -322,7 +323,7 @@ class CafeteriasState extends State<Cafeterias> {
     //Obtener nivel actual de getNivel()
     int nivel_actual = getNivel()[0]['nivel actual'];
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
-    //print('$nivel_usuario = $nivel_actual');
+    print('$nivel_usuario = $nivel_actual');
     //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
     if (nivel_usuario > nivel_actual) {
       nivel = nivel_usuario;
@@ -332,27 +333,35 @@ class CafeteriasState extends State<Cafeterias> {
     //Hacer que una funcion se ejecute cada 30 segundos
     Timer.periodic(Duration(seconds: 30), (timer) {
       _subirPuntaje();
-      print("puntaje subido a la base de datos {puntaje: $puntaje_actual}");
     });
 
-    return (Row(
-      children: [
-        Padding(
-          padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
-          child: Text(
-            'Nivel $nivel_usuario',
-            style: TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Text(
-          '$puntaje_actual/$puntaje_nivel',
-          style: TextStyle(
-              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ));
+    return (Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        //color: Colors.red,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Nivel $nivel',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              child: Text(
+                '$puntaje_actual/$puntaje_nivel',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        )));
   }
 
   @override
@@ -1374,23 +1383,23 @@ class CustomBottomBar extends StatelessWidget {
                 color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
               )),
         ),
-        Container(
+        Container(         
           height: 70,
           child: GNav(
               backgroundColor: Colors.transparent,
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
+              selectedIndex: 2,
               gap: 6,
-              selectedIndex: 4,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' inicio',
+                  text: ' Inicio',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
@@ -1401,41 +1410,40 @@ class CustomBottomBar extends StatelessWidget {
                   text: 'Mis Reseñas',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ResenasPage(inicio)));
                   },
                 ),
                 GButton(
-                  icon: Icons.menu_book,
-                  text: 'Mis Recetas',
-                ),
-                GButton(
-                  icon: Icons.stars,
-                  text: 'Mis logros',
-                ),
-                GButton(
                     icon: Icons.coffee_maker_outlined,
                     text: 'Cafeterias',
                     onPressed: () {
                       //Exportar la variable tiempo_inicio
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Cafeterias(inicio)));
                     }),
                 GButton(
-                  icon: Icons.search,
-                  text: 'Busqueda',
+                  icon: Icons.event_note,
+                  text: 'Eventos',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventosPage(inicio)));
+                  },
                 ),
                 GButton(
                   icon: Icons.account_circle,
-                  text: 'Configuracion',
+                  text: 'Configuración',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PerfilPage(inicio)));
