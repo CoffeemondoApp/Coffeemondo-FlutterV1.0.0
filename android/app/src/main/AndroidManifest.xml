@@ -7,7 +7,7 @@
    <uses-permission android:name="android.hardware.location.gps"/>
     
    <application
-        android:label="coffeemondo"
+        android:label="Coffeemondo"
         android:name="${applicationName}"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
