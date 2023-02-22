@@ -238,11 +238,18 @@ class EventosState extends State<EventosPage> {
     if (imageFiles != null) {
       setState(() {
         cant_imagenesEvento = imageFiles!.length;
-        imagenSeleccionada = true;
+        if (cant_imagenesEvento > 0) {
+          imagenSeleccionada = true;
+        } else {
+          imagenSeleccionada = false;
+        }
       });
       print('images: ${imageFiles?.map((file) => file.path).toList()}');
+      print(
+          "no se seleccionaron imagenes $cant_imagenesEvento $imagenSeleccionada");
     } else {
       imagenSeleccionada = false;
+
       return;
     }
   }
@@ -958,6 +965,18 @@ class EventosState extends State<EventosPage> {
               ))));
     }
 
+    Widget mostrarImagen(XFile imagen) {
+      return (Container(
+        width: (cant_imagenesEvento == 1) ? 40 : 30,
+        height: (cant_imagenesEvento == 1) ? 40 : 30,
+        margin: EdgeInsets.only(top: 10, left: 5, right: 5),
+        child: Image.file(
+          File(imagen.path),
+          fit: BoxFit.cover,
+        ),
+      ));
+    }
+
     Widget textFieldImagenCafeteria() {
       return (Column(
         children: [
@@ -968,30 +987,59 @@ class EventosState extends State<EventosPage> {
               Icon(Icons.image_outlined, color: morado, size: 24),
               Container(
                 margin: EdgeInsets.only(left: 10),
-                child: Text(
-                    (imagenSeleccionada)
-                        ? //Comprobar si se selecciono una o mas imagenes
-                        (cant_imagenesEvento > 1)
-                            ? '$cant_imagenesEvento Imagenes seleccionadas'
-                            : 'Imagen seleccionada'
-                        : 'Logo/Imagen del evento',
-                    style: TextStyle(
-                        letterSpacing: 2,
-                        color: morado,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14)),
-              ),
-              Container(
-                //Crear widget para mostrar la imagen de imageFile
-                margin: EdgeInsets.only(left: 10),
                 child: (imagenSeleccionada)
-                    ? Image.file(
-                        File(imageFilePath),
-                        width: 50,
-                        height: 50,
+                    ? Column(
+                        children: [
+                          Text(
+                              (imagenSeleccionada)
+                                  ? //Comprobar si se selecciono una o mas imagenes
+                                  (cant_imagenesEvento > 1)
+                                      ? '$cant_imagenesEvento Imagenes seleccionadas'
+                                      : 'Imagen seleccionada'
+                                  : 'Logo/Imagen del evento',
+                              style: TextStyle(
+                                  letterSpacing: 2,
+                                  color: morado,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14)),
+                          (cant_imagenesEvento > 1)
+                              ? Container(
+                                  //Crear widget para mostrar la imagen de imageFile
+                                  margin: EdgeInsets.only(left: 10),
+                                  child: (imagenSeleccionada)
+                                      ? Wrap(
+                                          spacing: 1,
+                                          runSpacing: 1,
+                                          children: imageFiles!.map((image) {
+                                            return mostrarImagen(image);
+                                          }).toList(),
+                                        )
+                                      : Container(),
+                                )
+                              : Container()
+                        ],
                       )
-                    : Container(),
+                    : Text(
+                        (imagenSeleccionada)
+                            ? //Comprobar si se selecciono una o mas imagenes
+                            (cant_imagenesEvento > 1)
+                                ? '$cant_imagenesEvento Imagenes seleccionadas'
+                                : 'Imagen seleccionada'
+                            : 'Logo/Imagen del evento',
+                        style: TextStyle(
+                            letterSpacing: 2,
+                            color: morado,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14)),
               ),
+              (cant_imagenesEvento == 1)
+                  ? Container(
+                      margin: EdgeInsets.only(left: 30, bottom: 5),
+                      child: (imagenSeleccionada)
+                          ? mostrarImagen(imageFiles![0])
+                          : Container(),
+                    )
+                  : Container()
             ]),
           ),
           Container(
@@ -1371,7 +1419,7 @@ class EventosState extends State<EventosPage> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.7,
+                height: MediaQuery.of(context).size.height * 0.6,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: eventos.snapshots(),
                   builder: (BuildContext context,
@@ -1391,70 +1439,13 @@ class EventosState extends State<EventosPage> {
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
                               return Container(
+                                color: Colors.white,
+                                margin: EdgeInsets.only(
+                                    right: MediaQuery.of(context).size.width *
+                                        0.02),
                                 width: MediaQuery.of(context).size.width * 0.8,
-                                height: MediaQuery.of(context).size.height,
                                 child: Column(
                                   children: [
-                                    Container(
-                                        margin: EdgeInsets.only(
-                                          top: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.02,
-                                          bottom: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.02,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  right: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.02),
-                                              child: Icon(Icons.coffee_sharp,
-                                                  color: Color.fromARGB(
-                                                      255, 255, 79, 52)),
-                                            ),
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    left: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.02),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        snapshot.data!.docs[
-                                                            index]['nombre'],
-                                                        style: TextStyle(
-                                                            color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    255,
-                                                                    79,
-                                                                    52),
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 18)),
-                                                    Text(
-                                                        snapshot.data!
-                                                                .docs[index]
-                                                            ['ubicacion'],
-                                                        style: TextStyle(
-                                                          color: Color.fromARGB(
-                                                              255, 255, 79, 52),
-                                                        )),
-                                                  ],
-                                                ))
-                                          ],
-                                        )),
                                     Container(
                                       height:
                                           MediaQuery.of(context).size.height *
@@ -1465,14 +1456,6 @@ class EventosState extends State<EventosPage> {
                                               .docs[index]['imagen'].length,
                                           itemBuilder: (context, index2) {
                                             return Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.6,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.2,
                                               child: Image.network(
                                                 snapshot.data!.docs[index]
                                                     ['imagen'][index2],
@@ -1481,67 +1464,132 @@ class EventosState extends State<EventosPage> {
                                             );
                                           }),
                                     ),
-                                    GestureDetector(
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.05,
-                                        margin: EdgeInsets.only(
-                                            top: 5,
-                                            bottom: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.02),
-                                        decoration: BoxDecoration(
-                                            color: Color.fromARGB(
-                                                255, 255, 79, 52),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: Container(
-                                            alignment: Alignment(0, 0),
-                                            child: Text(
-                                              '¡Asistir!',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0x52, 0x01, 0x9b),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                            margin: EdgeInsets.only(
+                                                left: 10, top: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    snapshot.data!.docs[index]
+                                                        ['nombre'],
+                                                    style: TextStyle(
+                                                        color: colorMorado,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16)),
+                                                Text(
+                                                    snapshot.data!.docs[index]
+                                                        ['ubicacion'],
+                                                    style: TextStyle(
+                                                      color: colorMorado,
+                                                    )),
+                                              ],
                                             )),
-                                      ),
+                                      ],
                                     ),
-                                    GestureDetector(
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.05,
-                                        margin: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.02),
-                                        decoration: BoxDecoration(
-                                            color: Color.fromARGB(
-                                                255, 255, 79, 52),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: Container(
-                                            alignment: Alignment(0, 0),
-                                            child: Text(
-                                              'Mas información',
-                                              style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0x52, 0x01, 0x9b),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
-                                            )),
+                                    Container(
+                                      height: 100,
+                                      margin:
+                                          EdgeInsets.only(top: 25, left: 10),
+                                      child: Text(
+                                          snapshot.data!.docs[index]
+                                              ['descripcion'],
+                                          style: TextStyle(
+                                            color: colorMorado,
+                                          )),
+                                    ),
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(top: 5, bottom: 25),
+                                      child: Text(
+                                          snapshot.data!.docs[index]['fecha'],
+                                          style: TextStyle(
+                                            color: colorMorado,
+                                          )),
+                                    ),
+                                    Container(
+                                      color: Colors.red,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          GestureDetector(
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.05,
+                                              margin: EdgeInsets.only(
+                                                  top: 5,
+                                                  right: 5,
+                                                  bottom: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.02),
+                                              decoration: BoxDecoration(
+                                                  color: colorMorado,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(20))),
+                                              child: Container(
+                                                  alignment: Alignment(0, 0),
+                                                  child: Text(
+                                                    '¡Asistir!',
+                                                    style: TextStyle(
+                                                      color:
+                                                          Color(0xffffebdcac),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  )),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.05,
+                                              margin: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.015),
+                                              decoration: BoxDecoration(
+                                                  color: colorMorado,
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(20))),
+                                              child: Container(
+                                                  alignment: Alignment(0, 0),
+                                                  child: Text(
+                                                    'Mas información',
+                                                    style: TextStyle(
+                                                      color:
+                                                          Color(0xffffebdcac),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  )),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     )
                                   ],

@@ -475,18 +475,20 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                   ),
                                   //Crear slide de cards con las cafeteras disponibles
                                   Container(
-                                    margin: EdgeInsets.only(top: 10),
+                                    margin: EdgeInsets.only(top: 20),
                                     height: 190,
                                     child: ListView(
                                       scrollDirection: Axis.horizontal,
                                       children: [
                                         Container(
+                                          margin: EdgeInsets.only(right: 10),
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.85,
+                                              0.91,
                                           child: Card(
-                                            color: Colors.white,
+                                            margin: EdgeInsets.all(0),
+                                            color: colorNaranja,
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -494,15 +496,92 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                               children: [
                                                 Image.asset(
                                                   'assets/cafetera1.jpg',
-                                                  width: 200,
+                                                  width: 190,
                                                   height: 200,
                                                 ),
-                                                Text('Cafetera 1')
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Prensa francesa',
+                                                      style: TextStyle(
+                                                        color: colorMorado,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 10),
+                                                        //color: Colors.white,
+                                                        child: Text(
+                                                          'La Prensa Francesa es un método\n por inmersión*, permite controlar\n todo el proceso de extracción,\n desde el tiempo de contacto,\n la temperatura y la turbulencia,\n entre otras variables.\n\n También al actuar directamente\n sobre todo el café molido nos da\n la posibilidad de extraer muy\n bien los sabores.',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  colorMorado,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800),
+                                                          maxLines: null,
+                                                        ))
+                                                  ],
+                                                )
                                               ],
                                             ),
                                           ),
                                         ),
                                         Container(
+                                          margin: EdgeInsets.only(right: 10),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.91,
+                                          child: Card(
+                                            margin: EdgeInsets.all(0),
+                                            color: colorNaranja,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Image.asset(
+                                                  'assets/cafetera1.jpg',
+                                                  width: 190,
+                                                  height: 200,
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      'Prensa francesa',
+                                                      style: TextStyle(
+                                                        color: colorMorado,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        margin: EdgeInsets.only(
+                                                            top: 10),
+                                                        //color: Colors.white,
+                                                        child: Text(
+                                                          'La Prensa Francesa es un método\n por inmersión*, permite controlar\n todo el proceso de extracción,\n desde el tiempo de contacto,\n la temperatura y la turbulencia,\n entre otras variables.\n\n También al actuar directamente\n sobre todo el café molido nos da\n la posibilidad de extraer muy\n bien los sabores.',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  colorMorado,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800),
+                                                          maxLines: null,
+                                                        ))
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: EdgeInsets.only(right: 10),
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -562,38 +641,6 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                                   width: 100,
                                                   height: 100,
                                                 ),
-                                                Text('Cafetera 3')
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          child: Card(
-                                            color: Colors.white,
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  'assets/cafetera1.png',
-                                                  width: 100,
-                                                  height: 100,
-                                                ),
-                                                Text('Cafetera 4')
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          child: Card(
-                                            color: Colors.white,
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  'assets/images/cafetera1.png',
-                                                  width: 100,
-                                                  height: 100,
-                                                ),
                                                 Text('Cafetera 5')
                                               ],
                                             ),
@@ -601,6 +648,36 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                         ),
                                       ],
                                     ),
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          GestureDetector(
+                                              child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            height: 20,
+                                            margin: EdgeInsets.only(top: 10),
+                                            decoration: BoxDecoration(
+                                                color: colorNaranja,
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                                child: Text(
+                                              'Seleccionar',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: colorMorado,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 12),
+                                            )),
+                                          ))
+                                        ]),
                                   )
                                 ],
                               )

@@ -459,7 +459,7 @@ class PerfilApp extends State<PerfilPage> {
                 child: Text(
                   'Informacion de perfil',
                   style: TextStyle(
-                      color: colorNaranja,
+                      color: Color(0xffffebdcac),
                       fontWeight: FontWeight.bold,
                       fontSize: 16),
                 ))
@@ -521,7 +521,7 @@ class PerfilApp extends State<PerfilPage> {
                           child: Text(
                             'Informacion de perfil',
                             style: TextStyle(
-                                color: colorNaranja,
+                                color: Color(0xffffebdcac),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16),
                           )))),
