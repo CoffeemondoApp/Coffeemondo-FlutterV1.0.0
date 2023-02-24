@@ -154,6 +154,7 @@ class EventosState extends State<EventosPage> {
     super.initState();
     // Se inicia la funcion de getData para traer la informacion de usuario proveniente de Firebase
     print('Inicio: ' + widget.tiempo_inicio);
+    _getEmailUsuario();
     _getdata();
   }
 
@@ -177,9 +178,26 @@ class EventosState extends State<EventosPage> {
         nivel = userData.data()!['nivel'];
         inicio = widget.tiempo_inicio;
         puntaje_actual = int.parse(userData.data()!['puntaje']);
+        print(email);
       });
     });
   }
+  String email = '';
+
+  void _getEmailUsuario() async {
+    User? user = Auth().currentUser;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(user?.uid)
+        .snapshots()
+        .listen((userData) {
+      setState(() {
+        email = userData.data()!['email'];
+      });
+    });
+  }
+
+
 
   final DocumentReference docRef =
       FirebaseFirestore.instance.collection("eventos").doc();
@@ -360,7 +378,7 @@ class EventosState extends State<EventosPage> {
     //Obtener nivel actual de getNivel()
     int nivel_actual = getNivel()[0]['nivel actual'];
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
-    //print('$nivel_usuario = $nivel_actual');
+    print('$nivel_usuario = $nivel_actual');
     //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
     if (nivel_usuario > nivel_actual) {
       nivel = nivel_usuario;
@@ -370,27 +388,35 @@ class EventosState extends State<EventosPage> {
     //Hacer que una funcion se ejecute cada 30 segundos
     Timer.periodic(Duration(seconds: 30), (timer) {
       _subirPuntaje();
-      print("puntaje subido a la base de datos {puntaje: $puntaje_actual}");
     });
 
-    return (Row(
-      children: [
-        Padding(
-          padding:
-              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
-          child: Text(
-            'Nivel $nivel_usuario',
-            style: TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Text(
-          '$puntaje_actual/$puntaje_nivel',
-          style: TextStyle(
-              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-      ],
-    ));
+    return (Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        //color: Colors.red,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Nivel $nivel',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Container(
+              child: Text(
+                '$puntaje_actual/$puntaje_nivel',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        )));
   }
 
   @override
@@ -658,28 +684,9 @@ class EventosState extends State<EventosPage> {
             }));
 
             print('Ingreso de cafeteria exitoso.');
-            FirebaseMessaging messaging = FirebaseMessaging.instance;
-            String? token = await messaging.getToken();
-            if (token != null) {
-              String serverKey =
-                  "AAAAmfQdnTU:APA91bHhOKsvWPMp7TyVJ3g5wpWbZT3GF-4-D-mIvXAquDPpt8yqxNox2q19YBrQmz3CBZnNHjoTYuk9hBDRiep-jn9U0Lg2bFvWhPFg9uPOd1p4GXQ4MY54bI6UQgDyqXDulgm46agl"; // Obtenido desde la consola de Firebase
-              String url = "https://fcm.googleapis.com/fcm/send";
-              await http.post(
-                Uri.parse(url),
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": "key=$serverKey",
-                },
-                body: json.encode({
-                  "notification": {
-                    "title": "Nuevo evento creado",
-                    "body":
-                        "Se ha creado el evento ${nombreEventoCC.text}, ve a revisarlo!",
-                  },
-                  "to": token,
-                }),
-              );
-            }
+            //enviar notificacion a todos los usuarios que tengan su token almacenado en firebase para que se les notifique que se ha creado un nuevo evento
+            
+            
             print("Notificacion enviada");
             //_limpiarCafeteria();
           } else {
@@ -1847,52 +1854,46 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
+              selectedIndex: 3,
               gap: 6,
-              selectedIndex: 5,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' inicio',
+                  text: 'Inicio',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
-                  },
+                  },           //Exportar la variable tiempo_inicio
                 ),
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
                   onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ResenasPage(inicio)));
-                  },
-                ),
-                GButton(
-                  icon: Icons.menu_book,
-                  text: 'Mis Recetas',
-                ),
-                GButton(
-                  icon: Icons.stars,
-                  text: 'Mis logros',
-                ),
-                GButton(
-                    icon: Icons.coffee_maker_outlined,
-                    text: 'Cafeterias',
-                    onPressed: () {
                       //Exportar la variable tiempo_inicio
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Cafeterias(inicio)));
-                    }),
+                              builder: (context) => ResenasPage(inicio)));
+                    }
+                  
+                ),
                 GButton(
-                  icon: Icons.event_note_outlined,
+                    icon: Icons.coffee_maker_outlined,
+                    text: 'Cafeterias',
+                                      onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Cafeterias(inicio)));
+                  },
+                    ),
+                GButton(
+                  icon: Icons.event_note,
                   text: 'Eventos',
                 ),
                 GButton(

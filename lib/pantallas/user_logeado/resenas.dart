@@ -4,6 +4,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:coffeemondo/pantallas/resenas/resenas.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Direccion.dart';
+import 'package:coffeemondo/pantallas/user_logeado/cafeterias.dart';
+import 'package:coffeemondo/pantallas/user_logeado/eventos.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
@@ -2687,40 +2689,46 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              gap: 6,
               selectedIndex: 1,
+              gap: 6,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' inicio',
+                  text: 'Inicio',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
-                  },
+                  },           //Exportar la variable tiempo_inicio
                 ),
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
+                  
                 ),
                 GButton(
-                  icon: Icons.menu_book,
-                  text: 'Mis Recetas',
-                ),
+                    icon: Icons.coffee_maker_outlined,
+                    text: 'Cafeterias',
+                    onPressed: () {
+                      //Exportar la variable tiempo_inicio
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Cafeterias(inicio)));
+                    }),
                 GButton(
-                  icon: Icons.stars,
-                  text: 'Mis logros',
-                ),
-                GButton(
-                  icon: Icons.favorite,
-                  text: 'Favoritos',
-                ),
-                GButton(
-                  icon: Icons.search,
-                  text: 'Busqueda',
+                  icon: Icons.event_note,
+                  text: 'Eventos',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EventosPage(inicio)));
+                  },
                 ),
                 GButton(
                   icon: Icons.account_circle,
