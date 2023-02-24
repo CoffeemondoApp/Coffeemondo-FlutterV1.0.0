@@ -360,7 +360,7 @@ class EventosState extends State<EventosPage> {
     //Obtener nivel actual de getNivel()
     int nivel_actual = getNivel()[0]['nivel actual'];
     int puntaje_nivel = getNivel()[0]['puntaje_nivel'];
-    print('$nivel_usuario = $nivel_actual');
+    //print('$nivel_usuario = $nivel_actual');
     //Si el nivel actual es diferente al nivel de usuario, se actualiza el nivel de usuario
     if (nivel_usuario > nivel_actual) {
       nivel = nivel_usuario;
@@ -370,35 +370,27 @@ class EventosState extends State<EventosPage> {
     //Hacer que una funcion se ejecute cada 30 segundos
     Timer.periodic(Duration(seconds: 30), (timer) {
       _subirPuntaje();
+      print("puntaje subido a la base de datos {puntaje: $puntaje_actual}");
     });
 
-    return (Container(
-        width: MediaQuery.of(context).size.width * 0.6,
-        //color: Colors.red,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Nivel $nivel',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            Container(
-              child: Text(
-                '$puntaje_actual/$puntaje_nivel',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        )));
+    return (Row(
+      children: [
+        Padding(
+          padding:
+              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
+          child: Text(
+            'Nivel $nivel_usuario',
+            style: TextStyle(
+                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Text(
+          '$puntaje_actual/$puntaje_nivel',
+          style: TextStyle(
+              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      ],
+    ));
   }
 
   @override
@@ -666,9 +658,28 @@ class EventosState extends State<EventosPage> {
             }));
 
             print('Ingreso de cafeteria exitoso.');
-            //enviar notificacion a todos los usuarios que tengan su token almacenado en firebase para que se les notifique que se ha creado un nuevo evento
-            
-            
+            FirebaseMessaging messaging = FirebaseMessaging.instance;
+            String? token = await messaging.getToken();
+            if (token != null) {
+              String serverKey =
+                  "AAAAmfQdnTU:APA91bHhOKsvWPMp7TyVJ3g5wpWbZT3GF-4-D-mIvXAquDPpt8yqxNox2q19YBrQmz3CBZnNHjoTYuk9hBDRiep-jn9U0Lg2bFvWhPFg9uPOd1p4GXQ4MY54bI6UQgDyqXDulgm46agl"; // Obtenido desde la consola de Firebase
+              String url = "https://fcm.googleapis.com/fcm/send";
+              await http.post(
+                Uri.parse(url),
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": "key=$serverKey",
+                },
+                body: json.encode({
+                  "notification": {
+                    "title": "Nuevo evento creado",
+                    "body":
+                        "Se ha creado el evento ${nombreEventoCC.text}, ve a revisarlo!",
+                  },
+                  "to": token,
+                }),
+              );
+            }
             print("Notificacion enviada");
             //_limpiarCafeteria();
           } else {
@@ -1836,16 +1847,16 @@ class CustomBottomBar extends StatelessWidget {
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: 3,
               gap: 6,
+              selectedIndex: 5,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' Inicio',
+                  text: ' inicio',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
@@ -1856,40 +1867,41 @@ class CustomBottomBar extends StatelessWidget {
                   text: 'Mis Reseñas',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ResenasPage(inicio)));
                   },
                 ),
                 GButton(
+                  icon: Icons.menu_book,
+                  text: 'Mis Recetas',
+                ),
+                GButton(
+                  icon: Icons.stars,
+                  text: 'Mis logros',
+                ),
+                GButton(
                     icon: Icons.coffee_maker_outlined,
                     text: 'Cafeterias',
                     onPressed: () {
                       //Exportar la variable tiempo_inicio
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Cafeterias(inicio)));
                     }),
                 GButton(
-                  icon: Icons.event_note,
+                  icon: Icons.event_note_outlined,
                   text: 'Eventos',
-                  onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => EventosPage(inicio)));
-                  },
                 ),
                 GButton(
                   icon: Icons.account_circle,
-                  text: 'Configuración',
+                  text: 'Configuracion',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PerfilPage(inicio)));

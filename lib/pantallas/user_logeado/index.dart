@@ -242,35 +242,27 @@ class IndexPageState extends State<IndexPage> {
     //Hacer que una funcion se ejecute cada 30 segundos
     Timer.periodic(Duration(seconds: 30), (timer) {
       _subirPuntaje();
+      print("puntaje subido a la base de datos {puntaje: $puntaje_actual}");
     });
 
-    return (Container(
-        width: MediaQuery.of(context).size.width * 0.6,
-        //color: Colors.red,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Nivel $nivel',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            Container(
-              child: Text(
-                '$puntaje_actual/$puntaje_nivel',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        )));
+    return (Row(
+      children: [
+        Padding(
+          padding:
+              EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.3),
+          child: Text(
+            'Nivel $nivel_usuario',
+            style: TextStyle(
+                color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Text(
+          '$puntaje_actual/$puntaje_nivel',
+          style: TextStyle(
+              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      ],
+    ));
   }
 
   @override
@@ -810,45 +802,52 @@ class CustomBottomBar extends StatelessWidget {
                 color: Color.fromARGB(0xff, 0x52, 0x01, 0x9b),
               )),
         ),
-        Container(         
+        Container(
           height: 70,
           child: GNav(
               backgroundColor: Colors.transparent,
               color: Color.fromARGB(255, 255, 79, 52),
               activeColor: Color.fromARGB(255, 255, 79, 52),
               tabBackgroundColor: Color.fromARGB(50, 0, 0, 0),
-              selectedIndex: 0,
               gap: 6,
               padding: EdgeInsets.all(10),
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: ' Inicio',
-                  onPressed: () {
-                    //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => IndexPage(inicio)));
-                  },
+                  text: ' inicio',
                 ),
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ResenasPage(inicio)));
                   },
                 ),
                 GButton(
+                  icon: Icons.event_note_rounded,
+                  text: 'Eventos',
+                  onPressed: () {
+                    //Exportar la variable tiempo_inicio
+                  },
+                ),
+                GButton(
+                  icon: Icons.menu_book,
+                  text: 'Mis Recetas',
+                ),
+                GButton(
+                  icon: Icons.stars,
+                  text: 'Mis logros',
+                ),
+                GButton(
                     icon: Icons.coffee_maker_outlined,
                     text: 'Cafeterias',
                     onPressed: () {
                       //Exportar la variable tiempo_inicio
-                      Navigator.pushReplacement(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Cafeterias(inicio)));
@@ -858,7 +857,7 @@ class CustomBottomBar extends StatelessWidget {
                   text: 'Eventos',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => EventosPage(inicio)));
@@ -866,11 +865,11 @@ class CustomBottomBar extends StatelessWidget {
                 ),
                 GButton(
                   icon: Icons.account_circle,
-                  text: 'Configuración',
+                  text: 'Configuracion',
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.pushReplacement(
+                    Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PerfilPage(inicio)));
