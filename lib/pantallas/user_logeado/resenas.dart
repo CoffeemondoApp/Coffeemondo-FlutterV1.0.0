@@ -2308,86 +2308,94 @@ class ResenasPageState extends State<ResenasPage> {
       ));
     }
 
+    Widget botonCrearResenaMenu() {
+      return (GestureDetector(
+        onTap: () {
+          setState(() {
+            crearResena = !crearResena;
+            pregunta = 0;
+            _tazas = 0;
+            calificado = false;
+            nombre_cafeteria = false;
+            _direccionController.text = '';
+            imagenSeleccionada = false;
+            resenasAnteriores = false;
+          });
+        },
+        child: Container(
+          margin:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.015),
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: 50,
+          decoration: BoxDecoration(
+              color: Color.fromARGB(255, 255, 79, 52),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              'Crear reseña',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ));
+    }
+
     @override
     Widget moduloMisResenas() {
       return (Column(
         children: [
           AnimatedOpacity(
-            opacity: misResenas2 ? 1.0 : 0.0,
-            duration: Duration(milliseconds: 3000),
-            child: GestureDetector(
+              opacity: misResenas2 ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 2000),
+              child: AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  height: (crearResena) ? 280 : 70,
+                  child: (!crearResena)
+                      ? botonCrearResenaMenu()
+                      : Column(
+                          children: [
+                            botonCrearResenaMenu(),
+                            _mostrarCrearResena()
+                          ],
+                        ))),
+          GestureDetector(
               onTap: () {
                 setState(() {
-                  crearResena = !crearResena;
-                  pregunta = 0;
-                  _tazas = 0;
-                  calificado = false;
-                  nombre_cafeteria = false;
-                  _direccionController.text = '';
-                  imagenSeleccionada = false;
-                  resenasAnteriores = false;
+                  resenasAnteriores = !resenasAnteriores;
+                  if (crearResena) {
+                    crearResena = false;
+                  }
                 });
               },
               child: Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.015),
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 50,
-                decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 79, 52),
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20))),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Crear reseña',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          _mostrarCrearResena(),
-          AnimatedOpacity(
-              opacity: misResenas2 ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 3000),
-              child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      resenasAnteriores = !resenasAnteriores;
-                      if (crearResena) {
-                        crearResena = false;
-                      }
-                    });
-                  },
-                  child: Container(
-                      margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.01),
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: MediaQuery.of(context).size.height * 0.08,
-                      decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 79, 52),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20))),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Reseñas anteriores',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )))),
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.01),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.08,
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 255, 79, 52),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20))),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Reseñas anteriores',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ))),
           moduloResenasAnteriores(),
           AnimatedOpacity(
               opacity: misResenas2 ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 3000),
+              duration: Duration(milliseconds: 2000),
               child: GestureDetector(
                   onTap: () {
                     print(direccion_cafeteria);
@@ -2436,8 +2444,9 @@ class ResenasPageState extends State<ResenasPage> {
     @override
     Widget _mostrarMenuOpciones() {
       print(crearResena);
-      return (Opacity(
+      return (AnimatedOpacity(
           opacity: misResenas ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 3000),
           child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -2702,12 +2711,11 @@ class CustomBottomBar extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
-                  },           //Exportar la variable tiempo_inicio
+                  }, //Exportar la variable tiempo_inicio
                 ),
                 GButton(
                   icon: Icons.reviews,
                   text: 'Mis Reseñas',
-                  
                 ),
                 GButton(
                     icon: Icons.coffee_maker_outlined,

@@ -39,6 +39,7 @@ var nivel = 1;
 var niveluser;
 var inicio = '';
 var contPremio = 0;
+var colorScaffold = Color(0xffffebdcac);
 
 //Crear lista de niveles con sus respectivos datos
 List<Map<String, dynamic>> niveles = [
@@ -592,7 +593,7 @@ class IndexPageState extends State<IndexPage> {
                                           child: Text(
                                             'Obtener premio :D',
                                             style: TextStyle(
-                                                color: naranja,
+                                                color: colorScaffold,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -620,7 +621,7 @@ class IndexPageState extends State<IndexPage> {
                                             'Unirse al grupo de WhatsApp',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                color: naranja,
+                                                color: colorScaffold,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.bold),
                                           ),
@@ -654,7 +655,7 @@ class IndexPageState extends State<IndexPage> {
     print(nivel.toString() + ' ' + niveluser.toString());
 
     return Scaffold(
-      backgroundColor: Color(0xffffebdcac),
+      backgroundColor: colorScaffold,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(170),
         child: Stack(
@@ -823,7 +824,7 @@ class CustomBottomBar extends StatelessWidget {
               tabs: [
                 GButton(
                   icon: Icons.home,
-                  text: 'Inicio',              //Exportar la variable tiempo_inicio
+                  text: 'Inicio', //Exportar la variable tiempo_inicio
                 ),
                 GButton(
                   icon: Icons.reviews,

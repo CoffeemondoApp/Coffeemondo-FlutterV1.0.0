@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:coffeemondo/pantallas/user_logeado/Calendario.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
 
@@ -182,6 +183,7 @@ class EventosState extends State<EventosPage> {
       });
     });
   }
+
   String email = '';
 
   void _getEmailUsuario() async {
@@ -196,8 +198,6 @@ class EventosState extends State<EventosPage> {
       });
     });
   }
-
-
 
   final DocumentReference docRef =
       FirebaseFirestore.instance.collection("eventos").doc();
@@ -685,8 +685,7 @@ class EventosState extends State<EventosPage> {
 
             print('Ingreso de cafeteria exitoso.');
             //enviar notificacion a todos los usuarios que tengan su token almacenado en firebase para que se les notifique que se ha creado un nuevo evento
-            
-            
+
             print("Notificacion enviada");
             //_limpiarCafeteria();
           } else {
@@ -1496,7 +1495,7 @@ class EventosState extends State<EventosPage> {
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.6,
+                height: MediaQuery.of(context).size.height * 0.68,
                 child: StreamBuilder<QuerySnapshot>(
                   stream: eventos.snapshots(),
                   builder: (BuildContext context,
@@ -1600,6 +1599,17 @@ class EventosState extends State<EventosPage> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CalendarioPage(
+                                                              snapshot.data!
+                                                                          .docs[
+                                                                      index]
+                                                                  ['fecha'])));
+                                            },
                                             child: Container(
                                               width: MediaQuery.of(context)
                                                       .size
@@ -1867,31 +1877,29 @@ class CustomBottomBar extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => IndexPage(inicio)));
-                  },           //Exportar la variable tiempo_inicio
+                  }, //Exportar la variable tiempo_inicio
                 ),
                 GButton(
-                  icon: Icons.reviews,
-                  text: 'Mis Reseñas',
-                  onPressed: () {
+                    icon: Icons.reviews,
+                    text: 'Mis Reseñas',
+                    onPressed: () {
                       //Exportar la variable tiempo_inicio
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => ResenasPage(inicio)));
-                    }
-                  
-                ),
+                    }),
                 GButton(
-                    icon: Icons.coffee_maker_outlined,
-                    text: 'Cafeterias',
-                                      onPressed: () {
+                  icon: Icons.coffee_maker_outlined,
+                  text: 'Cafeterias',
+                  onPressed: () {
                     //Exportar la variable tiempo_inicio
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => Cafeterias(inicio)));
                   },
-                    ),
+                ),
                 GButton(
                   icon: Icons.event_note,
                   text: 'Eventos',
