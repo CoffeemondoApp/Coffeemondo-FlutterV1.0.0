@@ -10,7 +10,6 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../firebase/autenticacion.dart';
-import 'CalendarClient.dart';
 
 class CalendarioPage extends StatefulWidget {
   final String fecha;
@@ -79,16 +78,6 @@ class CalendarioApp extends State<CalendarioPage> {
       _agregarEvento(DateTime.parse(string_dateTime), evento['titulo']);
     }
     eventos_generados = true;
-  }
-
-  void subirEvento() {
-    CalendarClient calendarClient = CalendarClient();
-
-    calendarClient.insert(
-      'prueba',
-      DateTime.now(),
-      DateTime(2023, 3, 2),
-    );
   }
 
   @override
@@ -183,9 +172,6 @@ class CalendarioApp extends State<CalendarioPage> {
                     ]),
                   )),
           GestureDetector(
-            onTap: () {
-              subirEvento();
-            },
             child: Container(
               child: Text('Subir evento'),
               decoration: BoxDecoration(color: Colors.blue),
