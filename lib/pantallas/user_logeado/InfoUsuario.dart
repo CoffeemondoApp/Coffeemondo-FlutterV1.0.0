@@ -545,14 +545,14 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                                       .spaceBetween,
                                               children: [
                                                 Image.asset(
-                                                  'assets/cafetera1.jpg',
-                                                  width: 190,
-                                                  height: 200,
+                                                  'assets/cafetera2.jpg',
+                                                  width: 210,
+                                                  height: 210,
                                                 ),
                                                 Column(
                                                   children: [
                                                     Text(
-                                                      'Prensa francesa',
+                                                      'Moka italiana',
                                                       style: TextStyle(
                                                         color: colorMorado,
                                                         fontWeight:
@@ -564,7 +564,7 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                                             top: 10),
                                                         //color: Colors.white,
                                                         child: Text(
-                                                          'La Prensa Francesa es un método\n por inmersión*, permite controlar\n todo el proceso de extracción,\n desde el tiempo de contacto,\n la temperatura y la turbulencia,\n entre otras variables.\n\n También al actuar directamente\n sobre todo el café molido nos da\n la posibilidad de extraer muy\n bien los sabores.',
+                                                          'La cafetera italiana o cafetera\n moka produce un café de\n calidad, intenso y con\n cuerpo en pocos minutos.\n Es la forma casera de\n conseguir un café expreso\n a baja presión, mucho más\n parecido al de los bares\n que el café de goteo.',
                                                           style: TextStyle(
                                                               color:
                                                                   colorMorado,
@@ -572,7 +572,6 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w800),
-                                                          maxLines: null,
                                                         ))
                                                   ],
                                                 )

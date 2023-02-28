@@ -529,6 +529,7 @@ class PerfilApp extends State<PerfilPage> {
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Container(
+            height: 40,
             width: MediaQuery.of(context).size.width * 0.9,
             decoration: BoxDecoration(
               color: colorMorado,
@@ -539,7 +540,7 @@ class PerfilApp extends State<PerfilPage> {
                 child: Text(
                   'Informacion de usuario',
                   style: TextStyle(
-                      color: colorNaranja,
+                      color: colorScaffold,
                       fontWeight: FontWeight.bold,
                       fontSize: 16),
                 )),

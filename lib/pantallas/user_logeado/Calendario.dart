@@ -8,9 +8,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:coffeemondo/pantallas/user_logeado/CalendarClient.dart';
 
 import '../../firebase/autenticacion.dart';
+import 'CalendarClient.dart';
 
 class CalendarioPage extends StatefulWidget {
   final String fecha;
