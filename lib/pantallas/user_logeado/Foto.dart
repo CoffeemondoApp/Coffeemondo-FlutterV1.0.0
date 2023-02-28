@@ -3,6 +3,7 @@
 import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/InfoUsuario.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -505,21 +506,22 @@ class CustomBottomBar extends StatelessWidget {
                   icon: Icons.home,
                   text: 'Perfil',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => PerfilPage('0')),
+                      MaterialPageRoute(builder: (context) => PerfilPage(inicio)),
                     );
                   },
                 ),
                 GButton(
                   icon: Icons.image,
                   text: 'Foto de perfil',
+                  
                 ),
                 GButton(
-                  icon: Icons.info,
-                  text: 'Informacion',
-                  onPressed: () {
-                    Navigator.push(
+                  icon: Icons.info_outline,
+                  text: 'Editar perfil',
+                   onPressed: () {
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
@@ -528,8 +530,26 @@ class CustomBottomBar extends StatelessWidget {
                   },
                 ),
                 GButton(
+                  icon: Icons.info,
+                  text: 'Editar usuario',
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InfoUsuarioPage(inicio)),
+                    );
+                  },
+                ),
+                GButton(
                   icon: Icons.arrow_back,
                   text: 'Volver atras',
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => IndexPage(inicio)),
+                    );
+                  },
                 ),
               ]),
         ),

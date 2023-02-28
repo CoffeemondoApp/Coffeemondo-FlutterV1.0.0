@@ -831,7 +831,7 @@ class CustomBottomBar extends StatelessWidget {
                   text: 'Mis Reseñas',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => ResenasPage(inicio)));
@@ -842,7 +842,7 @@ class CustomBottomBar extends StatelessWidget {
                     text: 'Cafeterias',
                     onPressed: () {
                       //Exportar la variable tiempo_inicio
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => Cafeterias(inicio)));
@@ -852,7 +852,7 @@ class CustomBottomBar extends StatelessWidget {
                   text: 'Eventos',
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => EventosPage(inicio)));
@@ -864,7 +864,7 @@ class CustomBottomBar extends StatelessWidget {
                   //Enlace a vista editar perfil desde Index
                   onPressed: () {
                     //Exportar la variable tiempo_inicio
-                    Navigator.push(
+                    Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => PerfilPage(inicio)));
