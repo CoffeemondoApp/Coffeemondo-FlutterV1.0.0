@@ -6,6 +6,7 @@ import 'package:coffeemondo/pantallas/Registro.dart';
 import 'package:coffeemondo/firebase/autenticacion.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Foto.dart';
 import 'package:coffeemondo/pantallas/user_logeado/Info.dart';
+import 'package:coffeemondo/pantallas/user_logeado/InfoUsuario.dart';
 import 'package:coffeemondo/pantallas/user_logeado/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -724,7 +725,7 @@ class CustomBottomBar extends StatelessWidget {
                   icon: Icons.image,
                   text: 'Foto de perfil',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => FotoPage(inicio)),
                     );
@@ -734,7 +735,7 @@ class CustomBottomBar extends StatelessWidget {
                   icon: Icons.info_outline,
                   text: 'Editar perfil',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
@@ -743,10 +744,21 @@ class CustomBottomBar extends StatelessWidget {
                   },
                 ),
                 GButton(
+                  icon: Icons.info,
+                  text: 'Editar usuario',
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InfoUsuarioPage(inicio)),
+                    );
+                  },
+                ),
+                GButton(
                   icon: Icons.arrow_back,
                   text: 'Volver atras',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => IndexPage(inicio)),

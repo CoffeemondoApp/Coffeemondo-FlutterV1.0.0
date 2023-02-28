@@ -602,31 +602,35 @@ class CustomBottomBar extends StatelessWidget {
                   icon: Icons.home,
                   text: 'Perfil',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => PerfilPage('0')),
+                      MaterialPageRoute(builder: (context) => PerfilPage(inicio)),
                     );
                   },
                 ),
                 GButton(
                   icon: Icons.image,
                   text: 'Foto de perfil',
-                  onPressed: () {
-                    Navigator.push(
+                   onPressed: () {
+                    Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => FotoPage(inicio)),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              FotoPage(inicio)),
                     );
                   },
+                  
                 ),
                 GButton(
                   icon: Icons.info_outline,
                   text: 'Editar perfil',
+                  
                 ),
                 GButton(
                   icon: Icons.info,
                   text: 'Editar usuario',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => InfoUsuarioPage(inicio)),
@@ -637,7 +641,7 @@ class CustomBottomBar extends StatelessWidget {
                   icon: Icons.arrow_back,
                   text: 'Volver atras',
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => IndexPage(inicio)),
