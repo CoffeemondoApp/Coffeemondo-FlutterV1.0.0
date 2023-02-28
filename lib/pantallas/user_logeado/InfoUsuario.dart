@@ -45,6 +45,7 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
   bool isLogin = true;
   bool mostrarSetCafeteras = false;
   bool mostrarSetCafeteras2 = false;
+  String nombreCafetera = '';
 
   // Este estado define si el usuario aun no ha editado ningun textField,
   //si edita alguno, se dejan de recibir en tiempo real los datos de la bbdd
@@ -61,6 +62,8 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
       TextEditingController();
   final TextEditingController _controladornombreApellido =
       TextEditingController();
+
+  final ScrollController _scrollController = ScrollController();
 
   // Funcion para guardar informacion del usuario en Firebase Firestore
   Future<void> guardarInfoUsuario() async {
@@ -424,7 +427,96 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
     );
   }
 
+  void seleccionarCafetera(Map cafetera) {
+    setState(() {
+      mostrarSetCafeteras = !mostrarSetCafeteras;
+      nombreCafetera = cafetera['nombre'];
+      if (!mostrarSetCafeteras2) {
+        Timer(Duration(milliseconds: 500), () {
+          setState(() {
+            mostrarSetCafeteras2 = !mostrarSetCafeteras2;
+          });
+        });
+      } else {
+        mostrarSetCafeteras2 = !mostrarSetCafeteras2;
+      }
+    });
+    print(nombreCafetera);
+    ;
+  }
+
+  //crear array con objetos dentro
+  List<Map> _crearCafeteras() {
+    final List<Map> cafeteras = [];
+    final List<String> cafeteras_nombre = [
+      'prensa francesa',
+      'moka italiana',
+      'V60',
+      'kalitta',
+      'aeroPress',
+      'maquina de espresso'
+    ];
+    final List<String> cafeteras_descripcion = [
+      'La Prensa Francesa es un\nmétodo por inmersión*,\n' +
+          'permite controlar todo el\nproceso de extracción,\n' +
+          'desde el tiempo de\n contacto, la temperatura\ny la turbulencia,' +
+          '\nentre otras variables.\n\nTambién al actuar\ndirectamente sobre' +
+          'todo\nel café molido nos da la\nposibilidad' +
+          'de extraer\n muy bien los sabores.',
+      'La cafetera italiana o\ncafetera moka produce\nun café de calidad,\n' +
+          'intenso y con cuerpo\nen pocos minutos.\n\nEs la forma casera de\n' +
+          'conseguir un café\nexpreso a baja presión,\nmucho más parecido\n' +
+          'al de los bares que\nel café de goteo.',
+      'Un único orificio grande\nen el V60 permite\nmodificar el sabor al\n' +
+          'alterar la velocidad del\nflujo de agua.\n\nCon este método se\n' +
+          'obtiene un café de\ncuerpo sedodo\ny sabor frutal.',
+      'Es una cafetera de filtro\nparecida al V60 que\nconsiste en verter ' +
+          'agua\ncaliente sobre el café\nmolido contenido en\nun filtro.\n\nEl ' +
+          'agua pasa a través\nde la cama de café,\nobtiene sus\ncomponentes ' +
+          'y se\nfiltra a un recipiente.',
+      'Es como una jeringuilla\ngigante, en el interior\nde la cual se ' +
+          'mezclan\ncafé y agua caliente\ny el café se extrae por\nla presión ' +
+          'de un émbolo.\n\nEl método aeropress\ncuenta cada vez con\nmás adeptos ' +
+          'porque\npermite preparar un\ncafé excelente y con\nmucho ' +
+          'cuerpo en\ncuestión de segundos.',
+      'Calientan el agua para\nlograr una alta presión\nque pasa por el café\n' +
+          'molido para hacer la\ninfusión.\n\nGeneralmente a 90°\ngrados, a ' +
+          'presión de\n8-10 atmósferas por\n20 a 30 segundos por\ncafé molido ' +
+          'muy fino,\nextrayendo su sabor\ny esencia.'
+    ];
+
+    for (var i = 0; i < 6; i++) {
+      cafeteras.add({
+        'nombre': cafeteras_nombre[i],
+        'imagen': 'assets/cafetera${i + 1}.jpg',
+        'descripcion': cafeteras_descripcion[i],
+      });
+    }
+    return cafeteras;
+  }
+
+  Future<void> guardarCafetera() async {
+    try {
+      // Importante: Este tipo de declaracion se utiliza para solamente actualizar la informacion solicitada y no manipular informacion adicional, como lo es la imagen y esto permite no borrar otros datos importantes
+
+      // Se busca la coleccion 'users' de la BD de Firestore en donde el uid sea igual al del usuario actual
+      final DocumentReference docRef =
+          FirebaseFirestore.instance.collection("users").doc(currentUser?.uid);
+      // Se actualiza la informacion del usuario actual mediante los controladores, que son los campos de informacion que el usuario debe rellenar
+      docRef.update({
+        'cafetera': nombreCafetera,
+      });
+      print('Ingreso de informacion exitoso.');
+      // Una vez actualizada la informacion, se devuelve a InfoUser para mostrar su nueva informacion
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const PerfilPage('0')));
+    } catch (e) {
+      print("Error al intentar ingresar informacion");
+    }
+  }
+
   Widget _bodyInfoUsuario() {
+    var cafeteras = _crearCafeteras();
     return (Container(
         width: MediaQuery.of(context).size.width,
         margin: EdgeInsets.only(top: 20),
@@ -436,259 +528,220 @@ class InfoUsuarioApp extends State<InfoUsuarioPage> {
             AnimatedContainer(
               duration: Duration(milliseconds: 500),
               width: MediaQuery.of(context).size.width * 0.95,
-              height: mostrarSetCafeteras ? 300 : 30,
+              height: mostrarSetCafeteras ? 380 : 30,
               decoration: BoxDecoration(
                   color: colorMorado, borderRadius: BorderRadius.circular(20)),
               child: Center(
-                  child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          mostrarSetCafeteras = !mostrarSetCafeteras;
-
-                          // cambiar estado de infoPerfilPressed2 luego de 2 segundos
-                          if (!mostrarSetCafeteras2) {
-                            Timer(Duration(milliseconds: 500), () {
-                              setState(() {
-                                mostrarSetCafeteras2 = !mostrarSetCafeteras2;
-                              });
-                            });
-                          } else {
-                            mostrarSetCafeteras2 = !mostrarSetCafeteras2;
-                          }
-                        });
-                      },
-                      child: Container(
+                child: GestureDetector(
+                    child: Container(
                         alignment: mostrarSetCafeteras2
                             ? Alignment.topCenter
                             : Alignment.center,
                         margin:
                             EdgeInsets.only(top: mostrarSetCafeteras2 ? 20 : 0),
                         child: mostrarSetCafeteras2
-                            ? Column(
-                                children: [
-                                  Text(
+                            ? Column(children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      mostrarSetCafeteras =
+                                          !mostrarSetCafeteras;
+
+                                      // cambiar estado de infoPerfilPressed2 luego de 2 segundos
+                                      if (!mostrarSetCafeteras2) {
+                                        Timer(Duration(milliseconds: 500), () {
+                                          setState(() {
+                                            mostrarSetCafeteras2 =
+                                                !mostrarSetCafeteras2;
+                                          });
+                                        });
+                                      } else {
+                                        mostrarSetCafeteras2 =
+                                            !mostrarSetCafeteras2;
+                                      }
+                                    });
+                                  },
+                                  child: Text(
                                     '¿Que cafetera usas en tu casa?',
                                     style: TextStyle(
                                         color: Color(0xffffebdcac),
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  //Crear slide de cards con las cafeteras disponibles
-                                  Container(
+                                ),
+                                //Crear slide de cards con las cafeteras disponibles
+                                Container(
                                     margin: EdgeInsets.only(top: 20),
-                                    height: 190,
-                                    child: ListView(
-                                      scrollDirection: Axis.horizontal,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.only(right: 10),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.91,
-                                          child: Card(
-                                            margin: EdgeInsets.all(0),
-                                            color: colorNaranja,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/cafetera1.jpg',
-                                                  width: 190,
-                                                  height: 200,
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                      'Prensa francesa',
-                                                      style: TextStyle(
-                                                        color: colorMorado,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 10),
-                                                        //color: Colors.white,
-                                                        child: Text(
-                                                          'La Prensa Francesa es un método\n por inmersión*, permite controlar\n todo el proceso de extracción,\n desde el tiempo de contacto,\n la temperatura y la turbulencia,\n entre otras variables.\n\n También al actuar directamente\n sobre todo el café molido nos da\n la posibilidad de extraer muy\n bien los sabores.',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  colorMorado,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800),
-                                                          maxLines: null,
-                                                        ))
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(right: 10),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.91,
-                                          child: Card(
-                                            margin: EdgeInsets.all(0),
-                                            color: colorNaranja,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/cafetera2.jpg',
-                                                  width: 210,
-                                                  height: 210,
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                      'Moka italiana',
-                                                      style: TextStyle(
-                                                        color: colorMorado,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 10),
-                                                        //color: Colors.white,
-                                                        child: Text(
-                                                          'La cafetera italiana o cafetera\n moka produce un café de\n calidad, intenso y con\n cuerpo en pocos minutos.\n Es la forma casera de\n conseguir un café expreso\n a baja presión, mucho más\n parecido al de los bares\n que el café de goteo.',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  colorMorado,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800),
-                                                        ))
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.only(right: 10),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.91,
-                                          child: Card(
-                                            margin: EdgeInsets.all(0),
-                                            color: colorNaranja,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Image.asset(
-                                                  'assets/cafetera1.jpg',
-                                                  width: 190,
-                                                  height: 200,
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    Text(
-                                                      'Prensa francesa',
-                                                      style: TextStyle(
-                                                        color: colorMorado,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 10),
-                                                        //color: Colors.white,
-                                                        child: Text(
-                                                          'La Prensa Francesa es un método\n por inmersión*, permite controlar\n todo el proceso de extracción,\n desde el tiempo de contacto,\n la temperatura y la turbulencia,\n entre otras variables.\n\n También al actuar directamente\n sobre todo el café molido nos da\n la posibilidad de extraer muy\n bien los sabores.',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  colorMorado,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800),
-                                                          maxLines: null,
-                                                        ))
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          child: Card(
-                                            color: Colors.white,
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  'assets/images/cafetera1.png',
-                                                  width: 100,
-                                                  height: 100,
-                                                ),
-                                                Text('Cafetera 5')
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                              child: Container(
+                                    height: 290,
+                                    child: ListView.builder(
+                                        controller: _scrollController,
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: cafeteras.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return (Container(
+                                            margin: EdgeInsets.only(right: 10),
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.4,
-                                            height: 20,
-                                            margin: EdgeInsets.only(top: 10),
-                                            decoration: BoxDecoration(
-                                                color: colorNaranja,
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: Center(
-                                                child: Text(
-                                              'Seleccionar',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: colorMorado,
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 12),
-                                            )),
-                                          ))
-                                        ]),
-                                  )
-                                ],
-                              )
-                            : Text(
-                                '¿Que cafetera usas en tu casa?',
-                                style: TextStyle(
-                                    color: Color(0xffffebdcac),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                      ))),
+                                                0.91,
+                                            child: Card(
+                                              color: colorNaranja,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            40)),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    FittedBox(
+                                                      child: Image.asset(
+                                                        cafeteras[index]
+                                                            ['imagen'],
+                                                        width: 210,
+                                                        height: 282,
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Container(
+                                                          child: Text(
+                                                            cafeteras[index]
+                                                                ['nombre'],
+                                                            style: TextStyle(
+                                                              color:
+                                                                  colorMorado,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 20,
+                                                                    right: 10),
+                                                            //color: Colors.white,
+                                                            height: 200,
+                                                            child: Text(
+                                                              cafeteras[index][
+                                                                  'descripcion'],
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      colorMorado,
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800),
+                                                              maxLines: null,
+                                                            )),
+                                                        GestureDetector(
+                                                            onTap: () {
+                                                              seleccionarCafetera(
+                                                                  cafeteras[
+                                                                      index]);
+                                                            },
+                                                            child: Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      right: 10,
+                                                                      top: 10,
+                                                                      bottom:
+                                                                          10),
+                                                              decoration: BoxDecoration(
+                                                                  color:
+                                                                      colorMorado,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10)),
+                                                              child: Container(
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          bottom:
+                                                                              5,
+                                                                          left:
+                                                                              10,
+                                                                          right:
+                                                                              10),
+                                                                  child: Text(
+                                                                    'Seleccionar cafetera',
+                                                                    style: TextStyle(
+                                                                        color:
+                                                                            colorNaranja,
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.bold),
+                                                                  )),
+                                                            ))
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ));
+                                        }))
+                              ])
+                            : GestureDetector(
+                                child: Text(
+                                  (nombreCafetera != '')
+                                      ? 'En mi casa uso $nombreCafetera'
+                                      : '¿Que cafetera usas en tu casa?',
+                                  style: TextStyle(
+                                      color: Color(0xffffebdcac),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    mostrarSetCafeteras = !mostrarSetCafeteras;
+
+                                    // cambiar estado de infoPerfilPressed2 luego de 2 segundos
+                                    if (!mostrarSetCafeteras2) {
+                                      Timer(Duration(milliseconds: 500), () {
+                                        setState(() {
+                                          mostrarSetCafeteras2 =
+                                              !mostrarSetCafeteras2;
+                                        });
+                                      });
+                                    } else {
+                                      mostrarSetCafeteras2 =
+                                          !mostrarSetCafeteras2;
+                                    }
+                                  });
+                                },
+                              ))),
+              ),
             ),
+            GestureDetector(
+              onTap: () {
+                guardarCafetera();
+              },
+              child: Container(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  height: 30,
+                  margin: EdgeInsets.only(top: 20),
+                  decoration: BoxDecoration(
+                      color: colorNaranja,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Center(
+                    child: Text(
+                      'Guardar informacion',
+                      style: TextStyle(
+                          color: colorMorado, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
+            )
           ],
         )));
   }

@@ -44,6 +44,7 @@ class PerfilApp extends State<PerfilPage> {
   String telefono = '';
   String direccion = '';
   String urlImage = '';
+  String cafetera = '';
 
   String? errorMessage = '';
   bool isLogin = true;
@@ -51,6 +52,9 @@ class PerfilApp extends State<PerfilPage> {
   //Informacion del perfil
   bool infoPerfilPressed = false;
   bool infoPerfilPressed2 = false;
+
+  bool infoUserPressed = false;
+  bool infoUserPressed2 = false;
 
   // Declaracion de email del usuario actual
   final email = FirebaseAuth.instance.currentUser?.email;
@@ -78,6 +82,7 @@ class PerfilApp extends State<PerfilPage> {
         telefono = userData.data()!['telefono'];
         direccion = userData.data()!['direccion'];
         urlImage = userData.data()!['urlImage'];
+        cafetera = userData.data()!['cafetera'];
       });
     });
   }
@@ -474,6 +479,84 @@ class PerfilApp extends State<PerfilPage> {
     ));
   }
 
+  Widget containerSeparador() {
+    return (Container(
+      width: MediaQuery.of(context).size.width,
+      height: 1,
+      color: colorNaranja,
+    ));
+  }
+
+  Widget moduloInfoUsuario() {
+    return (Column(
+      children: [
+        botonInfoUsuario(),
+        Container(
+          margin: EdgeInsets.only(top: 30, bottom: 10, left: 10),
+          child: Column(children: [
+            Row(
+              children: [
+                Container(
+                  child: Icon(
+                    Icons.coffee_maker_outlined,
+                    color: colorNaranja,
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  margin: EdgeInsets.only(left: 10),
+                  //color: Colors.white,
+                  child: Container(
+                      child: Text(
+                    'En mi casa uso $cafetera',
+                    style: TextStyle(
+                        color: colorNaranja,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2),
+                  )),
+                )
+              ],
+            )
+          ]),
+        ),
+        containerSeparador(),
+      ],
+    ));
+  }
+
+  Widget botonInfoUsuario() {
+    return (Container(
+        margin: EdgeInsets.only(top: (infoUserPressed2) ? 10 : 0),
+        child: GestureDetector(
+            onTap: () {
+              setState(() {
+                infoUserPressed = !infoUserPressed;
+                // cambiar estado de infoPerfilPressed2 luego de 2 segundos
+                if (!infoUserPressed2) {
+                  Timer(Duration(milliseconds: 500), () {
+                    setState(() {
+                      infoUserPressed2 = !infoUserPressed2;
+                    });
+                  });
+                } else {
+                  infoUserPressed2 = !infoUserPressed2;
+                }
+              });
+            },
+            child: Align(
+              alignment:
+                  (infoUserPressed2) ? Alignment.topCenter : Alignment.center,
+              child: Text(
+                'Informacion de usuario',
+                style: TextStyle(
+                    color: colorScaffold,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ))));
+  }
+
   Widget build(BuildContext context) {
     print('esto pasa ' + widget.tiempo_inicio);
     print('fecha actual' + DateTime.now().toString());
@@ -528,23 +611,17 @@ class PerfilApp extends State<PerfilPage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 10),
-          child: Container(
-            height: 40,
-            width: MediaQuery.of(context).size.width * 0.9,
-            decoration: BoxDecoration(
-              color: colorMorado,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Container(
-                alignment: Alignment.center,
-                child: Text(
-                  'Informacion de usuario',
-                  style: TextStyle(
-                      color: colorScaffold,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                )),
-          ),
+          child: AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              height: (infoUserPressed) ? 170 : 40,
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                color: colorMorado,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: (infoUserPressed2)
+                  ? moduloInfoUsuario()
+                  : botonInfoUsuario()),
         ),
         Padding(
             padding: const EdgeInsets.only(left: 50, top: 15, right: 40),
